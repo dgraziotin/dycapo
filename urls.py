@@ -14,4 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
+    (r'^RPC2$', 'dycapo.rpc4django.views.serve_rpc_request'),
+
 )
