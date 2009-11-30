@@ -76,6 +76,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.admin',
     'dycapo.rpc4django',
-    'dycapo.server'
+    'dycapo.geopy',
+    'dycapo.server',
 )
