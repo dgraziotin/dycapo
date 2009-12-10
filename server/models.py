@@ -1,32 +1,76 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+
+GENDER_CHOICES = (
+        (u'M', u'Male'),
+        (u'F', u'Female'),
+    )
 
 
-class Author(models.Model):
-    name = models.CharField(max_length=200)
-    surname = models.CharField(max_length=200)
-    age = models.IntegerField()
-    
-
-
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    num_pages = models.IntegerField()
-    author = models.ForeignKey(Author)
+class Trait(models.Model):
+    age = models.PositiveIntegerField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    smoker = models.BooleanField()
+    blind = models.BooleanField()
+    deaf = models.BooleanField()
+    dog = models.BooleanField()
 
 class Location(models.Model):
     label = models.CharField(max_length=255)
-    street = models.CharField(max_length=500)
-    point_x = models.FloatField()
-    point_y = models.FloatField()
+    street = models.CharField(max_length=255)
+    point = models.CharField(max_length=50)
+    country = models.CharField(max_length=2)
+    region = models.CharField(max_length=255)
+    town = models.CharField(max_length=255)
+    postcode = models.PositiveIntegerField()
+    subregion = models.CharField(max_length=255)
+    intersection = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    georss_point = models.CharField(max_length=255)
+    georss_radius = models.PositiveIntegerField()
+    georss_box = models.CharField(max_length=255)
+    offset = models.PositiveIntegerField()
+    recurs = models.CharField(max_length=255)
+    days = models.CharField(max_length=255)
     author = models.ForeignKey(User)
-    unique_together = ("label", "author", "street")
+    
+class Person(models.Model):
+    name = models.CharField(max_length=200)
+    alias = models.CharField(max_length=200)
+    userid = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    uri = models.CharField(max_length=200)
+    phone = models.CharField(max_length=200)
+    position = models.ForeignKey(Location)
+
+    
+class Mode(models.Model):
+    kind = models.CharField(max_length=255)
+    capacity = models.PositiveIntegerField()
+    vacancy = models.PositiveIntegerField()
+    make = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    year = models.PositiveIntegerField()
+    color = models.CharField(max_length=255)
+    lic = models.CharField(max_length=255)
+    cost = models.FloatField()
+    
+class Prefs(models.Model):
+    age = models.CharField(max_length=255)
+    nonsmoking = models.BooleanField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    drive = models.BooleanField()
+    ride = models.BooleanField()
     
 class Trip(models.Model):
-    started = models.BooleanField(default=False)
-    finished = models.BooleanField(default=False)
+    published = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    expires = models.DateTimeField()
+    content = models.TextField()
+    active = models.BooleanField()
+    author = models.ForeignKey(Person)
     locations = models.ManyToManyField(Location)
-    driver = models.ForeignKey(User,related_name="driver")
-    riders = models.ManyToManyField(User,related_name="riders")
-    
+    mode = models.ForeignKey(Mode)
+    prefs = models.ForeignKey(Prefs)
+
+
