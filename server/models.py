@@ -33,6 +33,7 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255)
     days = models.CharField(max_length=255)
     author = models.ForeignKey(User)
+    leaves = models.DateTimeField()
     
 class Person(models.Model):
     name = models.CharField(max_length=200)
@@ -42,6 +43,7 @@ class Person(models.Model):
     uri = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
     position = models.ForeignKey(Location)
+    trait = models.ForeignKey(Trait)
 
     
 class Mode(models.Model):
@@ -68,9 +70,13 @@ class Trip(models.Model):
     expires = models.DateTimeField()
     content = models.TextField()
     active = models.BooleanField()
-    author = models.ForeignKey(Person)
+    author = models.ForeignKey(Person,related_name='author')
     locations = models.ManyToManyField(Location)
     mode = models.ForeignKey(Mode)
     prefs = models.ForeignKey(Prefs)
+    participation = models.ManyToManyField(Person,through='Participation',related_name='participation')
 
-
+class Participation(models.Model):
+    role = models.CharField(max_length=255)
+    started = models.BooleanField()
+    finished = models.BooleanField()
