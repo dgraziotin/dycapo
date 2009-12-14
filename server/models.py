@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import IntegrityError
+
+
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
 described in OpenTrip Core specification (http://opentrip.info/wiki/OpenTrip_Core). 
@@ -46,84 +49,93 @@ Dycapo models
 """
 
 class Location(models.Model):
-    '''
+    """
     Represents a single location, as in http://opentrip.info/wiki/OpenTrip_Core#Location_Constructs
-    '''
-    label = models.CharField(max_length=255) # OPT
-    street = models.CharField(max_length=255)
-    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES) # OPT
-    country = models.CharField(max_length=2) # OPT
-    region = models.CharField(max_length=255) # OPT
-    town = models.CharField(max_length=255) # OPT
-    postcode = models.PositiveIntegerField() # OPT
-    subregion = models.CharField(max_length=255) # OPT
-    intersection = models.CharField(max_length=255) # OPT
-    address = models.CharField(max_length=255) # OPT
-    georss_point = models.CharField(max_length=255)  # RECOM
-    georss_radius = models.PositiveIntegerField() # OPT
-    georss_box = models.CharField(max_length=255) # OPT
-    '''
+    """
+    label = models.CharField(max_length=255, blank=True) # OPT
+    street = models.CharField(max_length=255, blank=True)
+    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES, blank=True) # OPT
+    country = models.CharField(max_length=2, blank=True) # OPT
+    region = models.CharField(max_length=255, blank=True) # OPT
+    town = models.CharField(max_length=255, blank=True) # OPT
+    postcode = models.PositiveIntegerField(blank=True,null=True) # OPT
+    subregion = models.CharField(max_length=255, blank=True) # OPT
+    intersection = models.CharField(max_length=255, blank=True) # OPT
+    address = models.CharField(max_length=255, blank=True) # OPT
+    georss_point = models.CharField(max_length=255, blank=True)  # RECOM
+    georss_radius = models.PositiveIntegerField(blank=True,null=True) # OPT
+    georss_box = models.CharField(max_length=255, blank=True) # OPT
+    """
     The following should be members of a separate Date-Time class but are included here for simplicity
-    '''
-    offset = models.PositiveIntegerField() # OPT
+    """
+    offset = models.PositiveIntegerField(blank=True,null=True) # OPT
     recurs = models.CharField(max_length=255) # OPT
     days = models.CharField(max_length=255, choices=RECURS_CHOICES) # OPT
-    leaves = models.DateTimeField() # MUST
+    leaves = models.DateTimeField(blank=False) # MUST
+    
+    def save(self, force_insert=False, force_update=False):
+        """
+        Ensures integrity
+        """
+        if self.address == "" and self.georss_point == "":
+            raise IntegrityError('either address or georss_point must have a value')
+        super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
+
     
 class Person(models.Model):
-    '''
+    """
     Represents a Person as described on http://opentrip.info/wiki/OpenTrip_Core#Person_Constructs
-    '''
+    """
     name = models.CharField(max_length=200) # MUST
-    alias = models.CharField(max_length=200) # OPT
+    alias = models.CharField(max_length=200,blank=True) # OPT
     userid = models.CharField(max_length=200) # MUST
     email = models.CharField(max_length=200) # OPT
-    uri = models.CharField(max_length=200) # OPT
+    uri = models.CharField(max_length=200,blank=True) # OPT
     phone = models.CharField(max_length=200) # OPT
-    position = models.ForeignKey(Location) # EXT
+    position = models.ForeignKey(Location,blank=True,null=True) # EXT
     age = models.PositiveIntegerField() # OPT
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES) # OPT
-    smoker = models.BooleanField() # OPT
-    blind = models.BooleanField() # OPT
-    deaf = models.BooleanField() # OPT
-    dog = models.BooleanField() # OPT
+    smoker = models.BooleanField(default=False) # OPT
+    blind = models.BooleanField(default=False) # OPT
+    deaf = models.BooleanField(default=False) # OPT
+    dog = models.BooleanField(default=False) # OPT
 
     
 class Mode(models.Model):
-    '''
+    """
     Represents additional information about the mode of transportation being used.
     See http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs
-    '''
-    kind = models.CharField(max_length=255) # MUST
-    capacity = models.PositiveIntegerField() # OPT
-    vacancy = models.PositiveIntegerField() # OPT
-    make = models.CharField(max_length=255) # OPT
-    model = models.CharField(max_length=255) # OPT
-    year = models.PositiveIntegerField() # OPT
-    color = models.CharField(max_length=255) # OPT
-    lic = models.CharField(max_length=255) # OPT
-    cost = models.FloatField() # OPT
+    """
+    kind = models.CharField(max_length=255,blank=False) # MUST
+    capacity = models.PositiveIntegerField(blank=False) # OPT
+    vacancy = models.PositiveIntegerField(blank=False) # OPT
+    make = models.CharField(max_length=255,blank=True) # OPT
+    model = models.CharField(max_length=255,blank=True) # OPT
+    year = models.PositiveIntegerField(blank=True) # OPT
+    color = models.CharField(max_length=255,blank=True) # OPT
+    lic = models.CharField(max_length=255,blank=True) # OPT
+    cost = models.FloatField(blank=True,null=True) # OPT
     
 class Prefs(models.Model):
-    '''
+    """
     Stores the preferences of a Trip set by the Person who creates it. 
     See http://opentrip.info/wiki/OpenTrip_Core#Preference_Constructs for more info. 
     We kept drive and ride attributes just for compatibility reasons: in OpenTrip Dynamic just a driver should be
     the author of a Trip.
-    '''
+    """
     age = models.CharField(max_length=50,blank=True) # OPT
     nonsmoking = models.BooleanField(blank=True) # OPT
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True) # OPT
-    drive = models.BooleanField() # OPT
-    ride = models.BooleanField() # OPT
+    drive = models.BooleanField(default=False,blank=True,null=True) # OPT
+    ride = models.BooleanField(default=False,blank=True,null=True) # OPT
 
 
 class Trip(models.Model):
-    '''
+    """
     Represents a Trip. See http://opentrip.info/wiki/OpenTrip_Core#Entry_Elements for more info.
     atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
     in case of an export of a Trip in OpenTrip Feed format.
-    '''
+    """
     published = models.DateTimeField(auto_now_add=True, blank=False) # MUST
     updated = models.DateTimeField(auto_now=True, blank=False) # MUST
     expires = models.DateTimeField(blank=False) # MUST
@@ -136,12 +148,12 @@ class Trip(models.Model):
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation', blank=False) # EXT
 
 class Participation(models.Model):
-    '''
+    """
     Describes the participation of a Person in a Trip.
     This is an OpenTrip extension and should be considered as a proposal for OpenTrip Dynamic
-    '''
-    person = models.ForeignKey(Person, related_name="participant") # used internally
-    trip = models.ForeignKey(Trip, related_name="trip") # used internally
+    """
+    person = models.ForeignKey(Person, related_name="participant",blank=False) # used internally
+    trip = models.ForeignKey(Trip, related_name="trip",blank=False) # used internally
     role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False) # EXT
     started = models.BooleanField(blank=False, default=False) # EXT
     finished = models.BooleanField(blank=False, default=False) # EXT    
