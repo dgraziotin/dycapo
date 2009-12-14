@@ -99,6 +99,14 @@ class Person(models.Model):
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
     dog = models.BooleanField(default=False) # OPT
+    
+    def save(self, force_insert=False, force_update=False):
+        """
+        Populates redundant fields
+        """
+        if self.address == "" and self.georss_point == "":
+            raise IntegrityError('either address or georss_point must have a value')
+        super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
 
     
 class Mode(models.Model):
@@ -126,8 +134,8 @@ class Prefs(models.Model):
     age = models.CharField(max_length=50,blank=True) # OPT
     nonsmoking = models.BooleanField(blank=True) # OPT
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True) # OPT
-    drive = models.BooleanField(default=False,blank=True,null=True) # OPT
-    ride = models.BooleanField(default=False,blank=True,null=True) # OPT
+    drive = models.BooleanField(default=False) # OPT
+    ride = models.BooleanField(default=False) # OPT
 
 
 class Trip(models.Model):
