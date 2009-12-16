@@ -82,31 +82,27 @@ class Location(models.Model):
         super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
 
     
-class Person(models.Model):
+class Person(User):
     """
-    Represents a Person as described on http://opentrip.info/wiki/OpenTrip_Core#Person_Constructs
+    Represents a Person as described on http://opentrip.info/wiki/OpenTrip_Core#Person_Constructs.
+    It's a subclass of django.contrib.auth.models.User. I use the technique described on
+    http://steps.ucdavis.edu/People/jbremson/extending-the-user-model-in-django to get Person objects
+    instead of User objects when requesting a user.
     """
     name = models.CharField(max_length=200) # MUST
     alias = models.CharField(max_length=200,blank=True) # OPT
-    userid = models.CharField(max_length=200) # MUST
-    email = models.CharField(max_length=200) # OPT
+    userid = models.CharField(max_length=200,blank=False) # MUST
+    #email is a field of django User model
+    #email = models.CharField(max_length=200) # OPT
     uri = models.CharField(max_length=200,blank=True) # OPT
-    phone = models.CharField(max_length=200) # OPT
+    phone = models.CharField(max_length=200,blank=False) # OPT
     position = models.ForeignKey(Location,blank=True,null=True) # EXT
-    age = models.PositiveIntegerField() # OPT
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES) # OPT
+    age = models.PositiveIntegerField(blank=False) # OPT
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False) # OPT
     smoker = models.BooleanField(default=False) # OPT
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
     dog = models.BooleanField(default=False) # OPT
-    
-    def save(self, force_insert=False, force_update=False):
-        """
-        Populates redundant fields
-        """
-        if self.address == "" and self.georss_point == "":
-            raise IntegrityError('either address or georss_point must have a value')
-        super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
 
     
 class Mode(models.Model):

@@ -38,6 +38,7 @@ RESTRICT_RPCTEST = getattr(settings, 'RPC4DJANGO_RESTRICT_RPCTEST', False)
 # these will be scanned for @rpcmethod decorators
 APPS = getattr(settings, 'INSTALLED_APPS', [])
 
+
 def _check_request_permission(request, request_format='xml'):
     '''
     Checks whether this user has permission to perform the specified action

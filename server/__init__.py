@@ -1,0 +1,1 @@
+from test_authentication_xmlrpc import secret
