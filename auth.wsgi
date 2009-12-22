@@ -5,6 +5,7 @@ See docs/http.conf on how to use it
 """
 import os
 import sys
+sys.stdout = sys.stderr
 sys.path.append('/home/bodom_lx/Projects/')
 sys.path.append('/home/bodom_lx/Projects/dycapo')
 

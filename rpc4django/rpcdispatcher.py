@@ -162,7 +162,7 @@ class RPCDispatcher:
             self.xmlrpcdispatcher = SimpleXMLRPCDispatcher()
         else:
             # python 2.5+ requires different parameters
-            self.xmlrpcdispatcher = SimpleXMLRPCDispatcher(allow_none=False, 
+            self.xmlrpcdispatcher = SimpleXMLRPCDispatcher(allow_none=True, 
                                                            encoding=None)
             
         if not restrict_introspection:

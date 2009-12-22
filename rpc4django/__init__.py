@@ -37,7 +37,7 @@ from rpcdispatcher import RPCDispatcher, rpcmethod
 
 _MAJOR = 0
 _MINOR = 1
-_PATCH = 5
+_PATCH = 6
 
 __author__ = 'David Fischer'
 __author_email__ = 'rpc4django@davidfischer.name'

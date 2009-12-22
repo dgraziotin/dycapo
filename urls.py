@@ -15,5 +15,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     (r'^RPC2$', 'dycapo.rpc4django.views.serve_rpc_request'),
-
+    (r'^media_admin/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': '/home/bodom_lx/Projects/dycapo/media_admin/', 'show_indexes': True}),
+    
 )

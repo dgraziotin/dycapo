@@ -1,1 +1,1 @@
-from test_authentication_xmlrpc import secret
+from trip import add_trip

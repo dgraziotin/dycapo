@@ -33,11 +33,15 @@ RESTRICT_XML = getattr(settings, 'RPC4DJANGO_RESTRICT_XMLRPC', False)
 RESTRICT_METHOD_SUMMARY = getattr(settings, 
                                   'RPC4DJANGO_RESTRICT_METHOD_SUMMARY', False)
 RESTRICT_RPCTEST = getattr(settings, 'RPC4DJANGO_RESTRICT_RPCTEST', False)
+RESTRICT_RPCTEST = getattr(settings, 'RPC4DJANGO_RESTRICT_RPCTEST', False)
+HTTP_ACCESS_CREDENTIALS = getattr(settings, 
+                                  'RPC4DJANGO_HTTP_ACCESS_CREDENTIALS', False)
+HTTP_ACCESS_ALLOW_ORIGIN = getattr(settings, 
+                                  'RPC4DJANGO_HTTP_ACCESS_ALLOW_ORIGIN', '')
 
 # get a list of the installed django applications
 # these will be scanned for @rpcmethod decorators
 APPS = getattr(settings, 'INSTALLED_APPS', [])
-
 
 def _check_request_permission(request, request_format='xml'):
     '''
@@ -125,7 +129,6 @@ def serve_rpc_request(request):
     '''
     This method handles rpc calls based on the content type of the request
     '''
-    
 
     if request.method == "POST" and len(request.POST) > 0:
         # Handle POST request with RPC payload
@@ -156,6 +159,26 @@ def serve_rpc_request(request):
             logging.debug('Outgoing %s response: %s' %(response_type, resp))
         
         return HttpResponse(resp, response_type)
+    elif request.method == 'OPTIONS':
+        # Handle OPTIONS request for "preflighted" requests
+        # see https://developer.mozilla.org/en/HTTP_access_control
+        
+        response = HttpResponse('', 'text/plain')
+        
+        origin = request.META.get('HTTP_ORIGIN', 'unknown origin')
+        response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response['Access-Control-Max-Age'] = 0
+        response['Access-Control-Allow-Credentials'] = \
+                        str(HTTP_ACCESS_CREDENTIALS).lower()
+        response['Access-Control-Allow-Origin']= HTTP_ACCESS_ALLOW_ORIGIN
+        
+        response['Access-Control-Allow-Headers'] = \
+                    request.META.get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS', '')
+                    
+        if LOG_REQUESTS_RESPONSES:
+            logging.debug('Outgoing HTTP access response to: %s' %(origin))
+                    
+        return response
     else:
         # Handle GET request
         
@@ -183,6 +206,22 @@ try:
     URL = reverse(serve_rpc_request)
 except NoReverseMatch:
     URL = ''
+    
+# exclude from the CSRF framework because RPC is intended to be used cross site
+try:
+    # Django 1.2
+    from django.views.decorators.csrf import csrf_exempt
+except ImportError:
+    try:
+        # Django 1.1
+        from django.contrib.csrf.middleware import csrf_exempt
+    except ImportError:
+        # Django 1.0
+        csrf_exempt = None
+
+if csrf_exempt is not None:
+    csrf_exempt(serve_rpc_request)
+
     
 # instantiate the rpcdispatcher -- this examines the INSTALLED_APPS
 # for any @rpcmethod decorators and adds them to the callable methods

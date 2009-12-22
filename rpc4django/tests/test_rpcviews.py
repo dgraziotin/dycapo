@@ -100,5 +100,17 @@ class TestRPCViews(unittest.TestCase):
         except xmlrpclib.Fault, fault:
             self.assertEqual(fault.faultCode, 1)
         
+    def test_httpaccesscontrol(self):
+        import django
+        t = django.VERSION
+        
+        if t[0] < 1 or (t[0] == 1 and t[1] < 1):
+            # options requests can only be tested by django 1.1+
+            self.fail('This version of django "%s" does not support http access control' %str(t))
+        
+        response = self.client.options(RPCPATH, '', 'text/plain')
+        self.assertEqual(response['Access-Control-Allow-Methods'], 'POST, GET, OPTIONS')
+        self.assertEqual(response['Access-Control-Max-Age'], '0')
+        
 if __name__ == '__main__':
     unittest.main()

@@ -51,17 +51,17 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = '/home/bodom_lx/Projects/dycapo/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'RPC4Django Example -- Super Secret. Shhhhhh'
@@ -90,7 +90,10 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     #'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
+    'dycapo.auth_backends.CustomUserModelBackend',
 )
+
+CUSTOM_USER_MODEL = 'server.models.Person'
 
 ROOT_URLCONF = 'dycapo.urls'
 
