@@ -1,5 +1,21 @@
-# Django settings for example project.
+"""
+This file is part of Dycapo.
+    Copyright (C) 2009, 2010 FBK Foundation, (http://www.fbk.eu)
+    Authors: SoNet Group (see AUTHORS)
+    Dycapo is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    Dycapo is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
 # Handle logging for this project
 import logging
 logging.basicConfig(
@@ -64,7 +80,7 @@ MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'RPC4Django Example -- Super Secret. Shhhhhh'
+SECRET_KEY = 'blahblahblahblahsecretkey12345'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -96,6 +112,8 @@ AUTHENTICATION_BACKENDS = (
 CUSTOM_USER_MODEL = 'server.models.Person'
 
 ROOT_URLCONF = 'dycapo.urls'
+
+GOOGLE_MAPS_API_KEY = 'ABQIAAAAEA5TqsSgku8oY63GIt0kvxTpH3CbXHjuCVmaTc5MkkU4wO1RRhQOBSk1yb3j1mHbRPaRhtbSt_APcA'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

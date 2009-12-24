@@ -1,0 +1,19 @@
+Dycapo (a.k.a. DyCaPo - Dynamic CarPooling) is a free software system 
+developed in the SoNET <http://sonet.fbk.eu> unit of the Fondazione Bruno Kessler <http://fbk.eu>
+
+It is an open client (mobile) / server system that will improve travel experiences 
+of people in a city. The system will let people to define a destination on their
+mobile phone. 
+Dycapo will suggest and arrange trips by either using the Public Transport Service
+or Carpooling volunteers.
+
+That is, Dycapo will implement full Dynamic Carpooling functionalities 
+as well as static approaches.
+
+The system will be first thought, implemented and tested for the city of Trento, Italy. 
+As the implementation continues and succedes, the whole national territory could be served.
+
+It is currently a solo project started by Daniel Graziotin for his BSC thesis 
+at the Free University of Bolzano/Bozen.
+
+More information on http://www.opensocialcapital.com/dynamic_carpooling/wiki/DyCaPo

@@ -1,0 +1,44 @@
+INSTALL
+***************
+
+MEET THE DEPENDENCIES
+***************
+
+Please verify that your system meets all the dependencies described in
+DEPENDENCIES file.
+
+Right now we could just test Dycapo using Sqlite.
+
+ADJUST SETTINGS
+***************
+
+Adjust settings.py according to your needs. In particular, change the values of:
+- ADMINS
+- DATABASE_* (all of them)
+- MEDIA_ROOT
+- ADMIN_MEDIA_PREFIX
+- GOOGLE_MAPS_API_KEY
+
+Run
+python manage.py syncdb
+
+We provide 3 registered users to test Dycapo functionalities:
+- admin 
+- driver1
+- rider1
+
+All of them with password set to "password".
+
+CONFIGURE APACHE
+***************
+Dycapo is designed and thought for using it with Apache2, and served with
+mod_wsgi. It uses rpc4django <http://www.davidfischer.name/rpc4django/> to 
+handle XML-RPC requests and responses. 
+Authentication is based on basic access authentication (on HTTP and HTTPS)
+Authentication is also handled by auth.wsgi file. Other authentication systems
+will not work, even the classical Django admin login.
+We highly reccommend to use HTTPS instead of HTTP, because of the private
+information exchanged between Dycapo and the clients.
+
+Please see docs/httpd.conf and docs/sites-enabled for some examples of 
+basic Apache2 configuration for Dycapo.

@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+WSGIScriptAlias / /home/bodom_lx/Projects/dycapo/dycapo.wsgi
+
+<Directory /home/bodom_lx/Projects/dycapo/>
+Order allow,deny
+Allow from all
+</Directory>
+
+	<Location /admin>
+    AuthType Basic
+    AuthName "Login Required"
+    Require valid-user
+    AuthBasicProvider wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+  </Location>
+
+  <Location /RPC2>
+    AuthType Basic
+    AuthName "Login Required"
+    Require valid-user
+    AuthBasicProvider wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+  </Location>
+
+</VirtualHost>

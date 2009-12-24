@@ -1,0 +1,49 @@
+<IfModule mod_ssl.c>
+
+<VirtualHost _default_:443>
+	ErrorLog /var/log/apache2/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/log/apache2/ssl_access.log combined
+
+	
+	#   SSL Engine Switch:
+	#   Enable/Disable SSL for this virtual host.
+	SSLEngine on
+
+	#   A self-signed (snakeoil) certificate can be created by installing
+	#   the ssl-cert package. See
+	#   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
+	#   If both key and certificate are stored in the same file, only the
+	#   SSLCertificateFile directive is needed.
+	SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+	SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+WSGIScriptAlias / /home/bodom_lx/Projects/dycapo/dycapo.wsgi
+
+
+  <Directory /home/bodom_lx/Projects/dycapo/>
+  Order allow,deny
+  Allow from all
+  </Directory>
+  
+  	<Location /admin>
+    AuthType Basic
+    AuthName "Login Required"
+    Require valid-user
+    AuthBasicProvider wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+  </Location>
+
+
+  <Location /RPC2>
+    AuthType Basic
+    AuthName "Login Required"
+    Require valid-user
+    AuthBasicProvider wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+  </Location>
+</VirtualHost>
+</IfModule>
