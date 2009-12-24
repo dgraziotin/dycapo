@@ -1,3 +1,6 @@
+INTRODUCTION
+***************
+
 Dycapo (a.k.a. DyCaPo - Dynamic CarPooling) is a free software system 
 developed in the SoNET <http://sonet.fbk.eu> unit of the Fondazione Bruno Kessler <http://fbk.eu>
 
@@ -17,3 +20,37 @@ It is currently a solo project started by Daniel Graziotin for his BSC thesis
 at the Free University of Bolzano/Bozen.
 
 More information on http://www.opensocialcapital.com/dynamic_carpooling/wiki/DyCaPo
+Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
+
+STATUS
+***************
+Dycapo is on its initial development phase. 
+0.0.x releases are all pre-alpha-dontuse releases, to only illustrate some functionalities.
+API will likely change very often.
+0.x.x releases are still alpha-releases, that cover some internal development cycles but have
+important features that will appear on a stable releases. API for the important parts of the
+project will likely not be changed.
+1.0.0 will be considered a stable release that can be used for testing in a small reality. API
+will be frozen.
+
+PROTOCOL
+***************
+Dycapo tries to both adopt and extend the OpenTrip <http://opentrip.info/wiki/Home> Protocol.
+It will also propose the OpenTrip Dynamic module, that makes use of OpenTrip objects over XML-RPC.
+
+API
+***************
+<insert here the location of the API when they're available>
+
+TESTING
+***************
+We provide 3 registered users to test Dycapo functionalities:
+- admin 
+- driver1
+- rider1
+
+All of them with password set to "password".
+
+There are some tiny python clients located under tests/
+They are just for playing with xml-rpc calls. We are working to a more consistent
+testing system.

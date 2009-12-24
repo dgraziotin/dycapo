@@ -6,11 +6,14 @@ RPC Dispatcher Tests
 
 '''
 
+import base64
 import unittest
-from xmlrpclib import Fault
+from xmlrpclib import Fault, Binary
 from xml.dom.minidom import parseString
 from rpc4django.rpcdispatcher import *
 from rpc4django.jsonrpcdispatcher import *
+
+BINARY_STRING = '\x97\xd2\xab\xc8\xfc\x98\xad'
 
 # tests both the class and the decorator
 class TestRPCMethod(unittest.TestCase):
@@ -49,6 +52,10 @@ class TestRPCDispatcher(unittest.TestCase):
             return a+b
         
         self.add = add
+        
+        def testBin():
+            return Binary(BINARY_STRING)
+        self.testBin = testBin
         
     def test_rpcfault(self):
         try:
@@ -97,6 +104,15 @@ class TestRPCDispatcher(unittest.TestCase):
         dom = parseString(resp)
         retval = dom.getElementsByTagName('string')[0].firstChild.data
         self.assertEqual(retval, u'はじめまして')
+        
+    def test_base64_call(self):
+        self.d.register_method(self.testBin)
+        
+        xml = xml = '<?xml version="1.0"?><methodCall><methodName>testBin</methodName><params></params></methodCall>'
+        resp = self.d.xmldispatch(xml)
+        dom = parseString(resp)
+        retval = dom.getElementsByTagName('base64')[0].firstChild.data
+        self.assertEquals(base64.b64decode(retval), BINARY_STRING)
         
     def test_jsonrpc_call(self):
         jsontxt = '{"params":[],"method":"system.listMethods","id":1}'
