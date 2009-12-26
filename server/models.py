@@ -17,7 +17,7 @@ This file is part of Dycapo.
 
 """
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 from django.db import IntegrityError
 from settings import GOOGLE_MAPS_API_KEY
 from geopy import geocoders
@@ -140,8 +140,10 @@ class Location(models.Model):
         Will be used in serialization. Work in progress
         """
         return (self.georss_point)
-
     
+    def __unicode__(self):
+        return self.georss_point
+
 class Person(User):
     """
     Represents a Person as described on `OpenTrip_Core Person_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Person_Constructs>`_.
@@ -157,15 +159,20 @@ class Person(User):
     uri = models.CharField(max_length=200,blank=True) # OPT
     phone = models.CharField(max_length=200,blank=False) # OPT
     position = models.ForeignKey(Location,blank=True,null=True) # EXT
-    age = models.PositiveIntegerField(blank=False) # OPT
+    age = models.PositiveIntegerField(null=True) # OPT
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False) # OPT
     smoker = models.BooleanField(default=False) # OPT
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
     dog = models.BooleanField(default=False) # OPT
     
-
+    class Meta:
+        permissions = (
+            ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
+        )
         
+     # Use UserManager to get the create_user method, etc.
+    objects = UserManager()
 
     
 class Mode(models.Model):
@@ -224,6 +231,10 @@ class Trip(models.Model):
         -use django serializers instead of this
         -what else about the driver?
         """
+        locations = self.locations.all()
+        points = []
+        for location in locations:
+            points.append(location.georss_point)
         trip_dict = {
             'id' : self.id,
             'published' : self.published,
@@ -232,7 +243,8 @@ class Trip(models.Model):
             'content': self.content,
             'author': self.author.username,
             'mode': 'mode',
-            'prefs': 'prefs'
+            'prefs': 'prefs',
+            'locations':points,
         }
         return trip_dict
 

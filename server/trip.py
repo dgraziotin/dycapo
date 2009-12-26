@@ -23,7 +23,7 @@ from django.core import serializers
 from models import Trip, Location, Person, Mode, Participation, Prefs
 import settings
 
-@rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Location','Location'], permission='auth.add_group')
+@rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, source, destination):
         """
         Inserts a new Trip in Dycapo System. Right now it is possible to just create a Trip with a source and a
@@ -68,10 +68,9 @@ def add_trip(trip, mode, source, destination):
         participation.trip = trip
         participation.role = 'driver'
         participation.save()
-        
-        return trip.for_xml_rpc()
+        return trip.to_xmlrpc()
 
-@rpcmethod(name='dycapo.start_trip', signature=['bool','Trip'], permission='auth.add_group')
+@rpcmethod(name='dycapo.start_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
 def start_trip(trip):
         """
         TODO:
@@ -84,7 +83,7 @@ def start_trip(trip):
         trip.save()
         return True
         
-@rpcmethod(name='dycapo.search_trip', signature=['bool','Location','Location'], permission='auth.add_group')
+@rpcmethod(name='dycapo.search_trip', signature=['bool','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination):
         """
         This method will be used by a rider to search a Trip, given its current position and the destination.
@@ -94,10 +93,13 @@ def search_trip(source, destination):
         -implement an algorithm to really search a Trip
         """
         # at the moment we just return the first available trip
-        trip = Trip.objects.get(id=1)
+        try:
+                trip = Trip.objects.get(id=1)
+        except Trip.DoesNotExist:
+                return False
         return trip.to_xmlrpc()
 
-@rpcmethod(name='dycapo.accept_trip', signature=['bool','Trip'], permission='auth.add_group')
+@rpcmethod(name='dycapo.accept_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
 def accept_trip(trip):
         """
         This method is for a rider to accept a proposed Trip.
@@ -108,7 +110,8 @@ def accept_trip(trip):
         -implement an algorithm to really search a Trip
         """
         trip_dict = trip
-        trip = Trip.objects.get(id=trip_dict['id'])
+        active_trips = Trip.objects.filter(active=True)
+        trip = active_trip[0]
         rider = Person.objects.get(username='rider1')
         
         participation = Participation()

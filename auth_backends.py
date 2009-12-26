@@ -16,35 +16,73 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-"""
-This will give us the opportunity to use Person instead of Django's User.
-It works using manage.py shell but needs verifications for use with RPC4Django,
-HTTPS and HTTP authentication
-"""
-from django.conf import settings
-from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.backends import RemoteUserBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
+from django.contrib.auth.models import User
+from server.models import Person
 
-class CustomUserModelBackend(ModelBackend):
-    def authenticate(self, username=None, password=None):
-        try:
-            user = self.user_class.objects.get(username=username)
-            if user.check_password(password):
-                return user
-        except self.user_class.DoesNotExist:
-            return None
+class DycapoRemoteUserBackend(RemoteUserBackend):
+    """
+    This backend is to be used in conjunction with the ``RemoteUserMiddleware``
+    found in the middleware module of this package, and is used when the server
+    is handling authentication outside of Django.
 
-    def get_user(self, user_id):
-        try:
-            return self.user_class.objects.get(pk=user_id)
-        except self.user_class.DoesNotExist:
-            return None
+    By default, the ``authenticate`` method creates ``User`` objects for
+    usernames that don't already exist in the database.  Subclasses can disable
+    this behavior by setting the ``create_unknown_user`` attribute to
+    ``False``.
+    """
 
-    @property
-    def user_class(self):
-        if not hasattr(self, '_user_class'):
-            self._user_class = get_model(*settings.CUSTOM_USER_MODEL.split('.', 2))
-            if not self._user_class:
-                raise ImproperlyConfigured('Could not get custom user model')
-        return self._user_class
+    # Create a User object if not already in the database?
+    create_unknown_user = False
+
+    def authenticate(self, remote_user):
+        """
+        The username passed as ``remote_user`` is considered trusted.  This
+        method simply returns the ``User`` object with the given username,
+        creating a new ``User`` object if ``create_unknown_user`` is ``True``.
+
+        Returns None if ``create_unknown_user`` is ``False`` and a ``User``
+        object with the given username is not found in the database.
+        """
+        if not remote_user:
+            return
+        user = None
+        username = self.clean_username(remote_user)
+
+        # Note that this could be accomplished in one try-except clause, but
+        # instead we use get_or_create when creating unknown users since it has
+        # built-in safeguards for multiple threads.
+        if self.create_unknown_user:
+            user, created = User.objects.get_or_create(username=username)
+            if created:
+                user = self.configure_user(user)
+        else:
+            try:
+                if username=='admin':
+                    user = User.objects.get(username=username)
+                else:
+                    user = Person.objects.get(username=username)
+            except User.DoesNotExist:
+                pass
+            except Person.DoesNotExist:
+                pass
+        return user
+
+    def clean_username(self, username):
+        """
+        Performs any cleaning on the "username" prior to using it to get or
+        create the user object.  Returns the cleaned username.
+
+        By default, returns the username unchanged.
+        """
+        return username
+
+    def configure_user(self, user):
+        """
+        Configures a user after creation and returns the updated user.
+
+        By default, returns the user unmodified.
+        """
+        return user

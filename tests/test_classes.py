@@ -36,14 +36,11 @@ def nowplusminutes(num_minutes):
     now_date = datetime.fromtimestamp(now_seconds)
     nowplus = now_date + timedelta(minutes=num_minutes)
     return nowplus.isoformat(' ')
-    
 
-class DycapoConnect():
-    url= ''
-    client = ''
-    def __init__(self, url):
-        self.url = url
-        self.client = ServerProxy(url)
+def get_client(user, password):
+        url = "https://" + user + ":" + password + "@127.0.0.1"
+        client = ServerProxy(url)
+        return client
         
 
 class Location():

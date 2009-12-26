@@ -104,12 +104,10 @@ MIDDLEWARE_CLASSES = (
 # Required for RPC4Django authenticated method calls
 # Also requires Django 1.1+
 AUTHENTICATION_BACKENDS = (
-    #'django.contrib.auth.backends.ModelBackend',
+    'dycapo.auth_backends.DycapoRemoteUserBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
-    'dycapo.auth_backends.CustomUserModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
-
-CUSTOM_USER_MODEL = 'server.models.Person'
 
 ROOT_URLCONF = 'dycapo.urls'
 
@@ -120,6 +118,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',
