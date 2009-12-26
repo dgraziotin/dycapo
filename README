@@ -52,5 +52,4 @@ We provide 3 registered users to test Dycapo functionalities:
 All of them with password set to "password".
 
 There are some tiny python clients located under tests/
-They are just for playing with xml-rpc calls. We are working to a more consistent
-testing system.
+They use threads to perform some Trip insertions, lookup and accept.

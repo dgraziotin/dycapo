@@ -1,0 +1,21 @@
+RELEASE NOTES
+***************
+
+2009-12-26  Daniel Graziotin  <daniel DOT graziotin AT gmail DOT com>
+
+Dycapo 0.0.1 is just for _showing_out_some_functionalities_ of the system and 
+testing the underlying technologies. 
+Dycapo 0.0.1 incorporates and shows:
+- OpenTrip Core adoption and OpenTrip Dynamic data structures proposal (in Django Model format)
+- Use of XML-RPC with Django (rpc4django over HTTP and HTTPS)
+- (Sort of) integration of Dycapo models with Django and rpc4django
+- Authentication
+- Insertion of a trip by a driver
+- Start of a trip by a driver
+- Search of a trip by a rider
+- Accepting a ride
+
+No one exported XML-RPC function will surely be included in the final API!
+No one exported XML-RPC function is either optimized or completely working!
+
+Code is (somewhat) documented. Expect a completely better work for 0.1.0 :)
