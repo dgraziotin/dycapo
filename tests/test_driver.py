@@ -1,6 +1,8 @@
 import test_classes
 import random
-class DriverTest():
+import time
+from threading import Thread
+class DriverTest(Thread):
     source = test_classes.Location()
     destination = test_classes.Location()
     client = ''
@@ -8,6 +10,7 @@ class DriverTest():
     trip = test_classes.Trip()
     
     def __init__(self,username,password):
+        Thread.__init__(self)
         self.client = test_classes.get_client(username,password)
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
@@ -55,10 +58,17 @@ class DriverTest():
         print trip
         print "#" * 80
         return trip
-
-
-u = DriverTest("driver1","password")
-trip = u.insert_trip()
-print trip
-trip = u.start_trip(trip)
-print trip
+    
+    def start_test(self):
+        test_classes.wait_random_seconds()
+        trip = self.insert_trip()
+        test_classes.wait_random_seconds()
+        trip = self.start_trip(trip)
+    
+    def run(self):
+        self.start_test()
+        
+if __name__ == "__main__": 
+    for i in range(0,5):
+        driver = DriverTest("driver1","password")
+        driver.start()

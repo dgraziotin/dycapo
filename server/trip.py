@@ -92,13 +92,22 @@ def search_trip(source, destination):
         -use serializers.serialize and use_natural_keys
         -implement an algorithm to really search a Trip
         """
+        dict_destination = destination
+        destination = Location()
+        destination = update(destination,dict_destination)
         # at the moment we just return the first available trip
-        try:
-                trip = Trip.objects.get(id=1)
-        except Trip.DoesNotExist:
+        trips = Trip.objects.filter(active=True)
+        """
+        dummy algorithm: search in active Trips that have the same destination of the driver.
+        """
+        if not trips:
                 return False
-        return trip.to_xmlrpc()
-
+        for trip in trips:
+                for location in trip.locations.all():
+                        if location.point=="dest" and location.georss_point==destination.georss_point:
+                                return trip.to_xmlrpc()
+        return False
+        
 @rpcmethod(name='dycapo.accept_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
 def accept_trip(trip):
         """
@@ -110,8 +119,7 @@ def accept_trip(trip):
         -implement an algorithm to really search a Trip
         """
         trip_dict = trip
-        active_trips = Trip.objects.filter(active=True)
-        trip = active_trip[0]
+        trip = Trip.objects.get(id=trip['id'])
         rider = Person.objects.get(username='rider1')
         
         participation = Participation()

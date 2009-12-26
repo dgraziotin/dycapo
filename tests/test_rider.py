@@ -1,11 +1,14 @@
 import test_classes
 import random
-class RiderTest():
+from threading import Thread
+import time
+class RiderTest(Thread):
     source = test_classes.Location()
     destination = test_classes.Location()
     client = ''
     
     def __init__(self,username,password):
+        Thread.__init__(self)
         self.client = test_classes.get_client(username,password)
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
@@ -42,3 +45,22 @@ class RiderTest():
         print trip
         print "#" * 80
         return trip
+    
+    def start_test(self):
+        test_classes.wait_random_seconds()
+        trip = self.search_ride()
+        while not trip:
+            test_classes.wait_random_seconds()
+            trip = self.search_ride()
+        trip = self.accept_trip(trip)
+        
+    def run(self):
+        self.start_test()
+
+if __name__ == "__main__": 
+    for i in range(0,5):
+        rider = RiderTest("rider1","password")
+        rider.start()
+    
+    
+    

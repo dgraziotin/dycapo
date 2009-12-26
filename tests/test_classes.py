@@ -17,8 +17,9 @@ This file is part of Dycapo.
 
 """
 from datetime import datetime, timedelta
-from time import time
+from time import time,sleep
 from xmlrpclib import ServerProxy
+import random
 
 def now():
     now_seconds = time()
@@ -42,7 +43,11 @@ def get_client(user, password):
         client = ServerProxy(url)
         return client
         
-
+def wait_random_seconds():
+    wait = random.randrange(1,20)
+    print "Waiting " + str(wait)
+    sleep(wait)
+    
 class Location():
     town = ''
     georss_radius = ''
