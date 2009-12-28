@@ -48,7 +48,7 @@ def get_client(user, password, domain):
         
 def wait_random_seconds():
     wait = random.randrange(1,20)
-    print "Waiting " + str(wait)
+    print "Waiting " + str(wait) + " seconds"
     sleep(wait)
     
 class Location():

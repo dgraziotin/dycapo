@@ -16,6 +16,10 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+"""
+This is a temporany file that holds all the XML-RPC exported functions.
+It will surely splitted in a future time.
+"""
 from rpc4django import rpcmethod
 from geopy import geocoders
 from django.contrib.auth.models import User
@@ -26,34 +30,39 @@ import settings
 @rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, source, destination):
         """
-        Inserts a new Trip in Dycapo System. Right now it is possible to just create a Trip with a source and a
-        destination. See the models.
+        Inserts a new Trip in Dycapo System. It supports a source, a destination and
+        the trip mode. See the models for more information.
+        TODO:
+        - Add trip preferences
         """
         dict_trip = trip
         dict_mode = mode
         dict_source= source
         dict_destination = destination
         
+        # we just use driver1 as driver right now. We must wait for rpc4django to inflate
+        # a User object in the functions for using the real driver
         driver = Person.objects.get(userid='driver1')
         
         source = Location()
-        source = update(source,dict_source)
+        source = populate_object(source,dict_source)
         source.save()
         
         destination = Location()
-        destination = update(destination,dict_destination)
+        destination = populate_object(destination,dict_destination)
         destination.save()
         
         mode = Mode()
-        mode = update(mode,dict_mode)
+        mode = populate_object(mode,dict_mode)
         mode.save()
         
+        # dummy Prefs object
         preferences = Prefs()
         preferences.age = "20"
         preferences.save()
         
         trip = Trip()
-        trip = update(trip,dict_trip)
+        trip = populate_object(trip,dict_trip)
         trip.author = driver
         trip.mode = mode
         trip.prefs = preferences
@@ -94,11 +103,11 @@ def search_trip(source, destination):
         """
         dict_destination = destination
         destination = Location()
-        destination = update(destination,dict_destination)
-        # at the moment we just return the first available trip
+        destination = populate_object(destination,dict_destination)
+        # at the moment we just return the first available trips that are also active
         trips = Trip.objects.filter(active=True)
         """
-        dummy algorithm: search in active Trips that have the same destination of the driver.
+        dummy algorithm: search in active Trips that have the same destination of the driver
         """
         if not trips:
                 return False
@@ -115,8 +124,7 @@ def accept_trip(trip):
         TODO:
         -verify user permissions
         -go through participation and set started = True
-        -use serializers.serialize and use_natural_keys
-        -implement an algorithm to really search a Trip
+        -get rid of the exception thrown when the rider already participates in the Trip
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip['id'])
@@ -130,7 +138,7 @@ def accept_trip(trip):
         
         return True
 
-def update(obj,dictionary):
+def populate_object(obj,dictionary):
         for key in dictionary:
                 obj.__dict__[key] = dictionary[key]
         if "Location" in str(obj.__class__ ):

@@ -16,7 +16,10 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-
+"""
+WARNING: in a short time every possible combination of trips will be covered and rider1
+will be participating in every trip!
+"""
 from test_driver import DriverTest
 from test_rider import RiderTest
 

@@ -18,7 +18,12 @@ This file is part of Dycapo.
 """
 
 """
-This class represents a Rider using a client
+This class represents a Rider using a client.
+The rider waits a random value of seconds (0 to 20) before searching a Ride.
+A random source and destination are created using one value in [1.00,2.00,3.00] (georss_point).
+The rider then searches for a Ride. If a Ride is available, it accepts it. If the Ride is
+not available, it waits a random value of seconds (0 to 20) and then searches again.
+The Rider aborts after 5 attempts.
 """
 import test_classes
 import random
@@ -49,32 +54,40 @@ class RiderTest(Thread):
         print "initializing random ride request from " + self.source.georss_point + " to " + self.destination.georss_point
         
     def search_ride(self):
-        print "#" * 80
+        print "*" * 80
         print "SEARCHING FOR A RIDE..."
-        print "#" * 80
+        print "*" * 80
         
-        trip = self.client.dycapo.search_trip(self.source.__dict__,self.destination.__dict__)
-        print trip
-        print "#" * 80
-        return trip
+        result = self.client.dycapo.search_trip(self.source.__dict__,self.destination.__dict__)
+        print result
+        print "*" * 80
+        return result
     
     def accept_trip(self,trip):
-        print "#" * 80
+        print "*" * 80
         print "ACCEPTING A RIDE..."
-        print "#" * 80
-        
-        trip = self.client.dycapo.accept_trip(trip)
+        print "*" * 80
+        result = self.client.dycapo.accept_trip(trip)
         print trip
-        print "#" * 80
-        return trip
+        print "*" * 80
+        return result
     
     def start_test(self):
         test_classes.wait_random_seconds()
         trip = self.search_ride()
-        while not trip:
+        attempts = 5
+        attempts_orig = attempts
+        found = False
+        while not found:
+            if attempts==0: 
+                print "*" * 80
+                print "RIDE NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
+                print "*" * 80
+                break
             test_classes.wait_random_seconds()
             trip = self.search_ride()
-        trip = self.accept_trip(trip)
+            attempts = attempts - 1
+            if trip: self.accept_trip(trip)
         
     def run(self):
         self.start_test()
@@ -83,6 +96,4 @@ if __name__ == "__main__":
     for i in range(0,5):
         rider = RiderTest("rider1","password","127.0.0.1")
         rider.start()
-    
-    
     

@@ -53,3 +53,5 @@ All of them with password set to "password".
 
 There are some tiny python clients located under tests/
 They use threads to perform some Trip insertions, lookup and accept.
+to run te tests, simply do a
+python tests/test_all.py

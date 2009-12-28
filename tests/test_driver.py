@@ -16,15 +16,22 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-"""
-This class represents a Driver using a client
-"""
+
 import test_classes
 import random
 import time
 from threading import Thread
 
 class DriverTest(Thread):
+    """
+    This class represents a Driver using a client. The Driver waits a random value
+    of seconds (0 to 20) before inserting the Trip.
+    When the object is initialized, a random source and destination are created using
+    one value in [1.00,2.00,3.00] (georss_point).
+    This test creates a fixed Trip Mode. The trip created is not started, and expires in 3 days.
+    After the insertion of the Trip, the Driver waits a random value
+    of seconds (0 to 20) before starting the Trip.
+    """
     source = test_classes.Location()
     destination = test_classes.Location()
     client = ''
@@ -67,19 +74,19 @@ class DriverTest(Thread):
         print "#" * 80
         print "SAVING TRIP..."
         print "#" * 80
-        trip = self.client.dycapo.add_trip(self.trip.__dict__,self.mode.__dict__,self.source.__dict__,self.destination.__dict__)
-        print trip
+        result = self.client.dycapo.add_trip(self.trip.__dict__,self.mode.__dict__,self.source.__dict__,self.destination.__dict__)
+        print result
         print "#" * 80
-        return trip
+        return result
     
     def start_trip(self,trip):
         print "#" * 80
         print "STARTING TRIP..."
         print "#" * 80
-        trip = self.client.dycapo.start_trip(trip)
-        print trip
+        result = self.client.dycapo.start_trip(trip)
+        print result
         print "#" * 80
-        return trip
+        return result
     
     def start_test(self):
         test_classes.wait_random_seconds()
