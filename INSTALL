@@ -9,7 +9,7 @@ DEPENDENCIES file.
 
 Right now we could just test Dycapo using Sqlite.
 
-ADJUST SETTINGS
+ADJUST SETTINGS.PY
 ***************
 
 Adjust settings.py according to your needs. In particular, change the values of:
@@ -29,6 +29,30 @@ We provide 3 registered users to test Dycapo functionalities:
 
 All of them with password set to "password".
 
+ADJUST DYCAPO.WSGI
+***************
+Change the lines
+sys.path.append('/home/bodom_lx/Projects/')
+sys.path.append('/home/bodom_lx/Projects/dycapo')
+according to your Dycapo path
+
+ADJUST AUTH.WSGI
+***************
+Change the lines
+sys.path.append('/home/bodom_lx/Projects/')
+sys.path.append('/home/bodom_lx/Projects/dycapo')
+according to your Dycapo path
+
+DATABASE FILE PERMISSIONS
+***************
+If you're using Sqlite (we don't recommend this, as it easily locks), then 
+change the permissions of
+- db/database.db
+AND
+- db/
+
+To 777.
+
 CONFIGURE APACHE
 ***************
 Dycapo is designed and thought for using it with Apache2, and served with
@@ -42,3 +66,20 @@ information exchanged between Dycapo and the clients.
 
 Please see docs/httpd.conf and docs/sites-enabled for some examples of 
 basic Apache2 configuration for Dycapo.
+
+CONFIGURE MOD.WSGI
+***************
+To let rpc4django write its logs, modify mod_wsgi configuration 
+(/etc/apache2/mods-available/wsgi.conf for Debian systems).
+
+Locate the lines
+
+#WSGIRestrictStdin Off
+#WSGIRestrictStdout Off
+#WSGIRestrictSignal Off
+
+And modify them in this way:
+
+WSGIRestrictStdin On
+WSGIRestrictStdout On
+WSGIRestrictSignal On

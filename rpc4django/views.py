@@ -59,7 +59,6 @@ def _check_request_permission(request, request_format='xml'):
     '''
     
     user = getattr(request, 'user', None)
-    
     methods = dispatcher.list_methods()
     method_name = dispatcher.get_method_name(request.raw_post_data, \
                                              request_format)

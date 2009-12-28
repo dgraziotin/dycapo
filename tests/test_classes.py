@@ -16,6 +16,9 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+"""
+This file contains classes and functions shared by tests.
+"""
 from datetime import datetime, timedelta
 from time import time,sleep
 from xmlrpclib import ServerProxy
@@ -38,8 +41,8 @@ def nowplusminutes(num_minutes):
     nowplus = now_date + timedelta(minutes=num_minutes)
     return nowplus.isoformat(' ')
 
-def get_client(user, password):
-        url = "https://" + user + ":" + password + "@127.0.0.1"
+def get_client(user, password, domain):
+        url = "https://" + user + ":" + password + "@" + domain
         client = ServerProxy(url)
         return client
         
