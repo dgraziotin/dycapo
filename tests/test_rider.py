@@ -68,9 +68,12 @@ class RiderTest(Thread):
         print "ACCEPTING A RIDE..."
         print "*" * 80
         result = self.client.dycapo.accept_trip(trip)
-        print trip
+        if result:
+            print trip
+        else:
+            print "ERROR: you are already participating on this trip!"
         print "*" * 80
-        return result
+        return str(result)
     
     def start_test(self):
         test_classes.wait_random_seconds()

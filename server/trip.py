@@ -24,6 +24,7 @@ from rpc4django import rpcmethod
 from geopy import geocoders
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs
 import settings
 
@@ -134,8 +135,10 @@ def accept_trip(trip):
         participation.trip = trip
         participation.person = rider
         participation.role = 'rider'
-        participation.save()
-        
+        try:
+                participation.save()
+        except IntegrityError:
+                return False
         return True
 
 def populate_object(obj,dictionary):
