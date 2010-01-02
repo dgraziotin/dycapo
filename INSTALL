@@ -18,7 +18,7 @@ Adjust settings.py according to your needs. In particular, change the values of:
 - MEDIA_ROOT
 - ADMIN_MEDIA_PREFIX
 - GOOGLE_MAPS_API_KEY
-
+- SITE_DOMAIN (use domain.ext or subdomain.domain.ext, without HTTP)
 Run
 python manage.py syncdb
 

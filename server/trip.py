@@ -87,7 +87,7 @@ def start_trip(trip):
         -verify user permissions
         -go through participation and set started = True
         """
-        trip_dict = trip
+        trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip_dict['id'])
         trip.active = True
         trip.save()
@@ -127,7 +127,7 @@ def accept_trip(trip):
         -go through participation and set started = True
         -get rid of the exception thrown when the rider already participates in the Trip
         """
-        trip_dict = trip
+        trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip['id'])
         rider = Person.objects.get(username='rider1')
         
@@ -141,9 +141,39 @@ def accept_trip(trip):
                 return False
         return True
 
+def get_atom_id_from_dycapo_id(id):
+        """
+        Converts a Dycapo Id to an Atom Id
+        """
+        return "urn:guid:"+settings.SITE_DOMAIN+":"+str(id)
+    
+def get_dycapo_id_from_atom_id(atom_id):
+        """
+        Converts an Atom Id to a Dycapo Id
+        """
+        splitted_atom_id = atom_id.split(':')
+        dycapo_id = int(splitted_atom_id[-1])
+        return dycapo_id
+
+def atom_to_dycapo(dictionary):
+        """
+        Searches for a id key in a dictionary and converts it to a Dycapo internal Id
+        """
+        try:
+                dictionary['id'] = get_dycapo_id_from_atom_id(dictionary['id'])
+                return dictionary
+        except KeyError:
+                return dictionary
+
 def populate_object(obj,dictionary):
         for key in dictionary:
                 obj.__dict__[key] = dictionary[key]
+        if "Trip" in str(obj.__class__ ):
+                try:
+                        obj.id = get_dycapo_id_from_atom_id(dictionary['id'])
+                except KeyError:
+                        return obj
+                return obj        
         if "Location" in str(obj.__class__ ):
                 #return geopy_it(obj)
                 return obj

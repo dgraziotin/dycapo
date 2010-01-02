@@ -19,7 +19,7 @@ This file is part of Dycapo.
 from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.db import IntegrityError
-from settings import GOOGLE_MAPS_API_KEY
+from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
 from geopy import geocoders
 from geopy.point import Point
 
@@ -236,7 +236,7 @@ class Trip(models.Model):
         for location in locations:
             points.append(location.georss_point)
         trip_dict = {
-            'id' : self.id,
+            'id' : self.get_atom_id_from_dycapo_id(),
             'published' : self.published,
             'updated': self.updated,
             'expires': self.expires,
@@ -247,6 +247,14 @@ class Trip(models.Model):
             'locations':points,
         }
         return trip_dict
+    
+    def get_atom_id_from_dycapo_id(self):
+        return "urn:guid:"+SITE_DOMAIN+":"+str(self.id)
+    
+    def get_dycapo_id_from_atom_id(self,atom_id):
+        splitted_atom_id = atom_id.split(':')
+        dycapo_id = int(splitted_atom_id[-1])
+        return dycapo_id
 
 class Participation(models.Model):
     """

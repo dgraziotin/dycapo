@@ -26,8 +26,9 @@ from test_rider import RiderTest
 for i in range(0,3): # number of driver threads inserting and starting trips
     driver = DriverTest("driver1","password","127.0.0.1")
     driver.start()
-    
-for i in range(0,5): # number of rider threads searching and accepting trips
+ 
+for i in range(0,6): # number of rider threads searching and accepting trips
     rider = RiderTest("rider1","password","127.0.0.1")
+    rider.client._ServerProxy__verbose = 0
     rider.start()
     
