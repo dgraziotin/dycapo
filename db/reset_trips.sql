@@ -4,3 +4,4 @@ DELETE FROM server_prefs;
 DELETE FROM server_participation;
 DELETE FROM server_mode;
 DELETE FROM server_location;
+DELETE FROM server_prefs;

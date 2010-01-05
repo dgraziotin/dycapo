@@ -28,8 +28,8 @@ from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs
 import settings
 
-@rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Location','Location'], permission='server.can_xmlrpc')
-def add_trip(trip, mode, source, destination):
+@rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
+def add_trip(trip, mode, preferences, source, destination):
         """
         Inserts a new Trip in Dycapo System. It supports a source, a destination and
         the trip mode. See the models for more information.
@@ -38,6 +38,7 @@ def add_trip(trip, mode, source, destination):
         """
         dict_trip = trip
         dict_mode = mode
+        dict_prefs = preferences
         dict_source= source
         dict_destination = destination
         
@@ -59,7 +60,7 @@ def add_trip(trip, mode, source, destination):
         
         # dummy Prefs object
         preferences = Prefs()
-        preferences.age = "20"
+        preferences = populate_object(preferences,dict_prefs)
         preferences.save()
         
         trip = Trip()

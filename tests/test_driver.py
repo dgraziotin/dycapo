@@ -36,6 +36,7 @@ class DriverTest(Thread):
     destination = test_classes.Location()
     client = ''
     mode = test_classes.Mode()
+    prefs = test_classes.Prefs()
     trip = test_classes.Trip()
     
     def __init__(self,username,password,domain):
@@ -66,6 +67,9 @@ class DriverTest(Thread):
         self.mode.year = 2003
         self.mode.kind = 'auto'
         
+        self.prefs.age = '18-40'
+        self.prefs.nonsmoking = False
+        
         self.trip.content = 'description of the trip'
         self.trip.expires = test_classes.nowplusdays(3)
         print "initializing random Trip from " + self.source.georss_point + " to " + self.destination.georss_point
@@ -74,7 +78,7 @@ class DriverTest(Thread):
         print "#" * 80
         print "SAVING TRIP..."
         print "#" * 80
-        result = self.client.dycapo.add_trip(self.trip.__dict__,self.mode.__dict__,self.source.__dict__,self.destination.__dict__)
+        result = self.client.dycapo.add_trip(self.trip.__dict__,self.mode.__dict__,self.prefs.__dict__,self.source.__dict__,self.destination.__dict__)
         print result
         print "#" * 80
         return result

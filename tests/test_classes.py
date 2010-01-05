@@ -85,3 +85,7 @@ class Mode():
     cost = 0
     year = 0
     model = ''
+    
+class Prefs():
+    age = '18-30'
+    nonsmoking = False
