@@ -38,10 +38,12 @@ class DriverTest(Thread):
     mode = test_classes.Mode()
     prefs = test_classes.Prefs()
     trip = test_classes.Trip()
+    clean_results = True
     
-    def __init__(self,username,password,domain):
+    def __init__(self,username,password,domain,clean_results):
         Thread.__init__(self)
         self.client = test_classes.get_client(username,password, domain)
+        self.clean_results = clean_results
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
@@ -92,16 +94,47 @@ class DriverTest(Thread):
         print "#" * 80
         return result
     
+    def check_ride_requests(self,trip):
+        print "#" * 80
+        print "SEARCHING FOR RIDERS..."
+        print "#" * 80
+        result = self.client.dycapo.check_ride_requests(trip)
+        print result
+        print "#" * 80
+        return result
+    
+    def delete_trip(self,trip):
+        print "#" * 80
+        print "DELETING TRIP..."
+        print "#" * 80
+        result = self.client.dycapo.delete_trip(trip)
+        print "#" * 80
+        return str(result)
+    
     def start_test(self):
         test_classes.wait_random_seconds()
         trip = self.insert_trip()
         test_classes.wait_random_seconds()
-        trip = self.start_trip(trip)
-    
+        trip_result = self.start_trip(trip)
+        attempts = 8
+        attempts_orig = 8
+        found = False
+        while not found:
+            if attempts==0: 
+                print "#" * 80
+                print "RIDE REQUEST NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
+                print "#" * 80
+                break
+            test_classes.wait_random_seconds()
+            ride_request = self.check_ride_requests(trip)
+            attempts = attempts - 1
+        if self.clean_results:
+            self.delete_trip(trip)
+                
     def run(self):
         self.start_test()
         
 if __name__ == "__main__": 
     for i in range(0,5):
-        driver = DriverTest("driver1","password","127.0.0.1")
+        driver = DriverTest("driver1","password","127.0.0.1",True)
         driver.start()

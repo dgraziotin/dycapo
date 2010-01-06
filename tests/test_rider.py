@@ -30,35 +30,33 @@ import random
 from threading import Thread
 import time
 class RiderTest(Thread):
-    source = test_classes.Location()
-    destination = test_classes.Location()
     client = ''
     
     def __init__(self,username,password,domain):
         Thread.__init__(self)
         self.client = test_classes.get_client(username,password,domain)
+        
+    def search_ride(self):
+        source = test_classes.Location()
+        destination = test_classes.Location()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        self.source.georss_point=str(point_lat) + "," + str(point_lon)
-        self.source.label="home"
-        self.source.point="orig"
-        self.source.leaves = test_classes.now()
-
+        source.georss_point=str(point_lat) + "," + str(point_lon)
+        source.label="home"
+        source.point="orig"
+        source.leaves = test_classes.now()
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        self.destination.georss_point=str(point_lat) + "," + str(point_lon)
-        self.destination.label="office"
-        self.destination.point="dest"
-        self.destination.leaves = test_classes.nowplusminutes(120)
-        print "initializing random ride request from " + self.source.georss_point + " to " + self.destination.georss_point
-        
-    def search_ride(self):
+        destination.georss_point=str(point_lat) + "," + str(point_lon)
+        destination.label="office"
+        destination.point="dest"
+        destination.leaves = test_classes.nowplusminutes(120)
         print "*" * 80
-        print "SEARCHING FOR A RIDE..."
+        print "SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
         print "*" * 80
         
-        result = self.client.dycapo.search_trip(self.source.__dict__,self.destination.__dict__)
+        result = self.client.dycapo.search_trip(source.__dict__,destination.__dict__)
         print result
         print "*" * 80
         return result
@@ -74,6 +72,7 @@ class RiderTest(Thread):
             print "ERROR: you are already participating on this trip!"
         print "*" * 80
         return str(result)
+    
     
     def start_test(self):
         test_classes.wait_random_seconds()

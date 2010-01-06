@@ -173,7 +173,21 @@ class Person(User):
         
      # Use UserManager to get the create_user method, etc.
     objects = UserManager()
-
+    
+    def __unicode__(self):
+        return self.username
+    
+    def to_xmlrpc(self):
+        """
+        TODO:
+        -use OpenTrip id, not Django internal id
+        -choose what will be marshalled for Mode and Prefs objects
+        -use django serializers instead of this
+        -what else about the driver?
+        """
+        dictionary = self.__dict__.copy()
+        del dictionary['_state']
+        return dictionary
     
 class Mode(models.Model):
     """
@@ -222,6 +236,9 @@ class Trip(models.Model):
     prefs = models.ForeignKey(Prefs) # OPT
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
     
+    def __unicode__(self):
+        return self.get_atom_id_from_dycapo_id()
+    
     def to_xmlrpc(self):
         """
         Prepares the dictionary to be returned when riders search a ride.
@@ -260,31 +277,22 @@ class Participation(models.Model):
     """
     Describes the participation of a Person in a Trip.
     This is an OpenTrip extension and should be considered as a proposal for OpenTrip Dynamic.
-    TODO: 
-    - add bool related to the request of Participation of a rider to a Trip
-    - add datetime related to request of Participation
-    - add datetime related to start of Participation
-    - add datetime related to finishing a Participation
+    It is currently used internally in Dycapo
     """
     person = models.ForeignKey(Person, related_name="participant") # used internally
     trip = models.ForeignKey(Trip, related_name="trip") # used internally
     role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False) # EXT
+    ride_requested = models.BooleanField(blank=False, default=False) # EXT
+    ride_requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    ride_accepted = models.BooleanField(blank=False, default=False) # EXT
+    ride_accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     started = models.BooleanField(blank=False, default=False) # EXT
+    started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     finished = models.BooleanField(blank=False, default=False) # EXT    
+    finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     
-    def save(self, force_insert=False, force_update=False):
-        """
-        Ensures integrity.
-        """
-        try:
-            participation = Participation.objects.get(trip=self.trip,person=self.person)
-            if participation:
-                raise IntegrityError("This person already participates in this Trip!")
-        except Participation.DoesNotExist:
-            """
-            A person can participate in a Trip only once
-            """
-            super(Participation, self).save(force_insert, force_update) # Call the "real" save() method.
+    def __unicode__(self):
+        return str(self.person) + " -> " + str(self.trip)
     
     
 class LocationManager(models.Manager):

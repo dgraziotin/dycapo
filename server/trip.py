@@ -26,6 +26,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs
+from datetime import datetime
 import settings
 
 @rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
@@ -58,7 +59,6 @@ def add_trip(trip, mode, preferences, source, destination):
         mode = populate_object(mode,dict_mode)
         mode.save()
         
-        # dummy Prefs object
         preferences = Prefs()
         preferences = populate_object(preferences,dict_prefs)
         preferences.save()
@@ -86,10 +86,18 @@ def start_trip(trip):
         """
         TODO:
         -verify user permissions
-        -go through participation and set started = True
         """
         trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip_dict['id'])
+        participation = Participation.objects.get(trip=trip,role='driver')
+        
+        # return False if the driver already started this trip
+        if participation.started:
+                return False
+        
+        participation.started = True
+        participation.started_timestamp = datetime.now()
+        participation.save()
         trip.active = True
         trip.save()
         return True
@@ -107,17 +115,19 @@ def search_trip(source, destination):
         destination = Location()
         destination = populate_object(destination,dict_destination)
         # at the moment we just return the first available trips that are also active
-        trips = Trip.objects.filter(active=True)
+        trips = Trip.objects.all()
         """
         dummy algorithm: search in active Trips that have the same destination of the driver
         """
+        
         if not trips:
                 return False
         for trip in trips:
-                for location in trip.locations.all():
-                        if location.point=="dest" and location.georss_point==destination.georss_point:
+                for location in trip.locations.filter(point="dest"):
+                        if location.georss_point==destination.georss_point:
                                 return trip.to_xmlrpc()
         return False
+        
         
 @rpcmethod(name='dycapo.accept_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
 def accept_trip(trip):
@@ -125,8 +135,6 @@ def accept_trip(trip):
         This method is for a rider to accept a proposed Trip.
         TODO:
         -verify user permissions
-        -go through participation and set started = True
-        -get rid of the exception thrown when the rider already participates in the Trip
         """
         trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip['id'])
@@ -136,10 +144,46 @@ def accept_trip(trip):
         participation.trip = trip
         participation.person = rider
         participation.role = 'rider'
+        participation.ride_requested = True
+        participation.ride_requested_timestamp = datetime.now()
         try:
+                participation_check = Participation.objects.get(trip=trip,person=rider)
+                participation_check = synchronize_objects(participation_check,participation)
+                participation_check.save()
+        except Participation.DoesNotExist:
                 participation.save()
-        except IntegrityError:
+        return True
+
+@rpcmethod(name='dycapo.check_ride_requests', signature=['bool','Trip'], permission='server.can_xmlrpc')
+def check_ride_requests(trip):
+        """
+        This method is for a driver to see if there are ride requests for his Trip
+        TODO:
+        -verify user permissions
+        """
+        trip_dict = atom_to_dycapo(trip)
+        trip = Trip.objects.get(id=trip['id'])
+        driver = Person.objects.get(username='driver1')
+        
+        participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
+        if len(participations_for_trip) == 0:
                 return False
+        else:
+                for participation in participations_for_trip:
+                        if participation.ride_requested and not participation.ride_accepted:
+                                return participation.person.to_xmlrpc()
+        return False
+
+@rpcmethod(name='dycapo.delete_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
+def delete_trip(trip):
+        """
+        This method is only for testing. It will be removed in the final version of Dycapo!
+        """
+        trip_dict = atom_to_dycapo(trip)
+        trip = Trip.objects.get(id=trip['id'])
+        trip.participation.clear()
+        trip.locations.clear()
+        trip.delete()
         return True
 
 def get_atom_id_from_dycapo_id(id):
@@ -181,6 +225,10 @@ def populate_object(obj,dictionary):
         else:
                 return obj
 
-        
-
-        
+def synchronize_objects(old_obj,new_obj):
+        for key in old_obj.__dict__:
+                if key != 'id' and key!= '_state':
+                        old_obj.__dict__[key] = new_obj.__dict__[key]
+        return old_obj
+                
+                
