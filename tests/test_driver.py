@@ -32,55 +32,57 @@ class DriverTest(Thread):
     After the insertion of the Trip, the Driver waits a random value
     of seconds (0 to 20) before starting the Trip.
     """
-    source = test_classes.Location()
-    destination = test_classes.Location()
+    
     client = ''
-    mode = test_classes.Mode()
-    prefs = test_classes.Prefs()
-    trip = test_classes.Trip()
     clean_results = True
     
     def __init__(self,username,password,domain,clean_results):
         Thread.__init__(self)
         self.client = test_classes.get_client(username,password, domain)
         self.clean_results = clean_results
+        
+        
+    def insert_trip(self):
+        source = test_classes.Location()
+        destination = test_classes.Location()
+        mode = test_classes.Mode()
+        prefs = test_classes.Prefs()
+        trip = test_classes.Trip()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        self.source.georss_point=str(point_lat) + "," + str(point_lon)
-        self.source.label="home"
-        self.source.point="orig"
-        self.source.leaves = test_classes.now()
+        source.georss_point=str(point_lat) + "," + str(point_lon)
+        source.label="home"
+        source.point="orig"
+        source.leaves = test_classes.now()
 
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        self.destination.georss_point=str(point_lat) + "," + str(point_lon)
-        self.destination.label="office"
-        self.destination.point="dest"
-        self.destination.leaves = test_classes.nowplusminutes(120)
+        destination.georss_point=str(point_lat) + "," + str(point_lon)
+        destination.label="office"
+        destination.point="dest"
+        destination.leaves = test_classes.nowplusminutes(120)
         
-        self.mode.capacity = 3
-        self.mode.vacancy = 3
-        self.mode.color = 'blue'
-        self.mode.cost = 0
-        self.mode.lic = '1234f434'
-        self.mode.make = 'ford'
-        self.mode.model = 'fiesta'
-        self.mode.year = 2003
-        self.mode.kind = 'auto'
+        mode.capacity = 3
+        mode.vacancy = 3
+        mode.color = 'blue'
+        mode.cost = 0
+        mode.lic = '1234f434'
+        mode.make = 'ford'
+        mode.model = 'fiesta'
+        mode.year = 2003
+        mode.kind = 'auto'
         
-        self.prefs.age = '18-40'
-        self.prefs.nonsmoking = False
+        prefs.age = '18-40'
+        prefs.nonsmoking = False
         
-        self.trip.content = 'description of the trip'
-        self.trip.expires = test_classes.nowplusdays(3)
-        print "initializing random Trip from " + self.source.georss_point + " to " + self.destination.georss_point
-        
-    def insert_trip(self):
+        trip.content = 'description of the trip'
+        trip.expires = test_classes.nowplusdays(3)
+        print "initializing random Trip from " + source.georss_point + " to " + destination.georss_point
         print "#" * 80
         print "SAVING TRIP..."
         print "#" * 80
-        result = self.client.dycapo.add_trip(self.trip.__dict__,self.mode.__dict__,self.prefs.__dict__,self.source.__dict__,self.destination.__dict__)
+        result = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
         print result
         print "#" * 80
         return result

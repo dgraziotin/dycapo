@@ -181,8 +181,11 @@ def delete_trip(trip):
         """
         trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip['id'])
+        for location in trip.locations.all():
+                location.delete()
+        trip.mode.delete()
+        trip.prefs.delete()
         trip.participation.clear()
-        trip.locations.clear()
         trip.delete()
         return True
 
