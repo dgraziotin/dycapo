@@ -31,11 +31,13 @@ from threading import Thread
 import time
 class RiderTest(Thread):
     client = ''
+    fixed_destination = None
     
-    def __init__(self,username,password,domain):
+    def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
         self.client = test_classes.get_client(username,password,domain)
-        
+        self.fixed_destination = fixed_destination
+    
     def search_ride(self):
         source = test_classes.Location()
         destination = test_classes.Location()
@@ -48,7 +50,10 @@ class RiderTest(Thread):
         source.leaves = test_classes.now()
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        destination.georss_point=str(point_lat) + "," + str(point_lon)
+        if self.fixed_destination:
+            destination.georss_point = self.fixed_destination
+        else:
+            destination.georss_point=str(point_lat) + "," + str(point_lon)
         destination.label="office"
         destination.point="dest"
         destination.leaves = test_classes.nowplusminutes(120)
@@ -89,7 +94,9 @@ class RiderTest(Thread):
             test_classes.wait_random_seconds()
             trip = self.search_ride()
             attempts = attempts - 1
-            if trip: self.accept_trip(trip)
+            if trip: 
+                self.accept_trip(trip)
+                found=True
         
     def run(self):
         self.start_test()

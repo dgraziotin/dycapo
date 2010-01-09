@@ -35,12 +35,13 @@ class DriverTest(Thread):
     
     client = ''
     clean_results = True
+    fixed_destination = None
     
-    def __init__(self,username,password,domain,clean_results):
+    def __init__(self,username,password,domain,fixed_destination,clean_results):
         Thread.__init__(self)
         self.client = test_classes.get_client(username,password, domain)
         self.clean_results = clean_results
-        
+        self.fixed_destination = fixed_destination
         
     def insert_trip(self):
         source = test_classes.Location()
@@ -58,7 +59,10 @@ class DriverTest(Thread):
 
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        destination.georss_point=str(point_lat) + "," + str(point_lon)
+        if self.fixed_destination:
+            destination.georss_point = self.fixed_destination
+        else:
+            destination.georss_point=str(point_lat) + "," + str(point_lon)
         destination.label="office"
         destination.point="dest"
         destination.leaves = test_classes.nowplusminutes(120)
@@ -105,6 +109,15 @@ class DriverTest(Thread):
         print "#" * 80
         return result
     
+    def accept_ride_request(self,trip,person):
+        print "#" * 80
+        print "ACCEPTING A RIDE REQUEST..."
+        print "#" * 80
+        result = self.client.dycapo.accept_ride_request(trip,person)
+        print result
+        print "#" * 80
+        return result
+    
     def delete_trip(self,trip):
         print "#" * 80
         print "DELETING TRIP..."
@@ -129,6 +142,9 @@ class DriverTest(Thread):
                 break
             test_classes.wait_random_seconds()
             ride_request = self.check_ride_requests(trip)
+            if ride_request:
+                found = True
+                self.accept_ride_request(trip,ride_request)
             attempts = attempts - 1
         if self.clean_results:
             self.delete_trip(trip)

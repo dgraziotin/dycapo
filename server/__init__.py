@@ -16,4 +16,4 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-from trip import add_trip, search_trip, start_trip, accept_trip, check_ride_requests, delete_trip
+from trip import add_trip, search_trip, start_trip, accept_trip, check_ride_requests, delete_trip, accept_ride_request

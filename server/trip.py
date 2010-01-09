@@ -28,7 +28,7 @@ from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs
 from datetime import datetime
 import settings
-
+from copy import deepcopy
 @rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination):
         """
@@ -137,7 +137,7 @@ def accept_trip(trip):
         -verify user permissions
         """
         trip_dict = atom_to_dycapo(trip)
-        trip = Trip.objects.get(id=trip['id'])
+        trip = Trip.objects.get(id=trip_dict['id'])
         rider = Person.objects.get(username='rider1')
         
         participation = Participation()
@@ -162,17 +162,43 @@ def check_ride_requests(trip):
         -verify user permissions
         """
         trip_dict = atom_to_dycapo(trip)
-        trip = Trip.objects.get(id=trip['id'])
+
+        trip = Trip.objects.get(id=trip_dict['id'])
         driver = Person.objects.get(username='driver1')
-        
+
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
+
         if len(participations_for_trip) == 0:
                 return False
         else:
                 for participation in participations_for_trip:
-                        if participation.ride_requested and not participation.ride_accepted:
+                        if participation.ride_requested:
                                 return participation.person.to_xmlrpc()
         return False
+
+
+@rpcmethod(name='dycapo.accept_ride_request', signature=['bool','Trip','Person'], permission='server.can_xmlrpc')
+def accept_ride_request(trip, person):
+        """
+        This method is for a driver to accept a ride request by a rider.
+        TODO:
+        -verify user permissions
+        """ 
+        trip_dict = atom_to_dycapo(trip)
+        person_dict = person
+        
+        trip = Trip.objects.get(id=trip_dict['id'])
+        driver = Person.objects.get(username='driver1')
+        rider = Person.objects.get(username=person_dict['username'])
+        
+        rider_participation = Participation.objects.get(trip=trip,person=rider)
+        if rider_participation.ride_requested and not rider_participation.ride_accepted:
+                rider_participation.ride_accepted = True
+                rider_participation.ride_accepted_timestamp = datetime.now()
+                rider_participation.save()
+                return True
+        return False
+
 
 @rpcmethod(name='dycapo.delete_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
 def delete_trip(trip):
@@ -180,7 +206,7 @@ def delete_trip(trip):
         This method is only for testing. It will be removed in the final version of Dycapo!
         """
         trip_dict = atom_to_dycapo(trip)
-        trip = Trip.objects.get(id=trip['id'])
+        trip = Trip.objects.get(id=trip_dict['id'])
         for location in trip.locations.all():
                 location.delete()
         trip.mode.delete()
@@ -207,11 +233,12 @@ def atom_to_dycapo(dictionary):
         """
         Searches for a id key in a dictionary and converts it to a Dycapo internal Id
         """
+        dycapo_dictionary = deepcopy(dictionary)
         try:
-                dictionary['id'] = get_dycapo_id_from_atom_id(dictionary['id'])
-                return dictionary
+                dycapo_dictionary['id'] = get_dycapo_id_from_atom_id(dictionary['id'])
+                return dycapo_dictionary
         except KeyError:
-                return dictionary
+                return dycapo_dictionary
 
 def populate_object(obj,dictionary):
         for key in dictionary:

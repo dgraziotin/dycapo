@@ -22,6 +22,7 @@ from django.db import IntegrityError
 from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
 from geopy import geocoders
 from geopy.point import Point
+from copy import deepcopy
 
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
@@ -185,9 +186,11 @@ class Person(User):
         -use django serializers instead of this
         -what else about the driver?
         """
-        dictionary = self.__dict__.copy()
-        del dictionary['_state']
-        return dictionary
+        person_dict = {
+            'id' : self.id,
+            'username': self.username
+        }
+        return person_dict
     
 class Mode(models.Model):
     """

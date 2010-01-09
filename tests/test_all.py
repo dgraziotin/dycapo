@@ -22,13 +22,14 @@ will be participating in every trip!
 """
 from test_driver import DriverTest
 from test_rider import RiderTest
+import os, sys
 
 for i in range(0,3): # number of driver threads inserting and starting trips
-    driver = DriverTest("driver1","password","127.0.0.1",False)
+    driver = DriverTest("driver1","password","127.0.0.1",None,True)
     driver.start()
  
 for i in range(0,5): # number of rider threads searching and accepting trips
-    rider = RiderTest("rider1","password","127.0.0.1")
+    rider = RiderTest("rider1","password","127.0.0.1",None)
     rider.client._ServerProxy__verbose = 0
     rider.start()
     
