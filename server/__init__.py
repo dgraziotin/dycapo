@@ -16,4 +16,8 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-from trip import add_trip, search_trip, start_trip, accept_trip, check_ride_requests, delete_trip, accept_ride_request
+"""
+This file must import all the XML-RPC methods that we also want to expone to the public.
+"""
+from driver import add_trip, start_trip, check_ride_requests, accept_ride_request, delete_trip
+from rider import search_trip, request_ride

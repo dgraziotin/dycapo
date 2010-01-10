@@ -24,8 +24,10 @@ A random source and destination are created using one value in [1.00,2.00,3.00] 
 The rider then searches for a Ride. If a Ride is available, it accepts it. If the Ride is
 not available, it waits a random value of seconds (0 to 20) and then searches again.
 The Rider aborts after 5 attempts.
+If the object is instantiated with fixed_destination!=None, then it must be a georss_point, like
+"1.0,3.0"
 """
-import test_classes
+import common_classes_and_methods
 import random
 from threading import Thread
 import time
@@ -35,19 +37,19 @@ class RiderTest(Thread):
     
     def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
-        self.client = test_classes.get_client(username,password,domain)
+        self.client = common_classes_and_methods.get_client(username,password,domain)
         self.fixed_destination = fixed_destination
     
     def search_ride(self):
-        source = test_classes.Location()
-        destination = test_classes.Location()
+        source = common_classes_and_methods.Location()
+        destination = common_classes_and_methods.Location()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
         source.georss_point=str(point_lat) + "," + str(point_lon)
         source.label="home"
         source.point="orig"
-        source.leaves = test_classes.now()
+        source.leaves = common_classes_and_methods.now()
         point_lat = random.choice(points)
         point_lon = random.choice(points)
         if self.fixed_destination:
@@ -56,7 +58,7 @@ class RiderTest(Thread):
             destination.georss_point=str(point_lat) + "," + str(point_lon)
         destination.label="office"
         destination.point="dest"
-        destination.leaves = test_classes.nowplusminutes(120)
+        destination.leaves = common_classes_and_methods.nowplusminutes(120)
         print "*" * 80
         print "SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
         print "*" * 80
@@ -66,11 +68,11 @@ class RiderTest(Thread):
         print "*" * 80
         return result
     
-    def accept_trip(self,trip):
+    def request_ride(self,trip):
         print "*" * 80
-        print "ACCEPTING A RIDE..."
+        print "REQUESTING A RIDE..."
         print "*" * 80
-        result = self.client.dycapo.accept_trip(trip)
+        result = self.client.dycapo.request_ride(trip)
         if result:
             print trip
         else:
@@ -80,7 +82,7 @@ class RiderTest(Thread):
     
     
     def start_test(self):
-        test_classes.wait_random_seconds()
+        common_classes_and_methods.wait_random_seconds()
         trip = self.search_ride()
         attempts = 5
         attempts_orig = attempts
@@ -91,11 +93,11 @@ class RiderTest(Thread):
                 print "RIDE NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
                 print "*" * 80
                 break
-            test_classes.wait_random_seconds()
+            common_classes_and_methods.wait_random_seconds()
             trip = self.search_ride()
             attempts = attempts - 1
             if trip: 
-                self.accept_trip(trip)
+                self.request_ride(trip)
                 found=True
         
     def run(self):

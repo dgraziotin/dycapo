@@ -17,19 +17,5 @@ This file is part of Dycapo.
 
 """
 """
-This test suite creates three driver inserting a random trip, and 5 riders
-requesting rides in random locations.
+This module holds all the XML-RPC methods that a driver and a rider have in common
 """
-from test_driver import DriverTest
-from test_rider import RiderTest
-import os, sys
-
-for i in range(0,3): # number of driver threads inserting and starting trips
-    driver = DriverTest("driver1","password","127.0.0.1",None,True)
-    driver.start()
- 
-for i in range(0,5): # number of rider threads searching and accepting trips
-    rider = RiderTest("rider1","password","127.0.0.1",None)
-    rider.client._ServerProxy__verbose = 0
-    rider.start()
-    

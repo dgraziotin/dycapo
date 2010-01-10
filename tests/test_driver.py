@@ -17,7 +17,7 @@ This file is part of Dycapo.
 
 """
 
-import test_classes
+import common_classes_and_methods
 import random
 import time
 from threading import Thread
@@ -31,6 +31,10 @@ class DriverTest(Thread):
     This test creates a fixed Trip Mode. The trip created is not started, and expires in 3 days.
     After the insertion of the Trip, the Driver waits a random value
     of seconds (0 to 20) before starting the Trip.
+    If the object is instantiated with clean_results = True, then the Trip is deleted at the end of
+    the test.
+    If the object is instantiated with fixed_destination!=None, then it must be a georss_point, like
+    "1.0,3.0"
     """
     
     client = ''
@@ -39,23 +43,23 @@ class DriverTest(Thread):
     
     def __init__(self,username,password,domain,fixed_destination,clean_results):
         Thread.__init__(self)
-        self.client = test_classes.get_client(username,password, domain)
+        self.client = common_classes_and_methods.get_client(username,password, domain)
         self.clean_results = clean_results
         self.fixed_destination = fixed_destination
         
     def insert_trip(self):
-        source = test_classes.Location()
-        destination = test_classes.Location()
-        mode = test_classes.Mode()
-        prefs = test_classes.Prefs()
-        trip = test_classes.Trip()
+        source = common_classes_and_methods.Location()
+        destination = common_classes_and_methods.Location()
+        mode = common_classes_and_methods.Mode()
+        prefs = common_classes_and_methods.Prefs()
+        trip = common_classes_and_methods.Trip()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
         source.georss_point=str(point_lat) + "," + str(point_lon)
         source.label="home"
         source.point="orig"
-        source.leaves = test_classes.now()
+        source.leaves = common_classes_and_methods.now()
 
         point_lat = random.choice(points)
         point_lon = random.choice(points)
@@ -65,7 +69,7 @@ class DriverTest(Thread):
             destination.georss_point=str(point_lat) + "," + str(point_lon)
         destination.label="office"
         destination.point="dest"
-        destination.leaves = test_classes.nowplusminutes(120)
+        destination.leaves = common_classes_and_methods.nowplusminutes(120)
         
         mode.capacity = 3
         mode.vacancy = 3
@@ -81,7 +85,7 @@ class DriverTest(Thread):
         prefs.nonsmoking = False
         
         trip.content = 'description of the trip'
-        trip.expires = test_classes.nowplusdays(3)
+        trip.expires = common_classes_and_methods.nowplusdays(3)
         print "initializing random Trip from " + source.georss_point + " to " + destination.georss_point
         print "#" * 80
         print "SAVING TRIP..."
@@ -127,9 +131,9 @@ class DriverTest(Thread):
         return str(result)
     
     def start_test(self):
-        test_classes.wait_random_seconds()
+        common_classes_and_methods.wait_random_seconds()
         trip = self.insert_trip()
-        test_classes.wait_random_seconds()
+        common_classes_and_methods.wait_random_seconds()
         trip_result = self.start_trip(trip)
         attempts = 8
         attempts_orig = 8
@@ -140,7 +144,7 @@ class DriverTest(Thread):
                 print "RIDE REQUEST NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
                 print "#" * 80
                 break
-            test_classes.wait_random_seconds()
+            common_classes_and_methods.wait_random_seconds()
             ride_request = self.check_ride_requests(trip)
             if ride_request:
                 found = True
@@ -154,5 +158,5 @@ class DriverTest(Thread):
         
 if __name__ == "__main__": 
     for i in range(0,5):
-        driver = DriverTest("driver1","password","127.0.0.1",True)
+        driver = DriverTest("driver1","password","127.0.0.1",None,True)
         driver.start()
