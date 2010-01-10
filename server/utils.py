@@ -48,7 +48,7 @@ def atom_to_dycapo(dictionary):
         except KeyError:
                 return dycapo_dictionary
 
-def populate_object(obj,dictionary):
+def populate_object_from_dictionary(obj,dictionary):
         for key in dictionary:
                 obj.__dict__[key] = dictionary[key]
         if "Trip" in str(obj.__class__ ):

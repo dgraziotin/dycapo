@@ -22,7 +22,7 @@ This module holds all the XML-RPC methods that a Driver needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Mode, Participation, Prefs
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object
+from utils import atom_to_dycapo, populate_object_from_dictionary
 
 @rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination):
@@ -43,23 +43,23 @@ def add_trip(trip, mode, preferences, source, destination):
         driver = Person.objects.get(userid='driver1')
         
         source = Location()
-        source = populate_object(source,dict_source)
+        source = populate_object_from_dictionary(source,dict_source)
         source.save()
         
         destination = Location()
-        destination = populate_object(destination,dict_destination)
+        destination = populate_object_from_dictionary(destination,dict_destination)
         destination.save()
         
         mode = Mode()
-        mode = populate_object(mode,dict_mode)
+        mode = populate_object_from_dictionary(mode,dict_mode)
         mode.save()
         
         preferences = Prefs()
-        preferences = populate_object(preferences,dict_prefs)
+        preferences = populate_object_from_dictionary(preferences,dict_prefs)
         preferences.save()
         
         trip = Trip()
-        trip = populate_object(trip,dict_trip)
+        trip = populate_object_from_dictionary(trip,dict_trip)
         trip.author = driver
         trip.mode = mode
         trip.prefs = preferences
@@ -103,6 +103,7 @@ def check_ride_requests(trip):
         This method is for a driver to see if there are ride requests for his Trip
         TODO:
         -verify user permissions
+        -what if there is more than a ride request? Should we return just one per time?
         """
         trip_dict = atom_to_dycapo(trip)
 
