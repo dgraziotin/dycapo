@@ -23,7 +23,6 @@ from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
 from geopy import geocoders
 from geopy.point import Point
 from copy import deepcopy
-
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
 described in OpenTrip Core specification (http://opentrip.info/wiki/OpenTrip_Core). 

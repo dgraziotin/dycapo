@@ -53,6 +53,13 @@ class TestRPCDispatcher(unittest.TestCase):
         
         self.add = add
         
+        def kwargstest(a, b, **kwargs):
+            if kwargs.get('c', None) is not None:
+                return True
+            return False
+        
+        self.kwargstest = kwargstest
+        
         def testBin():
             return Binary(BINARY_STRING)
         self.testBin = testBin
@@ -131,6 +138,36 @@ class TestRPCDispatcher(unittest.TestCase):
         self.assertTrue(jsondict['error'] is None)
         self.assertEqual(jsondict['id'], 1)
         self.assertEqual(jsondict['result'], 3)
+        
+    def test_register_methods(self):
+        self.d.register_rpcmethods(['rpc4django.tests.testmod'])
+        
+        jsontxt = '{"params":[3,1],"method":"subtract","id":1}'
+        resp = self.d.jsondispatch(jsontxt)
+        jsondict = json.loads(resp)
+        self.assertTrue(jsondict['error'] is None)
+        self.assertEqual(jsondict['id'], 1)
+        self.assertEqual(jsondict['result'], 2)
+        
+        jsontxt = '{"params":[3,2],"method":"power","id":99}'
+        resp = self.d.jsondispatch(jsontxt)
+        jsondict = json.loads(resp)
+        self.assertTrue(jsondict['error'] is None)
+        self.assertEqual(jsondict['id'], 99)
+        self.assertEqual(jsondict['result'], 9)
+        
+        
+    def test_kwargs(self):
+        self.d.register_method(self.kwargstest)
+        
+        jsontxt = '{"params":[1,2],"method":"kwargstest","id":1}'
+        resp = self.d.jsondispatch(jsontxt)
+        jsondict = json.loads(resp)
+        self.assertFalse(jsondict['result'])
+        
+        resp = self.d.jsondispatch(jsontxt, c=1)
+        jsondict = json.loads(resp)
+        self.assertTrue(jsondict['result'])
 
 if __name__ == '__main__':
     unittest.main()

@@ -21,3 +21,4 @@ This file must import all the XML-RPC methods that we also want to expone to the
 """
 from driver import add_trip, start_trip, check_ride_requests, accept_ride_request, delete_trip
 from rider import search_trip, request_ride
+from common import get_user

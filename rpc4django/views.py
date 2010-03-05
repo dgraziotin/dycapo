@@ -143,7 +143,8 @@ def serve_rpc_request(request):
             if not _check_request_permission(request, 'xml'):
                 return HttpResponseForbidden()
             
-            resp = dispatcher.xmldispatch(request.raw_post_data)
+            resp = dispatcher.xmldispatch(request.raw_post_data, \
+                                          request=request)
             response_type = 'text/xml'
         else:
             if RESTRICT_JSON:
@@ -152,7 +153,8 @@ def serve_rpc_request(request):
             if not _check_request_permission(request, 'json'):
                 return HttpResponseForbidden()
             
-            resp = dispatcher.jsondispatch(request.raw_post_data)
+            resp = dispatcher.jsondispatch(request.raw_post_data, \
+                                           request=request)
             response_type = 'application/json'
             
         if LOG_REQUESTS_RESPONSES:
@@ -220,7 +222,7 @@ except ImportError:
         csrf_exempt = None
 
 if csrf_exempt is not None:
-    csrf_exempt(serve_rpc_request)
+    serve_rpc_request = csrf_exempt(serve_rpc_request)
 
     
 # instantiate the rpcdispatcher -- this examines the INSTALLED_APPS

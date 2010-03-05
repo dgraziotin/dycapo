@@ -8,13 +8,14 @@ This module contains the classes necessary to handle both
 It also contains a decorator to mark methods as rpc methods.
 '''
 
-import platform
 import inspect
+import platform
 import pydoc
+import types
 import xmlrpclib
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
-from jsonrpcdispatcher import JSONRPCDispatcher, json
 from xmlrpclib import Fault
+from jsonrpcdispatcher import JSONRPCDispatcher, json
+from xmlrpcdispatcher import XMLRPCDispatcher
 
 # this error code is taken from xmlrpc-epi
 # http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php
@@ -156,14 +157,7 @@ class RPCDispatcher:
         self.url = url
         self.rpcmethods = []        # a list of RPCMethod objects
         self.jsonrpcdispatcher = JSONRPCDispatcher()
-        
-        if int(version[0]) < 3 and int(version[1]) < 5:
-            # this is for python 2.4 and below
-            self.xmlrpcdispatcher = SimpleXMLRPCDispatcher()
-        else:
-            # python 2.5+ requires different parameters
-            self.xmlrpcdispatcher = SimpleXMLRPCDispatcher(allow_none=True, 
-                                                           encoding=None)
+        self.xmlrpcdispatcher = XMLRPCDispatcher()
             
         if not restrict_introspection:
             self.register_method(self.system_listmethods)
@@ -243,21 +237,29 @@ class RPCDispatcher:
                    getattr(method, 'is_rpcmethod', False):
                     # if this method is callable and it has the rpcmethod
                     # decorator, add it to the dispatcher
-                    self.register_method(method, method.external_name)     
+                    self.register_method(method, method.external_name)
+                elif isinstance(method, types.ModuleType):
+                    # if this is not a method and instead a sub-module,
+                    # scan the module for methods with @rpcmethod
+                    try:
+                        self.register_rpcmethods(["%s.%s" % (appname, obj)])
+                    except ImportError:
+                        pass
+
     
-    def jsondispatch(self, raw_post_data):
+    def jsondispatch(self, raw_post_data, **kwargs):
         '''
         Sends the post data to a jsonrpc processor
         '''
         
-        return self.jsonrpcdispatcher.dispatch(raw_post_data)
+        return self.jsonrpcdispatcher.dispatch(raw_post_data, **kwargs)
     
-    def xmldispatch(self, raw_post_data):
+    def xmldispatch(self, raw_post_data, **kwargs):
         '''
         Sends the post data to an xmlrpc processor
         '''
         
-        return self.xmlrpcdispatcher._marshaled_dispatch(raw_post_data)
+        return self.xmlrpcdispatcher.dispatch(raw_post_data, **kwargs)
         
     def get_method_name(self, raw_post_data, request_format='xml'):
         '''
@@ -295,9 +297,11 @@ class RPCDispatcher:
         '''
         Registers a method with the rpc server
         '''
-        
+
         meth = RPCMethod(method, name, signature, helpmsg)
-        self.xmlrpcdispatcher.register_function(method, meth.name)
-        self.jsonrpcdispatcher.register_function(method, meth.name)
-        self.rpcmethods.append(meth)
+        
+        if meth.name not in self.system_listmethods():
+            self.xmlrpcdispatcher.register_function(method, meth.name)
+            self.jsonrpcdispatcher.register_function(method, meth.name)
+            self.rpcmethods.append(meth)
     

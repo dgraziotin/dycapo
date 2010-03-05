@@ -99,6 +99,10 @@ class RiderTest(Thread):
             if trip: 
                 self.request_ride(trip)
                 found=True
+    
+    def get_user(self):
+        result = self.client.dycapo.get_user()
+        print result
         
     def run(self):
         self.start_test()

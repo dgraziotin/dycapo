@@ -78,7 +78,7 @@ class JSONRPCDispatcher:
             res['error'] = err
             return json.dumps(res, indent=JSON_INDENT)
     
-    def dispatch(self, json_data):
+    def dispatch(self, json_data, **kwargs):
         '''
         Verifies that the passed json encoded string 
         is in the correct form according to the json-rpc spec
@@ -130,8 +130,13 @@ class JSONRPCDispatcher:
         
         if jsondict['method'] in self.methods:
             try:
-                result = self.methods[jsondict.get('method')] \
-                                    (*jsondict.get('params')) 
+                try:
+                    result = self.methods[jsondict.get('method')] \
+                                    (*jsondict.get('params'), **kwargs)
+                except TypeError:
+                    # Catch unexpected keyword argument error
+                    result = self.methods[jsondict.get('method')] \
+                                         (*jsondict.get('params'))
             except Exception, e:
                 # this catches any error from the called method raising
                 # an exception to the wrong number of params being sent

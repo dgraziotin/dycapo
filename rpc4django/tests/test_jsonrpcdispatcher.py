@@ -24,10 +24,31 @@ class TestJSONRPCDispatcher(unittest.TestCase):
         def unicode_ret():
             return u'はじめまして'
         
+        def kwargstest(a, b, **kwargs):
+            if kwargs.get('c', None) is not None:
+                return True
+            return False
+        
         self.dispatcher = JSONRPCDispatcher()
         self.dispatcher.register_function(add, 'add')
         self.dispatcher.register_function(factorial, 'fact')
         self.dispatcher.register_function(unicode_ret, 'unicode_ret')
+        self.dispatcher.register_function(kwargstest, 'kwargstest')
+
+    def test_kwargs(self):
+        d = dict()
+        d['params'] = [1,2]
+        d['method'] = 'kwargstest'
+        d['id'] = 1
+        
+        jsontxt = json.dumps(d)
+        resp = self.dispatcher.dispatch(jsontxt)
+        jsondict = json.loads(resp)
+        self.assertFalse(jsondict['result'])
+        
+        resp = self.dispatcher.dispatch(jsontxt, c=1)
+        jsondict = json.loads(resp)
+        self.assertTrue(jsondict['result'])
 
     def test_unicode(self):
         jsontxt = '{"params":[],"method":"unicode_ret","id":1}'

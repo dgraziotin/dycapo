@@ -19,3 +19,8 @@ This file is part of Dycapo.
 """
 This module holds all the XML-RPC methods that a driver and a rider have in common
 """
+from rpc4django import rpcmethod
+
+@rpcmethod(name='dycapo.get_user', signature=['User'], permission='server.can_xmlrpc')
+def get_user(**kwargs):
+        return kwargs['request'].META['REMOTE_USER']
