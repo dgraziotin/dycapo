@@ -6,7 +6,7 @@ Order allow,deny
 Allow from all
 </Directory>
 
-	<Location /admin>
+  <Location /admin>
     AuthType Basic
     AuthName "Login Required"
     Require valid-user

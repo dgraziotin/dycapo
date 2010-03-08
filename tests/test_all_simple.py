@@ -28,8 +28,6 @@ import os
 if __name__=="__main__":
    
     riderthread = RiderTest("rider1","password","127.0.0.1","1.0,1.0")
-    riderthread.get_user()
-    '''
     for i in range(0,1):
         driverthread = DriverTest("driver1","password","127.0.0.1","1.0,1.0",False)
         driverthread.start()
@@ -37,4 +35,3 @@ if __name__=="__main__":
         riderthread = RiderTest("rider1","password","127.0.0.1","1.0,1.0")
         riderthread.client._ServerProxy__verbose = 0
         riderthread.start()
-    '''
