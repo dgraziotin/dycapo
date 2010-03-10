@@ -17,7 +17,15 @@ This file is part of Dycapo.
 
 """
 """
-This module holds all the XML-RPC methods that a driver and a rider have in common
+This file contains useful configurations for the tests. Adjust them here.
 """
-from rpc4django import rpcmethod
-from models import Person
+DYCAPO_URL = 'https://dycapo.task3.cc'
+CLEAN_DATABASE_AFTER_TESTS = True
+
+DRIVER_USERNAME = 'driver1'
+DRIVER_PASSWORD = 'password'
+DRIVER_THREADS = 2
+
+RIDER_USERNAME = 'rider1'
+RIDER_PASSWORD = 'password'
+RIDER_THREADS = 2

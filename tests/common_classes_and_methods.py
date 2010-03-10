@@ -41,8 +41,10 @@ def nowplusminutes(num_minutes):
     nowplus = now_date + timedelta(minutes=num_minutes)
     return nowplus.isoformat(' ')
 
-def get_client(user, password, domain):
-        url = "https://" + user + ":" + password + "@" + domain
+def get_client(user, password, url):
+        protocol = url.split(':')[0]
+        host_and_path = url.split(':')[1][2:]
+        url = protocol +"://" + user + ":" + password + "@" + host_and_path
         client = ServerProxy(url)
         return client
         

@@ -21,6 +21,7 @@ This module holds some utility functions.
 """
 import settings
 from copy import deepcopy
+from models import Person
  
 
 def get_atom_id_from_dycapo_id(id):
@@ -69,4 +70,11 @@ def synchronize_objects(old_obj,new_obj):
                         old_obj.__dict__[key] = new_obj.__dict__[key]
         return old_obj
                 
+def get_user(kwargs):
+    try:
+        return Person.objects.get(username=kwargs['request'].META['REMOTE_USER'])
+    except Person.DoesNotExist:
+        return None
+        
+    
                 

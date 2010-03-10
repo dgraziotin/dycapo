@@ -24,12 +24,11 @@ from test_driver import DriverTest
 from test_rider import RiderTest
 import os, sys
 
-for i in range(0,3): # number of driver threads inserting and starting trips
-    driver = DriverTest("driver1","password","127.0.0.1",None,False)
-    driver.start()
- 
-for i in range(0,5): # number of rider threads searching and accepting trips
-    rider = RiderTest("rider1","password","127.0.0.1",None)
-    rider.client._ServerProxy__verbose = 0
-    rider.start()
-    
+if __name__=="__main__":
+    for i in range(0,settings.DRIVER_THREADS):
+        driverthread = DriverTest(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL,None,settings.CLEAN_DATABASE_AFTER_TESTS)
+        driverthread.start()
+    for i in range(0,settings.RIDER_THREADS):
+        riderthread = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,None)
+        riderthread.client._ServerProxy__verbose = 0
+        riderthread.start()

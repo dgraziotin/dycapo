@@ -20,18 +20,18 @@ This file is part of Dycapo.
 This test suite creates a single driver with a selected destination (1.0,1.0)
 and a rider searching for a ride in the same destination.
 """
+
 from test_driver import DriverTest
 from test_rider import RiderTest
+import settings
 import os
 
     
 if __name__=="__main__":
-   
-    riderthread = RiderTest("rider1","password","127.0.0.1","1.0,1.0")
-    for i in range(0,1):
-        driverthread = DriverTest("driver1","password","127.0.0.1","1.0,1.0",False)
+    for i in range(0,settings.DRIVER_THREADS):
+        driverthread = DriverTest(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL,"1.0,1.0",settings.CLEAN_DATABASE_AFTER_TESTS)
         driverthread.start()
-    for i in range(0,1):
-        riderthread = RiderTest("rider1","password","127.0.0.1","1.0,1.0")
+    for i in range(0,settings.RIDER_THREADS):
+        riderthread = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"1.0,1.0")
         riderthread.client._ServerProxy__verbose = 0
         riderthread.start()

@@ -22,7 +22,7 @@ This module holds all the XML-RPC methods that a Rider needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Participation
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects
+from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_user
 
 @rpcmethod(name='dycapo.search_trip', signature=['bool','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination):
@@ -52,7 +52,7 @@ def search_trip(source, destination):
         
         
 @rpcmethod(name='dycapo.request_ride', signature=['bool','Trip'], permission='server.can_xmlrpc')
-def request_ride(trip):
+def request_ride(trip, **kwargs):
         """
         This method is for a rider to request a Ride in a Trip.
         TODO:
@@ -62,7 +62,7 @@ def request_ride(trip):
         """
         trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip_dict['id'])
-        rider = Person.objects.get(username='rider1')
+        rider = get_user(kwargs)
         
         participation = Participation()
         participation.trip = trip
@@ -70,6 +70,7 @@ def request_ride(trip):
         participation.role = 'rider'
         participation.ride_requested = True
         participation.ride_requested_timestamp = datetime.now()
+        
         try:
                 participation_check = Participation.objects.get(trip=trip,person=rider)
                 participation_check = synchronize_objects(participation_check,participation)
