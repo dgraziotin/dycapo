@@ -4,7 +4,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-03-07 18:10:20 +0100
+# Generation Time: 2010-03-18 16:14:25 +0100
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -58,7 +58,7 @@ CREATE TABLE `auth_message` (
   `message` longtext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `auth_message_user_id` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 
 
@@ -154,9 +154,9 @@ LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
 INSERT INTO `auth_user` (`id`,`username`,`first_name`,`last_name`,`email`,`password`,`is_staff`,`is_active`,`is_superuser`,`last_login`,`date_joined`)
 VALUES
-	(1,'admin','','','admin@admin.com','sha1$73b8c$8c5d7f69cbd5200da1d953015a1a892f0b1c137b',1,1,1,'2010-03-07 09:02:30','2010-03-07 09:02:17'),
-	(2,'rider1','Rider First','Rider Last','rider@riders.com','sha1$9d621$bfcbbe52c37f9bedec3684566385409ce0eb4091',0,1,0,'2010-03-07 09:07:06','2010-03-07 09:07:06'),
-	(3,'driver1','Driver First','Driver Last','driver@drivers.com','sha1$201dd$c5f8d46dffe4d43d01384e99f6b3f429fa8b5b25',0,1,0,'2010-03-07 09:08:30','2010-03-07 09:08:30');
+	(1,'admin','','','admin@admins.com','sha1$71a04$7446e1fae5a9b7e9e16d6c37d29abbc0f92c9970',1,1,1,'2010-03-18 08:10:54','2010-03-18 08:10:37'),
+	(2,'rider1','John','Rider','rider@riders.com','sha1$a6660$2e2f222a983d0b03bac70a62db48883578681c2c',0,1,0,'2010-03-18 08:11:09','2010-03-18 08:11:09'),
+	(3,'driver1','Pamela','Driver','','sha1$f8857$6ba0b6324ebff0f87cdf58ddfd325886307c4156',0,1,0,'2010-03-18 08:11:54','2010-03-18 08:11:54');
 
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -190,14 +190,14 @@ CREATE TABLE `auth_user_user_permissions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`permission_id`),
   KEY `permission_id_refs_id_67e79cb` (`permission_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `auth_user_user_permissions` WRITE;
 /*!40000 ALTER TABLE `auth_user_user_permissions` DISABLE KEYS */;
 INSERT INTO `auth_user_user_permissions` (`id`,`user_id`,`permission_id`)
 VALUES
-	(2,2,31),
-	(3,3,31);
+	(1,2,31),
+	(2,3,31);
 
 /*!40000 ALTER TABLE `auth_user_user_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -220,15 +220,14 @@ CREATE TABLE `django_admin_log` (
   PRIMARY KEY (`id`),
   KEY `django_admin_log_user_id` (`user_id`),
   KEY `django_admin_log_content_type_id` (`content_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
 INSERT INTO `django_admin_log` (`id`,`action_time`,`user_id`,`content_type_id`,`object_id`,`object_repr`,`action_flag`,`change_message`)
 VALUES
-	(1,'2010-03-07 09:08:24',1,10,'2','rider1',1,''),
-	(2,'2010-03-07 09:08:30',1,10,'2','rider1',2,'No fields changed.'),
-	(3,'2010-03-07 09:09:12',1,10,'3','driver1',1,'');
+	(1,'2010-03-18 08:11:54',1,10,'2','rider1',1,''),
+	(2,'2010-03-18 08:12:26',1,10,'3','driver1',1,'');
 
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -287,7 +286,7 @@ LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
 INSERT INTO `django_session` (`session_key`,`session_data`,`expire_date`)
 VALUES
-	('995ee2a48f501d8e992d6d6f23c6f29d','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUpZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5k\ncy5Nb2RlbEJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS5kYTEwYzliNDJiMGVlZmVlOWNh\nODhiYWJjNzQ2MmFhOA==\n','2010-03-21 09:02:30');
+	('1f8a1fff75b14eedbe5a3cf2a0714c09','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS43ODI2YTQ1Mjk4MWZmMmUy\nMzVmZDQ0ZWM3OGUxZGE1ZA==\n','2010-04-01 08:10:54');
 
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -377,10 +376,10 @@ CREATE TABLE `server_participation` (
   `person_id` int(11) NOT NULL,
   `trip_id` int(11) NOT NULL,
   `role` varchar(6) NOT NULL,
-  `ride_requested` tinyint(1) NOT NULL,
-  `ride_requested_timestamp` datetime DEFAULT NULL,
-  `ride_accepted` tinyint(1) NOT NULL,
-  `ride_accepted_timestamp` datetime DEFAULT NULL,
+  `requested` tinyint(1) NOT NULL,
+  `requested_timestamp` datetime DEFAULT NULL,
+  `accepted` tinyint(1) NOT NULL,
+  `accepted_timestamp` datetime DEFAULT NULL,
   `started` tinyint(1) NOT NULL,
   `started_timestamp` datetime DEFAULT NULL,
   `finished` tinyint(1) NOT NULL,
@@ -419,8 +418,8 @@ LOCK TABLES `server_person` WRITE;
 /*!40000 ALTER TABLE `server_person` DISABLE KEYS */;
 INSERT INTO `server_person` (`user_ptr_id`,`name`,`alias`,`userid`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
 VALUES
-	(2,'RiderName','','rider1','','123123123123',NULL,29,'M',1,0,0,0),
-	(3,'Driver Name','','driver1','','898967897',NULL,23,'F',1,0,0,0);
+	(2,'John Rider','','rider1','','123123123',NULL,34,'M',1,0,0,0),
+	(3,'Pamela Driver','','driver1','','234324234',NULL,24,'F',0,0,0,0);
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;
 UNLOCK TABLES;

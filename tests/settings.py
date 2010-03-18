@@ -19,13 +19,14 @@ This file is part of Dycapo.
 """
 This file contains useful configurations for the tests. Adjust them here.
 """
-DYCAPO_URL = 'https://dycapo.task3.cc'
+DYCAPO_URL = 'https://127.0.0.1'
 CLEAN_DATABASE_AFTER_TESTS = True
+XMLRPC_CLIENT_VERBOSE = 0
 
 DRIVER_USERNAME = 'driver1'
 DRIVER_PASSWORD = 'password'
-DRIVER_THREADS = 2
+DRIVER_THREADS = 1
 
 RIDER_USERNAME = 'rider1'
 RIDER_PASSWORD = 'password'
-RIDER_THREADS = 2
+RIDER_THREADS = 5

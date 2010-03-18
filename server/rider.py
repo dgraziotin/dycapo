@@ -22,10 +22,10 @@ This module holds all the XML-RPC methods that a Rider needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Participation
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_user
+from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
 
-@rpcmethod(name='dycapo.search_trip', signature=['bool','Location','Location'], permission='server.can_xmlrpc')
-def search_trip(source, destination):
+@rpcmethod(name='dycapo.search_trip', signature=['ReturnItem','Location','Location'], permission='server.can_xmlrpc')
+def search_trip(source, destination, **kwargs):
         """
         This method will be used by a rider to search a Trip, given its current position and the destination.
         TODO:
@@ -36,6 +36,9 @@ def search_trip(source, destination):
         dict_destination = destination
         destination = Location()
         destination = populate_object_from_dictionary(destination,dict_destination)
+        user = get_xmlrpc_user(kwargs)
+        #if user.is_travelling():
+        #    return False
         # at the moment we just return the first available trips that are also active
         trips = Trip.objects.filter(active=True)
         """
@@ -62,14 +65,14 @@ def request_ride(trip, **kwargs):
         """
         trip_dict = atom_to_dycapo(trip)
         trip = Trip.objects.get(id=trip_dict['id'])
-        rider = get_user(kwargs)
+        rider = get_xmlrpc_user(kwargs)
         
         participation = Participation()
         participation.trip = trip
         participation.person = rider
         participation.role = 'rider'
-        participation.ride_requested = True
-        participation.ride_requested_timestamp = datetime.now()
+        participation.requested = True
+        participation.requested_timestamp = datetime.now()
         
         try:
                 participation_check = Participation.objects.get(trip=trip,person=rider)

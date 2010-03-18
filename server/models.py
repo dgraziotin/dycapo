@@ -191,6 +191,12 @@ class Person(User):
         }
         return person_dict
     
+    def is_travelling(self):
+        participation = Trip.objects.filter()
+        if participation:
+            return True
+        return False
+    
 class Mode(models.Model):
     """
     Represents additional information about the mode of transportation being used.
@@ -284,10 +290,10 @@ class Participation(models.Model):
     person = models.ForeignKey(Person, related_name="participant") # used internally
     trip = models.ForeignKey(Trip, related_name="trip") # used internally
     role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False) # EXT
-    ride_requested = models.BooleanField(blank=False, default=False) # EXT
-    ride_requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
-    ride_accepted = models.BooleanField(blank=False, default=False) # EXT
-    ride_accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    requested = models.BooleanField(blank=False, default=False) # EXT
+    requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    accepted = models.BooleanField(blank=False, default=False) # EXT
+    accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     started = models.BooleanField(blank=False, default=False) # EXT
     started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     finished = models.BooleanField(blank=False, default=False) # EXT    
@@ -303,3 +309,11 @@ class LocationManager(models.Manager):
     """
     def get_by_natural_key(self, georss_point):
         return self.get(georss_point=georss_point)
+    
+class ReturnItem():
+    return_code = -1
+    return_value = {}
+    def __init__(self,code,value):
+        self.return_code = return_code
+        self.return_value = return_value
+    

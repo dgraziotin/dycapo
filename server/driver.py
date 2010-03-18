@@ -22,15 +22,13 @@ This module holds all the XML-RPC methods that a Driver needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Mode, Participation, Prefs
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object_from_dictionary, get_user
+from utils import atom_to_dycapo, populate_object_from_dictionary, get_xmlrpc_user
 
 @rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination, **kwargs):
         """
         Inserts a new Trip in Dycapo System. It supports a source, a destination and
         the trip mode. See the models for more information.
-        TODO:
-        - Add trip preferences
         """
         dict_trip = trip
         dict_mode = mode
@@ -40,7 +38,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         
         # we just use driver1 as driver right now. We must wait for rpc4django to inflate
         # a User object in the functions for using the real driver
-        driver = get_user(kwargs)
+        driver = get_xmlrpc_user(kwargs)
         
         source = Location()
         source = populate_object_from_dictionary(source,dict_source)
@@ -108,7 +106,7 @@ def check_ride_requests(trip, **kwargs):
         trip_dict = atom_to_dycapo(trip)
 
         trip = Trip.objects.get(id=trip_dict['id'])
-        driver = get_user(kwargs)
+        driver = get_xmlrpc_user(kwargs)
 
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
 
@@ -116,7 +114,7 @@ def check_ride_requests(trip, **kwargs):
                 return False
         else:
                 for participation in participations_for_trip:
-                        if participation.ride_requested:
+                        if participation.requested:
                                 return participation.person.to_xmlrpc()
         return False
 
@@ -135,9 +133,9 @@ def accept_ride_request(trip, person):
         rider = Person.objects.get(username=person_dict['username'])
         
         rider_participation = Participation.objects.get(trip=trip,person=rider)
-        if rider_participation.ride_requested and not rider_participation.ride_accepted:
-                rider_participation.ride_accepted = True
-                rider_participation.ride_accepted_timestamp = datetime.now()
+        if rider_participation.requested and not rider_participation.accepted:
+                rider_participation.accepted = True
+                rider_participation.accepted_timestamp = datetime.now()
                 rider_participation.save()
                 return True
         return False
