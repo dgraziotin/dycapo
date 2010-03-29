@@ -21,7 +21,7 @@ This file contains useful configurations for the tests. Adjust them here.
 """
 DYCAPO_URL = 'https://127.0.0.1'
 CLEAN_DATABASE_AFTER_TESTS = True
-XMLRPC_CLIENT_VERBOSE = 0
+XMLRPC_CLIENT_VERBOSE = 1
 
 DRIVER_USERNAME = 'driver1'
 DRIVER_PASSWORD = 'password'
@@ -29,4 +29,4 @@ DRIVER_THREADS = 1
 
 RIDER_USERNAME = 'rider1'
 RIDER_PASSWORD = 'password'
-RIDER_THREADS = 5
+RIDER_THREADS = 1

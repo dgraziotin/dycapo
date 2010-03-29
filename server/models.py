@@ -23,6 +23,7 @@ from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
 from geopy import geocoders
 from geopy.point import Point
 from copy import deepcopy
+
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
 described in OpenTrip Core specification (http://opentrip.info/wiki/OpenTrip_Core). 
@@ -190,6 +191,8 @@ class Person(User):
             'username': self.username
         }
         return person_dict
+        
+
     
     def is_travelling(self):
         participation = Trip.objects.filter()
@@ -310,10 +313,16 @@ class LocationManager(models.Manager):
     def get_by_natural_key(self, georss_point):
         return self.get(georss_point=georss_point)
     
-class ReturnItem():
-    return_code = -1
-    return_value = {}
-    def __init__(self,code,value):
-        self.return_code = return_code
-        self.return_value = return_value
-    
+class Response(object):
+    """
+    This is an envelope that standardizes the response of Dycapo. This is an OpenTrip Dynamic proposal.
+    """
+    code = -1
+    message = ""
+    type = ""
+    value = {}
+    def __init__(self,code,message,type,value):
+        self.code = code
+        self.message = message
+        self.type = type
+        self.value = value

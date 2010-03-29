@@ -54,23 +54,41 @@ def wait_random_seconds():
     sleep(wait)
     
 class Location():
-    town = ''
-    georss_radius = ''
+    town = 'Trento'
+    georss_radius = 500
     point = ''
     georss_point = ''
-    country = ''
-    region = ''
+    country = 'IT'
+    region = 'Trentino-Alto Adige'
     offset = ''
-    subregion = ''
-    days = ''
-    label = ''
-    street = ''
-    georss_box = ''
-    postcode = ''
-    address = ''
+    subregion = 'Trentino'
+    days = 'MTW'
+    label = 'Work'
+    street = 'Via Sommarive'
+    georss_box = '46.06693 11.15065 46.20000 11.20000'
+    postcode = 38100
+    address = '18 Via Sommarive, 38100 Trento'
     leaves = ''
-    intersection = ''
-    recurs = ''
+    intersection = 'Via Sommarive'
+    recurs = 'weekly'
+    def __init__(self):
+        self.town = 'Trento'
+        self.georss_radius = 500
+        self.point = ''
+        self.georss_point = ''
+        self.country = 'IT'
+        self.region = 'Trentino-Alto Adige'
+        self.offset = 30
+        self.subregion = 'Trentino'
+        self.days = 'MTW'
+        self.label = 'Work'
+        self.street = 'Via Sommarive'
+        self.georss_box = '46.06693 11.15065 46.20000 11.20000'
+        self.postcode = 38100
+        self.address = '18 Via Sommarive, 38100 Trento'
+        self.leaves = ''
+        self.intersection = 'Via Sommarive'
+        self.recurs = 'weekly'
 
 class Trip():
     expires = ''

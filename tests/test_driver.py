@@ -21,6 +21,7 @@ import common_classes_and_methods
 import random
 import time
 from threading import Thread
+import settings
 
 class DriverTest(Thread):
     """
@@ -133,6 +134,9 @@ class DriverTest(Thread):
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         trip = self.insert_trip()
+        '''
+        print trip
+        
         common_classes_and_methods.wait_random_seconds()
         trip_result = self.start_trip(trip)
         attempts = 8
@@ -152,11 +156,13 @@ class DriverTest(Thread):
             attempts = attempts - 1
         if self.clean_results:
             self.delete_trip(trip)
+        '''
                 
     def run(self):
         self.start_test()
         
 if __name__ == "__main__": 
-    for i in range(0,5):
-        driver = DriverTest("driver1","password","127.0.0.1",None,True)
-        driver.start()
+    for i in range(0,1):
+        driverthread = DriverTest(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065",settings.CLEAN_DATABASE_AFTER_TESTS)
+        driverthread.client._ServerProxy__verbose = settings.XMLRPC_CLIENT_VERBOSE
+        driverthread.start()

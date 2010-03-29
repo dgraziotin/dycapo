@@ -25,13 +25,8 @@ Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
 STATUS
 ***************
 Dycapo is on its initial development phase. 
-0.0.x releases are all pre-alpha-dontuse releases, to only illustrate some functionalities.
-API will likely change very often.
-0.x.x releases are still alpha-releases, that cover some internal development cycles but have
-important features that will appear on a stable releases. API for the important parts of the
-project will likely not be changed.
-1.0.0 will be considered a stable release that can be used for testing in a small reality. API
-will be frozen.
+We adopted SemVer - Semantic Versioning [http://semver.org] for our release numbering system.
+Therefore, v1.0.0 will be considered stable, with fixed API. 
 
 PROTOCOL
 ***************

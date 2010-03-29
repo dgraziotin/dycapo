@@ -17,16 +17,11 @@ This file is part of Dycapo.
 
 """
 """
-This module holds all the XML-RPC methods that a driver and a rider have in common
+This module contains response codes and messages
 """
-from rpc4django import rpcmethod
-from models import Location, Person, Mode, Prefs, Trip
-@rpcmethod(name='dycapo.echo', signature=['bool'], permission='server.can_xmlrpc')
-def echo(**kwargs):
-    location = Location.objects.all()[0]
-    person = Person.objects.all()[0]
-    mode = Mode.objects.all()[0]
-    prefs = Prefs.objects.all()[0]
-    trip = Trip.objects.all()[0]
-    return location
-    
+OK = 1
+ERROR = 2
+
+TRIP_INSERTED = "Trip successfully inserted."
+TRIP_STARTED = "Trip succesfully started."
+RIDE_REQUESTS_NOT_FOUND = "Ride requests not found."
