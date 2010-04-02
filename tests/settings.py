@@ -20,7 +20,7 @@ This file is part of Dycapo.
 This file contains useful configurations for the tests. Adjust them here.
 """
 DYCAPO_URL = 'https://127.0.0.1'
-CLEAN_DATABASE_AFTER_TESTS = True
+CLEAN_DATABASE_AFTER_TESTS = False
 XMLRPC_CLIENT_VERBOSE = 0
 
 DRIVER_USERNAME = 'driver1'

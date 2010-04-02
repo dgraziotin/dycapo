@@ -123,7 +123,7 @@ def check_ride_requests(trip, **kwargs):
         else:
                 for participation in participations_for_trip:
                         if participation.requested:
-                                resp = Response(response_codes.OK,response_codes.RIDE_REQUESTS_FOUND,str(participaion.person.__class__),participation.person.to_xmlrpc())
+                                resp = Response(response_codes.OK,response_codes.RIDE_REQUESTS_FOUND,str(participation.person.__class__),participation.person.to_xmlrpc())
                                 return resp
                             
         resp = Response(response_codes.ERROR,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
