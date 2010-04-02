@@ -25,7 +25,7 @@ from datetime import datetime
 from utils import atom_to_dycapo, populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
 
-@rpcmethod(name='dycapo.add_trip', signature=['bool','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.add_trip', signature=['Response','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination, **kwargs):
         """
         Inserts a new Trip in Dycapo System. It supports a source, a destination and
@@ -74,10 +74,10 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         participation.role = 'driver'
         participation.save()
         
-        resp = Response(response_codes.OK,response_codes.TRIP_INSERTED,str(trip.__class__),trip.to_xmlrpc())
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,str(trip.__class__),trip.to_xmlrpc())
         return resp
 
-@rpcmethod(name='dycapo.start_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def start_trip(trip):
         """
         TODO:
@@ -89,7 +89,7 @@ def start_trip(trip):
         
         # return False if the driver already started this trip
         if participation.started:
-                resp = Response(response_codes.ERROR,response_codes.TRIP_STARTED,str(False.__class__),False)
+                resp = Response(response_codes.NEGATIVE,response_codes.TRIP_ALREADY_STARTED,str(False.__class__),False)
                 return resp
         
         participation.started = True
@@ -98,11 +98,11 @@ def start_trip(trip):
         trip.active = True
         trip.save()
         
-        resp = Response(response_codes.OK,response_codes.TRIP_STARTED,str(True.__class__),True)
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_STARTED,str(True.__class__),True)
         return resp
 
 
-@rpcmethod(name='dycapo.check_ride_requests', signature=['bool','Trip'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.check_ride_requests', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def check_ride_requests(trip, **kwargs):
         """
         This method is for a driver to see if there are ride requests for his Trip
@@ -118,19 +118,19 @@ def check_ride_requests(trip, **kwargs):
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
 
         if len(participations_for_trip) == 0:
-                resp = Response(response_codes.ERROR,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
+                resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
                 return resp
         else:
                 for participation in participations_for_trip:
                         if participation.requested:
-                                resp = Response(response_codes.OK,response_codes.RIDE_REQUESTS_FOUND,str(participation.person.__class__),participation.person.to_xmlrpc())
+                                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTS_FOUND,str(participation.person.__class__),participation.person.to_xmlrpc())
                                 return resp
                             
-        resp = Response(response_codes.ERROR,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
+        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
         return resp
 
 
-@rpcmethod(name='dycapo.accept_ride_request', signature=['bool','Trip','Person'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.accept_ride_request', signature=['Response','Trip','Person'], permission='server.can_xmlrpc')
 def accept_ride_request(trip, person):
         """
         This method is for a driver to accept a ride request by a rider.
@@ -148,14 +148,14 @@ def accept_ride_request(trip, person):
                 rider_participation.accepted = True
                 rider_participation.accepted_timestamp = datetime.now()
                 rider_participation.save()
-                resp = Response(response_codes.OK,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
+                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
                 return resp
-        resp = Response(response_codes.OK,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
+        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
         return resp
 
         
 
-@rpcmethod(name='dycapo.delete_trip', signature=['bool','Trip'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.delete_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def delete_trip(trip):
         """
         This method is only for testing. It will be removed in the final version of Dycapo!
@@ -168,6 +168,6 @@ def delete_trip(trip):
         trip.prefs.delete()
         trip.participation.clear()
         trip.delete()
-        resp = Response(response_codes.OK,response_codes.TRIP_DELETED,str(True.__class__),True)
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,str(True.__class__),True)
         return resp
         

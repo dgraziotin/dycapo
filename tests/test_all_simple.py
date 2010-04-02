@@ -28,11 +28,11 @@ import os
 
     
 if __name__=="__main__":
-    for i in range(0,settings.DRIVER_THREADS):
+    for i in range(0,1):
         driverthread = DriverTest(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065",settings.CLEAN_DATABASE_AFTER_TESTS)
         driverthread.client._ServerProxy__verbose = settings.XMLRPC_CLIENT_VERBOSE
         driverthread.start()
-    for i in range(0,settings.RIDER_THREADS):
+    for i in range(0,1):
         riderthread = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065")
         riderthread.client._ServerProxy__verbose = settings.XMLRPC_CLIENT_VERBOSE
         riderthread.start()

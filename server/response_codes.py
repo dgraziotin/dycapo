@@ -19,11 +19,13 @@ This file is part of Dycapo.
 """
 This module contains response codes and messages
 """
-OK = 1
-ERROR = 2
+POSITIVE = 1
+NEGATIVE = 2
+ERROR = 3
 
 TRIP_INSERTED = "Trip successfully inserted."
 TRIP_STARTED = "Trip succesfully started."
+TRIP_STARTED = "Trip already started."
 TRIP_DELETED = ""
 RIDE_REQUESTS_NOT_FOUND = "Ride requests not found."
 RIDE_REQUESTS_FOUND = "Ride requests found."
@@ -32,3 +34,4 @@ RIDE_REQUEST_REFUSED = "Ride request refused."
 RIDES_NOT_FOUND = "Rides not found."
 RIDES_FOUND = "Rides found."
 RIDE_REQUESTED = "Ride succesfully requested."
+RIDE_IN_COURSE = "Rider is already participating"

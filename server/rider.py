@@ -25,7 +25,7 @@ from datetime import datetime
 from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
 import response_codes
 
-@rpcmethod(name='dycapo.search_trip', signature=['ReturnItem','Location','Location'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.search_trip', signature=['Response','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination, **kwargs):
         """
         This method will be used by a rider to search a Trip, given its current position and the destination.
@@ -47,17 +47,18 @@ def search_trip(source, destination, **kwargs):
         """
         
         if not trips:
-                resp = Response(response_codes.ERROR,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
+                resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
                 return resp
         for trip in trips:
                 for location in trip.locations.filter(point="dest"):
                         if location.georss_point==destination.georss_point:
-                                resp = Response(response_codes.OK,response_codes.RIDES_FOUND,str(trip.__class__),trip.to_xmlrpc())
+                                resp = Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,str(trip.__class__),trip.to_xmlrpc())
                                 return resp
-        return False
+        resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
+        return resp
         
         
-@rpcmethod(name='dycapo.request_ride', signature=['bool','Trip'], permission='server.can_xmlrpc')
+@rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def request_ride(trip, **kwargs):
         """
         This method is for a rider to request a Ride in a Trip.
@@ -83,5 +84,7 @@ def request_ride(trip, **kwargs):
                 participation_check.save()
         except Participation.DoesNotExist:
                 participation.save()
-        resp = Response(response_codes.OK,response_codes.RIDE_REQUESTED,str(True.__class__),True)
+                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTED,str(True.__class__),True)
+                return resp
+        resp = Response(response_codes.ERROR,response_codes.RIDE_IN_COURSE,str(True.__class__),True)
         return resp
