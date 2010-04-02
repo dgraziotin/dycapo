@@ -53,6 +53,9 @@ def wait_random_seconds():
     print "Waiting " + str(wait) + " seconds"
     sleep(wait)
     
+def extract_response(response):
+    return response['value']
+    
 class Location():
     town = 'Trento'
     georss_radius = 500
@@ -109,3 +112,18 @@ class Mode():
 class Prefs():
     age = '18-30'
     nonsmoking = False
+    
+class Response(object):
+    """
+    This is an envelope that standardizes the response of Dycapo. This is an OpenTrip Dynamic proposal.
+    """
+    code = -1
+    message = ""
+    type = ""
+    value = {}
+    def __init__(self,code,message,type,value):
+        self.code = code
+        self.message = message
+        self.type = type
+        self.value = value
+

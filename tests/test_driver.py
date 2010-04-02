@@ -32,20 +32,20 @@ class DriverTest(Thread):
     This test creates a fixed Trip Mode. The trip created is not started, and expires in 3 days.
     After the insertion of the Trip, the Driver waits a random value
     of seconds (0 to 20) before starting the Trip.
-    If the object is instantiated with clean_results = True, then the Trip is deleted at the end of
+    If the object is instantiated with clean_responses = True, then the Trip is deleted at the end of
     the test.
     If the object is instantiated with fixed_destination!=None, then it must be a georss_point, like
     "1.0,3.0"
     """
     
     client = ''
-    clean_results = True
+    clean_responses = True
     fixed_destination = None
     
-    def __init__(self,username,password,domain,fixed_destination,clean_results):
+    def __init__(self,username,password,domain,fixed_destination,clean_responses):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password, domain)
-        self.clean_results = clean_results
+        self.clean_responses = clean_responses
         self.fixed_destination = fixed_destination
         
     def insert_trip(self):
@@ -91,54 +91,52 @@ class DriverTest(Thread):
         print "#" * 80
         print "SAVING TRIP..."
         print "#" * 80
-        result = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
-        print result
+        response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
+        print response
         print "#" * 80
-        return result
+        return common_classes_and_methods.extract_response(response)
     
     def start_trip(self,trip):
         print "#" * 80
         print "STARTING TRIP..."
         print "#" * 80
-        result = self.client.dycapo.start_trip(trip)
-        print result
+        response = self.client.dycapo.start_trip(trip)
+        print response
         print "#" * 80
-        return result
+        return common_classes_and_methods.extract_response(response)
     
     def check_ride_requests(self,trip):
         print "#" * 80
         print "SEARCHING FOR RIDERS..."
         print "#" * 80
-        result = self.client.dycapo.check_ride_requests(trip)
-        print result
+        response = self.client.dycapo.check_ride_requests(trip)
+        print response
         print "#" * 80
-        return result
-    
+        return common_classes_and_methods.extract_response(response)
+        
     def accept_ride_request(self,trip,person):
         print "#" * 80
         print "ACCEPTING A RIDE REQUEST..."
         print "#" * 80
-        result = self.client.dycapo.accept_ride_request(trip,person)
-        print result
+        response = self.client.dycapo.accept_ride_request(trip,person)
+        print response
         print "#" * 80
-        return result
+        return common_classes_and_methods.extract_response(response)
     
     def delete_trip(self,trip):
         print "#" * 80
         print "DELETING TRIP..."
         print "#" * 80
-        result = self.client.dycapo.delete_trip(trip)
+        response = self.client.dycapo.delete_trip(trip)
         print "#" * 80
-        return str(result)
+        return common_classes_and_methods.extract_response(response)
     
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         trip = self.insert_trip()
-        '''
-        print trip
-        
         common_classes_and_methods.wait_random_seconds()
-        trip_result = self.start_trip(trip)
+        trip_response = self.start_trip(trip)
+        
         attempts = 8
         attempts_orig = 8
         found = False
@@ -154,9 +152,9 @@ class DriverTest(Thread):
                 found = True
                 self.accept_ride_request(trip,ride_request)
             attempts = attempts - 1
-        if self.clean_results:
+        if self.clean_responses:
             self.delete_trip(trip)
-        '''
+        
                 
     def run(self):
         self.start_test()

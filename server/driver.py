@@ -89,7 +89,8 @@ def start_trip(trip):
         
         # return False if the driver already started this trip
         if participation.started:
-                return False
+                resp = Response(response_codes.ERROR,response_codes.TRIP_STARTED,str(False.__class__),False)
+                return resp
         
         participation.started = True
         participation.started_timestamp = datetime.now()
@@ -122,7 +123,7 @@ def check_ride_requests(trip, **kwargs):
         else:
                 for participation in participations_for_trip:
                         if participation.requested:
-                                resp = Response(response_codes.OK,response_codes.RIDE_REQUESTS_NOT_FOUND,str(participaion.person.__class__),participation.person.to_xmlrpc())
+                                resp = Response(response_codes.OK,response_codes.RIDE_REQUESTS_FOUND,str(participaion.person.__class__),participation.person.to_xmlrpc())
                                 return resp
                             
         resp = Response(response_codes.ERROR,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
@@ -147,8 +148,10 @@ def accept_ride_request(trip, person):
                 rider_participation.accepted = True
                 rider_participation.accepted_timestamp = datetime.now()
                 rider_participation.save()
-                return True
-        return False
+                resp = Response(response_codes.OK,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
+                return resp
+        resp = Response(response_codes.OK,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
+        return resp
 
         
 
@@ -165,5 +168,6 @@ def delete_trip(trip):
         trip.prefs.delete()
         trip.participation.clear()
         trip.delete()
-        return True
+        resp = Response(response_codes.OK,response_codes.TRIP_DELETED,str(True.__class__),True)
+        return resp
         

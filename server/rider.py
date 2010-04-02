@@ -20,9 +20,10 @@ This file is part of Dycapo.
 This module holds all the XML-RPC methods that a Rider needs.
 """
 from rpc4django import rpcmethod
-from models import Trip, Location, Person, Participation
+from models import Trip, Location, Person, Participation, Response
 from datetime import datetime
 from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
+import response_codes
 
 @rpcmethod(name='dycapo.search_trip', signature=['ReturnItem','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination, **kwargs):
@@ -46,11 +47,13 @@ def search_trip(source, destination, **kwargs):
         """
         
         if not trips:
-                return False
+                resp = Response(response_codes.ERROR,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
+                return resp
         for trip in trips:
                 for location in trip.locations.filter(point="dest"):
                         if location.georss_point==destination.georss_point:
-                                return trip.to_xmlrpc()
+                                resp = Response(response_codes.OK,response_codes.RIDES_FOUND,str(trip.__class__),trip.to_xmlrpc())
+                                return resp
         return False
         
         
@@ -80,4 +83,5 @@ def request_ride(trip, **kwargs):
                 participation_check.save()
         except Participation.DoesNotExist:
                 participation.save()
-        return True
+        resp = Response(response_codes.OK,response_codes.RIDE_REQUESTED,str(True.__class__),True)
+        return resp

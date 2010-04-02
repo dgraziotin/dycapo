@@ -31,6 +31,7 @@ import common_classes_and_methods
 import random
 from threading import Thread
 import time
+import settings 
 class RiderTest(Thread):
     client = ''
     fixed_destination = None
@@ -63,22 +64,22 @@ class RiderTest(Thread):
         print "SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
         print "*" * 80
         
-        result = self.client.dycapo.search_trip(source.__dict__,destination.__dict__)
-        print result
+        response = self.client.dycapo.search_trip(source.__dict__,destination.__dict__)
+        print response
         print "*" * 80
-        return result
+        return common_classes_and_methods.extract_response(response)
     
     def request_ride(self,trip):
         print "*" * 80
         print "REQUESTING A RIDE..."
         print "*" * 80
-        result = self.client.dycapo.request_ride(trip)
-        if result:
+        response = self.client.dycapo.request_ride(trip)
+        if response:
             print trip
         else:
             print "ERROR: you are already participating on this trip!"
         print "*" * 80
-        return str(result)
+        return common_classes_and_methods.extract_response(response)
     
     
     def start_test(self):
@@ -101,14 +102,14 @@ class RiderTest(Thread):
                 found=True
     
     def get_user(self):
-        result = self.client.dycapo.get_user()
-        print result
+        response = self.client.dycapo.get_user()
+        print response
         
     def run(self):
         self.start_test()
 
 if __name__ == "__main__": 
-    for i in range(0,5):
-        rider = RiderTest("rider1","password","127.0.0.1")
+    for i in range(0,1):
+        rider = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065")
         rider.start()
     
