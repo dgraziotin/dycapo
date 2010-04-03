@@ -1,4 +1,5 @@
-﻿# Sequel Pro dump
+﻿# USE THIS DUMP TO TEST DYCAPO WITH MYSQL
+# Sequel Pro dump
 # Version 1630
 # http://code.google.com/p/sequel-pro
 #

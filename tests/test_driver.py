@@ -41,12 +41,14 @@ class DriverTest(Thread):
     client = ''
     clean_responses = True
     fixed_destination = None
+    username = ''
     
     def __init__(self,username,password,domain,fixed_destination,clean_responses):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password, domain)
         self.clean_responses = clean_responses
         self.fixed_destination = fixed_destination
+        self.username = username
         
     def insert_trip(self):
         source = common_classes_and_methods.Location()
@@ -89,16 +91,16 @@ class DriverTest(Thread):
         trip.expires = common_classes_and_methods.nowplusdays(3)
         print "initializing random Trip from " + source.georss_point + " to " + destination.georss_point
         print "#" * 80
-        print "SAVING TRIP..."
+        print self.username + ": SAVING TRIP..."
         print "#" * 80
         response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
-        print response
+        print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
     
     def start_trip(self,trip):
         print "#" * 80
-        print "STARTING TRIP..."
+        print self.username + ": STARTING TRIP..."
         print "#" * 80
         response = self.client.dycapo.start_trip(trip)
         print response
@@ -107,19 +109,19 @@ class DriverTest(Thread):
     
     def check_ride_requests(self,trip):
         print "#" * 80
-        print "SEARCHING FOR RIDERS..."
+        print self.username + ": SEARCHING FOR RIDERS..."
         print "#" * 80
         response = self.client.dycapo.check_ride_requests(trip)
-        print response
+        print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
         
     def accept_ride_request(self,trip,person):
         print "#" * 80
-        print "ACCEPTING A RIDE REQUEST..."
+        print self.username + ": ACCEPTING A RIDE REQUEST..."
         print "#" * 80
         response = self.client.dycapo.accept_ride_request(trip,person)
-        print response
+        print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
     

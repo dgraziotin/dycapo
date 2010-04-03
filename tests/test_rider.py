@@ -35,11 +35,13 @@ import settings
 class RiderTest(Thread):
     client = ''
     fixed_destination = None
+    username = ""
     
     def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password,domain)
         self.fixed_destination = fixed_destination
+        self.username = username
     
     def search_ride(self):
         source = common_classes_and_methods.Location()
@@ -61,23 +63,23 @@ class RiderTest(Thread):
         destination.point="dest"
         destination.leaves = common_classes_and_methods.nowplusminutes(120)
         print "*" * 80
-        print "SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
+        print self.username + ": SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
         print "*" * 80
         
         response = self.client.dycapo.search_trip(source.__dict__,destination.__dict__)
-        print response
+        print "Dycapo Response: \n" + str(response)
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
     
     def request_ride(self,trip):
         print "*" * 80
-        print "REQUESTING A RIDE..."
+        print self.username + ": REQUESTING A RIDE..."
         print "*" * 80
         response = self.client.dycapo.request_ride(trip)
         if response:
-            print trip
+            print "Dycapo Response: \n" + str(response)
         else:
-            print "ERROR: you are already participating on this trip!"
+            print self.username + ": ERROR: you are already participating on this trip!"
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
     
@@ -91,7 +93,7 @@ class RiderTest(Thread):
         while not found:
             if attempts==0: 
                 print "*" * 80
-                print "RIDE NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
+                print self.username + ": RIDE NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
                 print "*" * 80
                 break
             common_classes_and_methods.wait_random_seconds()

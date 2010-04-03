@@ -20,13 +20,15 @@ This file is part of Dycapo.
 This module holds all the XML-RPC methods that a driver and a rider have in common
 """
 from rpc4django import rpcmethod
-from models import Location, Person, Mode, Prefs, Trip
-@rpcmethod(name='dycapo.echo', signature=['bool'], permission='server.can_xmlrpc')
-def echo(**kwargs):
-    location = Location.objects.all()[0]
-    person = Person.objects.all()[0]
-    mode = Mode.objects.all()[0]
-    prefs = Prefs.objects.all()[0]
-    trip = Trip.objects.all()[0]
-    return location
-    
+from models import Location, Person, Mode, Prefs, Trip, Response
+"""
+@rpcmethod(name='dycapo.update_position', signature=['Response','Location'], permission='server.can_xmlrpc')
+def update_position(location):
+    dict_position = location
+    position = Location()
+    position = populate_object_from_dictionary(position,dict_position)
+    user = get_xmlrpc_user(kwargs)
+    user.position = position
+    resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,str(True.__class__),True)
+    return resp
+"""

@@ -37,8 +37,6 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         dict_source= source
         dict_destination = destination
         
-        # we just use driver1 as driver right now. We must wait for rpc4django to inflate
-        # a User object in the functions for using the real driver
         driver = get_xmlrpc_user(kwargs)
         
         source = Location()
@@ -74,7 +72,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         participation.role = 'driver'
         participation.save()
         
-        resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,str(trip.__class__),trip.to_xmlrpc())
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,"Trip",trip.to_xmlrpc())
         return resp
 
 @rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
@@ -123,7 +121,7 @@ def check_ride_requests(trip, **kwargs):
         else:
                 for participation in participations_for_trip:
                         if participation.requested:
-                                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTS_FOUND,str(participation.person.__class__),participation.person.to_xmlrpc())
+                                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTS_FOUND,"Person",participation.person.to_xmlrpc())
                                 return resp
                             
         resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)

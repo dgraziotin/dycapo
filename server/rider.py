@@ -52,7 +52,7 @@ def search_trip(source, destination, **kwargs):
         for trip in trips:
                 for location in trip.locations.filter(point="dest"):
                         if location.georss_point==destination.georss_point:
-                                resp = Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,str(trip.__class__),trip.to_xmlrpc())
+                                resp = Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",trip.to_xmlrpc())
                                 return resp
         resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
         return resp
