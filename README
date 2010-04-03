@@ -30,8 +30,8 @@ Therefore, v1.0.0 will be considered stable, with fixed API.
 
 PROTOCOL
 ***************
-Dycapo tries to both adopt and extend the OpenTrip <http://opentrip.info/wiki/Home> Protocol.
-It will also propose the OpenTrip Dynamic module, that makes use of OpenTrip objects over XML-RPC.
+Dycapo defines a new Protocol for Dynamic Carpooling, heavily inspired on <http://opentrip.info/wiki/Home> Protocol.
+The Protocol (which currently has no name) is based on XML-RPC calls
 
 API
 ***************
