@@ -1,53 +1,46 @@
 RELEASE NOTES
 ***************
 
-2010-01-10  Daniel Graziotin  <daniel DOT graziotin AT gmail DOT com>
+2010-04-03  Daniel Graziotin  <daniel DOT graziotin AT gmail DOT com>
 
-Dycapo 0.0.2 is just for _showing_out_some_functionalities_ of the system and 
-testing the underlying technologies. 
-Dycapo 0.0.2 incorporates and shows:
-- OpenTrip Core adoption and OpenTrip Dynamic data structures proposal (in Django Model format)
-- Use of XML-RPC with Django (rpc4django over HTTP and HTTPS)
-- (Sort of) integration of Dycapo models with Django and rpc4django
-- Authentication
-- Insertion of a trip by a driver
-- Start of a trip by a driver
-- Search of a trip by a rider
-- Send a ride request to a driver
-- Let the driver accept the ride request
+Dycapo v0.1.0 is the first prototype version on which we are beginning to build our APIs.
 
-No one exported XML-RPC function will surely be included in the final API!
-No one exported XML-RPC function is either optimized or completely working!
+Dycapo v0.1.0 incorporates and shows:
+* The introduction of an open Protocol heavily inspired by OpenTrip Core [http://www.opentrip.info] based on XML-RPC calls
+* Integration of Dycapo models with Django models
+* Authentication system
+* Insertion of a trip by a driver
+* Start of a trip by a driver
+* Search of a trip by a rider
+* Send a ride request to a driver
+* Let the driver accept the ride request
+* A complete testing framework
 
-Code is (somewhat) documented. Expect a completely better work for 0.1.0 :)
-
-
-CHANGES SINCE 0.0.1
+CHANGES SINCE v0.0.2
 ***************
-Some refactoring to make the code cleaner. 
-Lots of bugs fixed.
-Test suite rewritten and (finally) fully working.
 
-models.py:
-- added utility methods (i.e. __unicode__ and to_xmlrpc)
-- use of OpenTrip id proposal instead of Django id
-- addition of fields to Participation model, regarding a ride request and a request accepted
-
-trip.py:
-this module has been splitted in four files:
-- driver.py - holds all the XML-RPC methods that a Driver needs.
-- rider.py - holds all the XML-RPC methods that a Rider needs.
-- commin.py - will hold all the XML-RPC methods shared by Rider and Driver
-- utils.py - holds some utility functions.
-
-driver.py (formerly trip.py):
-- added check_ride_requests(trip) - checks for ride requests
-- added accept_ride_request(trip, person) - for accepting a Rider
-
-rider.py (formerly trip.py):
-- added request_ride(trip) - sends a ride request to a trip
+General
+* sqlite no more included, we make use of MySQL for testing (dump is included)
+* docs/ directory is cleaner
+* SemVer [http://semver.org] adopted
+* Refactoring
+* Return values adjusted thanks to new Response object, now used eveywhere
+* Use of get_xmlrpc_user() and new RPC4DJANGO feature to get the logged in user
 
 tests/:
-- Cleaner code and better organization
-- Added test_all_simple.py - creates a Driver and a Rider with the same destination as target
-- test_all.py - creates 3 drivers and 5 riders with random locations as target
+* Use of the new Response object
+* More verbose, clearer
+* Refactoring
+* Can be configured throught a file, settings.py
+
+server/models.py
+* New Response object, the default returning value of every XML-RPC call. Acts as an Envelope, like in Soap.
+
+server/response_codes.py (NEW)
+* Contains the default codes and strings to be returned from Response objects
+
+server/utils.py
+* util function get_xmlrpc_user(), that returns the Person object making the XML-RPC call
+
+server/rider.py
+* Better documentation
