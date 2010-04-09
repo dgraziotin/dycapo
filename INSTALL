@@ -7,7 +7,9 @@ MEET THE DEPENDENCIES
 Please verify that your system meets all the dependencies described in
 DEPENDENCIES file.
 
-Right now we could just test Dycapo using Sqlite.
+Please note that we are testing Dycapo using Mysql. We also provide a dump, 
+located under db/dycapo-mysql.sql that enables testing out-of-the-box
+
 
 ADJUST SETTINGS.PY
 ***************
@@ -19,6 +21,7 @@ Adjust settings.py according to your needs. In particular, change the values of:
 - ADMIN_MEDIA_PREFIX
 - GOOGLE_MAPS_API_KEY
 - SITE_DOMAIN (use domain.ext or subdomain.domain.ext, without HTTP)
+
 Run
 python manage.py syncdb
 
@@ -42,16 +45,6 @@ Change the lines
 sys.path.append('/home/bodom_lx/Projects/')
 sys.path.append('/home/bodom_lx/Projects/dycapo')
 according to your Dycapo path
-
-DATABASE FILE PERMISSIONS
-***************
-If you're using Sqlite (we don't recommend this, as it easily locks), then 
-change the permissions of
-- db/database.db
-AND
-- db/
-
-To 777.
 
 CONFIGURE APACHE
 ***************

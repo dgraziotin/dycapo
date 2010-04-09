@@ -1,11 +1,10 @@
-﻿# USE THIS DUMP TO TEST DYCAPO WITH MYSQL
-# Sequel Pro dump
+﻿# Sequel Pro dump
 # Version 1630
 # http://code.google.com/p/sequel-pro
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-03-18 16:14:25 +0100
+# Generation Time: 2010-04-09 13:07:19 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -59,7 +58,7 @@ CREATE TABLE `auth_message` (
   `message` longtext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `auth_message_user_id` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 
 
@@ -155,9 +154,9 @@ LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
 INSERT INTO `auth_user` (`id`,`username`,`first_name`,`last_name`,`email`,`password`,`is_staff`,`is_active`,`is_superuser`,`last_login`,`date_joined`)
 VALUES
-	(1,'admin','','','admin@admins.com','sha1$71a04$7446e1fae5a9b7e9e16d6c37d29abbc0f92c9970',1,1,1,'2010-03-18 08:10:54','2010-03-18 08:10:37'),
-	(2,'rider1','John','Rider','rider@riders.com','sha1$a6660$2e2f222a983d0b03bac70a62db48883578681c2c',0,1,0,'2010-03-18 08:11:09','2010-03-18 08:11:09'),
-	(3,'driver1','Pamela','Driver','','sha1$f8857$6ba0b6324ebff0f87cdf58ddfd325886307c4156',0,1,0,'2010-03-18 08:11:54','2010-03-18 08:11:54');
+	(1,'admin','','','admin@admins.com','sha1$de73b$20d52a554a8564deaca930d34754c472cc71685e',1,1,1,'2010-04-09 04:00:20','2010-04-09 04:00:06'),
+	(2,'driver1','John','Driver','driver1@drivers.com','sha1$a62af$db4bc3984f81c872bb66adaba5337bf969217c30',0,1,0,'2010-04-09 04:00:51','2010-04-09 04:00:51'),
+	(3,'rider1','Lorena','Rider','rider1@riders.com','sha1$3688c$31af2df5aebe9937101b61ca780615547fd0fdb3',0,1,0,'2010-04-09 04:01:49','2010-04-09 04:01:49');
 
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -191,14 +190,14 @@ CREATE TABLE `auth_user_user_permissions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`permission_id`),
   KEY `permission_id_refs_id_67e79cb` (`permission_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `auth_user_user_permissions` WRITE;
 /*!40000 ALTER TABLE `auth_user_user_permissions` DISABLE KEYS */;
 INSERT INTO `auth_user_user_permissions` (`id`,`user_id`,`permission_id`)
 VALUES
 	(1,2,31),
-	(2,3,31);
+	(3,3,31);
 
 /*!40000 ALTER TABLE `auth_user_user_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -221,14 +220,15 @@ CREATE TABLE `django_admin_log` (
   PRIMARY KEY (`id`),
   KEY `django_admin_log_user_id` (`user_id`),
   KEY `django_admin_log_content_type_id` (`content_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
 INSERT INTO `django_admin_log` (`id`,`action_time`,`user_id`,`content_type_id`,`object_id`,`object_repr`,`action_flag`,`change_message`)
 VALUES
-	(1,'2010-03-18 08:11:54',1,10,'2','rider1',1,''),
-	(2,'2010-03-18 08:12:26',1,10,'3','driver1',1,'');
+	(1,'2010-04-09 04:01:49',1,10,'2','driver1',1,''),
+	(2,'2010-04-09 04:02:59',1,10,'3','rider1',1,''),
+	(3,'2010-04-09 04:04:43',1,10,'3','rider1',2,'Changed password.');
 
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -287,7 +287,7 @@ LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
 INSERT INTO `django_session` (`session_key`,`session_data`,`expire_date`)
 VALUES
-	('1f8a1fff75b14eedbe5a3cf2a0714c09','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS43ODI2YTQ1Mjk4MWZmMmUy\nMzVmZDQ0ZWM3OGUxZGE1ZA==\n','2010-04-01 08:10:54');
+	('2b927c566019711b5cc09f5c2c1c1670','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS43ODI2YTQ1Mjk4MWZmMmUy\nMzVmZDQ0ZWM3OGUxZGE1ZA==\n','2010-04-23 04:00:20');
 
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -330,13 +330,9 @@ CREATE TABLE `server_location` (
   `town` varchar(255) NOT NULL,
   `postcode` int(10) unsigned DEFAULT NULL,
   `subregion` varchar(255) NOT NULL,
-  `intersection` varchar(255) NOT NULL,
-  `address` varchar(255) NOT NULL,
   `georss_point` varchar(255) NOT NULL,
   `georss_point_latitude` double DEFAULT NULL,
   `georss_point_longitude` double DEFAULT NULL,
-  `georss_radius` int(10) unsigned DEFAULT NULL,
-  `georss_box` varchar(255) NOT NULL,
   `offset` int(10) unsigned DEFAULT NULL,
   `recurs` varchar(255) NOT NULL,
   `days` varchar(255) NOT NULL,
@@ -399,9 +395,6 @@ DROP TABLE IF EXISTS `server_person`;
 
 CREATE TABLE `server_person` (
   `user_ptr_id` int(11) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `alias` varchar(200) NOT NULL,
-  `userid` varchar(200) NOT NULL,
   `uri` varchar(200) NOT NULL,
   `phone` varchar(200) NOT NULL,
   `position_id` int(11) DEFAULT NULL,
@@ -417,10 +410,10 @@ CREATE TABLE `server_person` (
 
 LOCK TABLES `server_person` WRITE;
 /*!40000 ALTER TABLE `server_person` DISABLE KEYS */;
-INSERT INTO `server_person` (`user_ptr_id`,`name`,`alias`,`userid`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
+INSERT INTO `server_person` (`user_ptr_id`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
 VALUES
-	(2,'John Rider','','rider1','','123123123',NULL,34,'M',1,0,0,0),
-	(3,'Pamela Driver','','driver1','','234324234',NULL,24,'F',0,0,0,0);
+	(2,'http://john.drivers.com','555-5924-594',NULL,29,'M',1,0,0,0),
+	(3,'http://lorena.riders.com','44593-21349-3443',NULL,26,'F',0,0,0,0);
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;
 UNLOCK TABLES;

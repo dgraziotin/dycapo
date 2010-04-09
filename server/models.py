@@ -89,16 +89,16 @@ class Location(models.Model):
     town = models.CharField(max_length=255, blank=True) # OPT
     postcode = models.PositiveIntegerField(blank=True,null=True) # OPT
     subregion = models.CharField(max_length=255, blank=True) # OPT
-    intersection = models.CharField(max_length=255, blank=True) # OPT
-    address = models.CharField(max_length=255, blank=True) # OPT
+    #intersection = models.CharField(max_length=255, blank=True) # OPT
+    #address = models.CharField(max_length=255, blank=True) # OPT
     georss_point = models.CharField(max_length=255, blank=True)  # RECOM
     """
     georss_pont_latitude and georss_point_longitude should be just used internally
     """
     georss_point_latitude = models.FloatField(null=True) #EXT
     georss_point_longitude = models.FloatField(null=True) #EXT
-    georss_radius = models.PositiveIntegerField(blank=True,null=True) # OPT
-    georss_box = models.CharField(max_length=255, blank=True) # OPT
+    #georss_radius = models.PositiveIntegerField(blank=True,null=True) # OPT
+    #georss_box = models.CharField(max_length=255, blank=True) # OPT
     """
     The following should be members of a separate Date-Time class but are included here for simplicity
     """
@@ -152,10 +152,17 @@ class Person(User):
     `this blog <http://steps.ucdavis.edu/People/jbremson/extending-the-user-model-in-django>`_  to get Person objects
     instead of User objects when requesting a user.
     """
-    name = models.CharField(max_length=200) # MUST
-    alias = models.CharField(max_length=200,blank=True) # OPT
-    userid = models.CharField(max_length=200,blank=False) # MUST
-    #email is a field of django User model
+    
+    # first_name from Django
+    # last_name from Django
+    # email from Django
+    # last_login from Django
+    # date_joined from Django
+    # username from Django
+    
+    #name = models.CharField(max_length=200) # MUST
+    #alias = models.CharField(max_length=200,blank=True) # OPT
+    #userid = models.CharField(max_length=200,blank=False) # MUST
     #email = models.CharField(max_length=200) # OPT
     uri = models.CharField(max_length=200,blank=True) # OPT
     phone = models.CharField(max_length=200,blank=False) # OPT
@@ -235,6 +242,7 @@ class Trip(models.Model):
     See `OpenTrip_Core#Entry_Elements <http://opentrip.info/wiki/OpenTrip_Core#Entry_Elements>`_ for more info.
     atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
     in case of an export of a Trip in OpenTrip Feed format.
+    TODO: return Prefs and Mode in XML_RPC
     """
     published = models.DateTimeField(auto_now_add=True, blank=False) # MUST
     updated = models.DateTimeField(auto_now=True, blank=False) # MUST
