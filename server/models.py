@@ -89,16 +89,12 @@ class Location(models.Model):
     town = models.CharField(max_length=255, blank=True) # OPT
     postcode = models.PositiveIntegerField(blank=True,null=True) # OPT
     subregion = models.CharField(max_length=255, blank=True) # OPT
-    #intersection = models.CharField(max_length=255, blank=True) # OPT
-    #address = models.CharField(max_length=255, blank=True) # OPT
     georss_point = models.CharField(max_length=255, blank=True)  # RECOM
     """
     georss_pont_latitude and georss_point_longitude should be just used internally
     """
     georss_point_latitude = models.FloatField(null=True) #EXT
     georss_point_longitude = models.FloatField(null=True) #EXT
-    #georss_radius = models.PositiveIntegerField(blank=True,null=True) # OPT
-    #georss_box = models.CharField(max_length=255, blank=True) # OPT
     """
     The following should be members of a separate Date-Time class but are included here for simplicity
     """
@@ -130,18 +126,7 @@ class Location(models.Model):
             self.geopy_it()
         super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
         
-    def geopy_it(self):
-        """
-        TODO: popoulate a Location object using geopy
-        """
-        pass
-    
-    def natural_key(self):
-        """
-        Will be used in serialization. Work in progress
-        """
-        return (self.georss_point)
-    
+   
     def __unicode__(self):
         return self.georss_point
 
@@ -159,11 +144,7 @@ class Person(User):
     # last_login from Django
     # date_joined from Django
     # username from Django
-    
-    #name = models.CharField(max_length=200) # MUST
-    #alias = models.CharField(max_length=200,blank=True) # OPT
-    #userid = models.CharField(max_length=200,blank=False) # MUST
-    #email = models.CharField(max_length=200) # OPT
+    # password from Django
     uri = models.CharField(max_length=200,blank=True) # OPT
     phone = models.CharField(max_length=200,blank=False) # OPT
     position = models.ForeignKey(Location,blank=True,null=True) # EXT

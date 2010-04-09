@@ -1,4 +1,6 @@
 *.pyc
 *.DS_Store
+*.bak
 .project
 .pydevproject
+docs/UML.jude.bak
