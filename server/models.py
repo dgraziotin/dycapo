@@ -196,6 +196,15 @@ class Mode(models.Model):
     lic = models.CharField(max_length=255,blank=True) # OPT
     cost = models.FloatField(blank=True,null=True) # OPT
     
+    def to_xmlrpc(self):
+        """
+        Prepares the dictionary to be returned when returned as XML-RPC
+        """
+        dict_mode = self.__dict__
+        del dict_mode['id']
+        return dict_mode
+        
+    
 class Prefs(models.Model):
     """
     Stores the preferences of a Trip set by the Person who creates it. 
@@ -208,6 +217,14 @@ class Prefs(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True) # OPT
     drive = models.BooleanField(default=False) # OPT
     ride = models.BooleanField(default=False) # OPT
+   
+    def to_xmlrpc(self):
+        """
+        Prepares the dictionary to be returned when returned as XML-RPC
+        """
+        dict_prefs = self.__dict__
+        del dict_prefs['id']
+        return dict_prefs
 
 
 class Trip(models.Model):
@@ -230,7 +247,7 @@ class Trip(models.Model):
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
     
     def __unicode__(self):
-        return self.get_atom_id_from_dycapo_id()
+        return self.id
     
     def to_xmlrpc(self):
         """
@@ -242,9 +259,9 @@ class Trip(models.Model):
         -what else about the driver?
         """
         locations = self.locations.all()
-        points = []
+        locations_dict = []
         for location in locations:
-            points.append(location.georss_point)
+            locations_dict.append(location.to_xmlrpc())
         trip_dict = {
             'id' : self.id,
             'published' : self.published,
@@ -252,9 +269,9 @@ class Trip(models.Model):
             'expires': self.expires,
             'content': self.content,
             'author': self.author.username,
-            'mode': 'mode',
-            'prefs': 'prefs',
-            'locations':points,
+            'mode': self.mode.to_xmlrpc(),
+            'prefs': self.prefs.to_xmlrpc(),
+            'locations':locations_dict,
         }
         return trip_dict
     
