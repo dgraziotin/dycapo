@@ -22,7 +22,7 @@ This module holds all the XML-RPC methods that a Rider needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Participation, Response
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
+from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
 import response_codes
 
 @rpcmethod(name='dycapo.search_trip', signature=['Response','Location','Location'], permission='server.can_xmlrpc')
@@ -67,7 +67,7 @@ def request_ride(trip, **kwargs):
         -check if there is vacancy in the current trip
         -check if the trip is not expired
         """
-        trip_dict = atom_to_dycapo(trip)
+        trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
         rider = get_xmlrpc_user(kwargs)
         

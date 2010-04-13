@@ -22,7 +22,7 @@ This module holds all the XML-RPC methods that a Driver needs.
 from rpc4django import rpcmethod
 from models import Trip, Location, Person, Mode, Participation, Prefs, Response
 from datetime import datetime
-from utils import atom_to_dycapo, populate_object_from_dictionary, get_xmlrpc_user
+from utils import populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
 
 @rpcmethod(name='dycapo.add_trip', signature=['Response','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
@@ -81,7 +81,7 @@ def start_trip(trip):
         TODO:
         -verify user permissions
         """
-        trip_dict = atom_to_dycapo(trip)
+        trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
         participation = Participation.objects.get(trip=trip,role='driver')
         
@@ -108,7 +108,7 @@ def check_ride_requests(trip, **kwargs):
         -verify user permissions
         -what if there is more than a ride request? Should we return just one per time?
         """
-        trip_dict = atom_to_dycapo(trip)
+        trip_dict = trip
 
         trip = Trip.objects.get(id=trip_dict['id'])
         driver = get_xmlrpc_user(kwargs)
@@ -135,7 +135,7 @@ def accept_ride_request(trip, person):
         TODO:
         -verify user permissions
         """ 
-        trip_dict = atom_to_dycapo(trip)
+        trip_dict = trip
         person_dict = person
         
         trip = Trip.objects.get(id=trip_dict['id'])
@@ -158,7 +158,7 @@ def delete_trip(trip):
         """
         This method is only for testing. It will be removed in the final version of Dycapo!
         """
-        trip_dict = atom_to_dycapo(trip)
+        trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
         for location in trip.locations.all():
                 location.delete()

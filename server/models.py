@@ -123,7 +123,6 @@ class Location(models.Model):
             point = Point.from_string(self.georss_point)
             self.georss_point_latitude = point.latitude
             self.georss_point_longitude = point.longitude
-            self.geopy_it()
         super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
         
    
@@ -253,7 +252,7 @@ class Trip(models.Model):
         for location in locations:
             points.append(location.georss_point)
         trip_dict = {
-            'id' : self.get_atom_id_from_dycapo_id(),
+            'id' : self.id,
             'published' : self.published,
             'updated': self.updated,
             'expires': self.expires,
@@ -265,14 +264,6 @@ class Trip(models.Model):
         }
         return trip_dict
     
-    def get_atom_id_from_dycapo_id(self):
-        return "urn:guid:"+SITE_DOMAIN+":"+str(self.id)
-    
-    def get_dycapo_id_from_atom_id(self,atom_id):
-        splitted_atom_id = atom_id.split(':')
-        dycapo_id = int(splitted_atom_id[-1])
-        return dycapo_id
-
 class Participation(models.Model):
     """
     Describes the participation of a Person in a Trip.
