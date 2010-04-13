@@ -21,14 +21,28 @@ This module holds all the XML-RPC methods that a driver and a rider have in comm
 """
 from rpc4django import rpcmethod
 from models import Location, Person, Mode, Prefs, Trip, Response
-"""
+from utils import populate_object_from_dictionary, get_xmlrpc_user
+import response_codes
+
 @rpcmethod(name='dycapo.update_position', signature=['Response','Location'], permission='server.can_xmlrpc')
-def update_position(location):
+def update_position(location,**kwargs):
     dict_position = location
     position = Location()
     position = populate_object_from_dictionary(position,dict_position)
     user = get_xmlrpc_user(kwargs)
+    position.save()
     user.position = position
+    user.save()
     resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,str(True.__class__),True)
-    return resp
-"""
+    return resp.to_xmlrpc()
+
+@rpcmethod(name='dycapo.get_position', signature=['Response','Person'], permission='server.can_xmlrpc')
+def get_position(person):
+    '''
+    TODO: check permissions!
+    '''
+    dict_person = person
+    person = Person.objects.get(username=person['username'])
+    
+    resp = Response(response_codes.POSITIVE,response_codes.POSITION_FOUND,'Location',person.position.to_xmlrpc())
+    return resp.to_xmlrpc()

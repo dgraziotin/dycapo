@@ -17,7 +17,7 @@ This file is part of Dycapo.
 
 """
 """
-This test suite creates a single driver with a selected destination (1.0,1.0)
+This test suite creates a single driver with a selected destination (1.0 1.0)
 and a rider searching for a ride in the same destination.
 """
 

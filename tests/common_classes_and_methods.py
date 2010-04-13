@@ -113,6 +113,10 @@ class Prefs():
     age = '18-30'
     nonsmoking = False
     
+class Person():
+    username = ''
+
+    
 class Response(object):
     """
     This is an envelope that standardizes the response of Dycapo. This is an OpenTrip Dynamic proposal.

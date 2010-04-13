@@ -102,15 +102,6 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255,blank=True) # OPT
     days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True) # OPT
     leaves = models.DateTimeField(blank=False) # MUST
-    
-    def slit_georss_point(self):
-        if self.georss_point !=  '':
-            try:
-                point.P
-                self.georss_point_lat = float(georss_point_splitted[0])
-                self.georss_point_lon = float(georss_point_splitted[1])
-            except:
-                raise ValueError('georss_point does not have a valid value')
             
     
     def save(self, force_insert=False, force_update=False):
@@ -128,6 +119,9 @@ class Location(models.Model):
    
     def __unicode__(self):
         return self.georss_point
+    
+    def to_xmlrpc(self):
+        return self.__dict__
 
 class Person(User):
     """

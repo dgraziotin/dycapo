@@ -36,12 +36,16 @@ class RiderTest(Thread):
     client = ''
     fixed_destination = None
     username = ""
+    position = ''
     
     def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password,domain)
         self.fixed_destination = fixed_destination
         self.username = username
+        self.position = common_classes_and_methods.Location()
+        self.position.georss_point="33.3 66.6"
+        self.position.leaves = common_classes_and_methods.now()
     
     def search_ride(self):
         source = common_classes_and_methods.Location()
@@ -49,7 +53,7 @@ class RiderTest(Thread):
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        source.georss_point=str(point_lat) + "," + str(point_lon)
+        source.georss_point=str(point_lat) + " " + str(point_lon)
         source.label="home"
         source.point="orig"
         source.leaves = common_classes_and_methods.now()
@@ -83,6 +87,26 @@ class RiderTest(Thread):
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
     
+     
+    def update_position(self):
+        print "#" * 80
+        print self.username + ": UPDATING POSITION..."
+        print "#" * 80
+        response = self.client.dycapo.update_position(self.position)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
+    
+    def get_position(self):
+        print "#" * 80
+        print self.username + ": GETTING POSITION..."
+        print "#" * 80
+        person = common_classes_and_methods.Person()
+        person.username = self.username
+        response = self.client.dycapo.get_position(person)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
     
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
@@ -97,6 +121,7 @@ class RiderTest(Thread):
                 print "*" * 80
                 break
             common_classes_and_methods.wait_random_seconds()
+            self.update_position()
             trip = self.search_ride()
             attempts = attempts - 1
             if trip: 

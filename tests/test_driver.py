@@ -42,6 +42,7 @@ class DriverTest(Thread):
     clean_responses = True
     fixed_destination = None
     username = ''
+    position = ''
     
     def __init__(self,username,password,domain,fixed_destination,clean_responses):
         Thread.__init__(self)
@@ -49,6 +50,9 @@ class DriverTest(Thread):
         self.clean_responses = clean_responses
         self.fixed_destination = fixed_destination
         self.username = username
+        self.position = common_classes_and_methods.Location()
+        self.position.georss_point="66.66 33.33"
+        self.position.leaves = common_classes_and_methods.now()
         
     def insert_trip(self):
         source = common_classes_and_methods.Location()
@@ -59,7 +63,7 @@ class DriverTest(Thread):
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        source.georss_point=str(point_lat) + "," + str(point_lon)
+        source.georss_point=str(point_lat) + " " + str(point_lon)
         source.label="home"
         source.point="orig"
         source.leaves = common_classes_and_methods.now()
@@ -125,6 +129,25 @@ class DriverTest(Thread):
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
     
+    def update_position(self):
+        print "#" * 80
+        print self.username + ": UPDATING POSITION..."
+        print "#" * 80
+        response = self.client.dycapo.update_position(self.position)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
+    def get_position(self):
+        print "#" * 80
+        print self.username + ": GETTING POSITION..."
+        print "#" * 80
+        person = common_classes_and_methods.Person()
+        person.username = self.username
+        response = self.client.dycapo.get_position(person)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
+    
     def delete_trip(self,trip):
         print "#" * 80
         print "DELETING TRIP..."
@@ -149,6 +172,8 @@ class DriverTest(Thread):
                 print "#" * 80
                 break
             common_classes_and_methods.wait_random_seconds()
+            self.update_position()
+            self.get_position()
             ride_request = self.check_ride_requests(trip)
             if ride_request:
                 found = True
@@ -156,6 +181,7 @@ class DriverTest(Thread):
             attempts = attempts - 1
         if self.clean_responses:
             self.delete_trip(trip)
+        
         
                 
     def run(self):
