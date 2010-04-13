@@ -73,7 +73,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         participation.save()
         
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,"Trip",trip.to_xmlrpc())
-        return resp
+        return resp.to_xmlrpc()
 
 @rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def start_trip(trip):
@@ -88,7 +88,7 @@ def start_trip(trip):
         # return False if the driver already started this trip
         if participation.started:
                 resp = Response(response_codes.NEGATIVE,response_codes.TRIP_ALREADY_STARTED,str(False.__class__),False)
-                return resp
+                return resp.to_xmlrpc()
         
         participation.started = True
         participation.started_timestamp = datetime.now()
@@ -97,7 +97,7 @@ def start_trip(trip):
         trip.save()
         
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_STARTED,str(True.__class__),True)
-        return resp
+        return resp.to_xmlrpc()
 
 
 @rpcmethod(name='dycapo.check_ride_requests', signature=['Response','Trip'], permission='server.can_xmlrpc')
@@ -117,15 +117,15 @@ def check_ride_requests(trip, **kwargs):
 
         if len(participations_for_trip) == 0:
                 resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
-                return resp
+                return resp.to_xmlrpc()
         else:
                 for participation in participations_for_trip:
                         if participation.requested:
                                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTS_FOUND,"Person",participation.person.to_xmlrpc())
-                                return resp
+                                return resp.to_xmlrpc()
                             
         resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
-        return resp
+        return resp.to_xmlrpc()
 
 
 @rpcmethod(name='dycapo.accept_ride_request', signature=['Response','Trip','Person'], permission='server.can_xmlrpc')
@@ -147,9 +147,9 @@ def accept_ride_request(trip, person):
                 rider_participation.accepted_timestamp = datetime.now()
                 rider_participation.save()
                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
-                return resp
+                return resp.to_xmlrpc()
         resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
-        return resp
+        return resp.to_xmlrpc()
 
         
 
@@ -167,5 +167,5 @@ def delete_trip(trip):
         trip.participation.clear()
         trip.delete()
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,str(True.__class__),True)
-        return resp
+        return resp.to_xmlrpc()
         

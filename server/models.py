@@ -306,3 +306,6 @@ class Response(object):
         self.message = message
         self.type = type
         self.value = value
+        
+    def to_xmlprc(self):
+        return self.__dict__

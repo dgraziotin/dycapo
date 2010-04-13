@@ -48,14 +48,14 @@ def search_trip(source, destination, **kwargs):
         
         if not trips:
                 resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
-                return resp
+                return resp.to_xmlrpc()
         for trip in trips:
                 for location in trip.locations.filter(point="dest"):
                         if location.georss_point==destination.georss_point:
                                 resp = Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",trip.to_xmlrpc())
-                                return resp
+                                return resp.to_xmlrpc()
         resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
-        return resp
+        return resp.to_xmlrpc()
         
         
 @rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')
@@ -85,6 +85,6 @@ def request_ride(trip, **kwargs):
         except Participation.DoesNotExist:
                 participation.save()
                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTED,str(True.__class__),True)
-                return resp
+                return resp.to_xmlrpc()
         resp = Response(response_codes.ERROR,response_codes.RIDE_IN_COURSE,str(True.__class__),True)
-        return resp
+        return resp.to_xmlrpc()
