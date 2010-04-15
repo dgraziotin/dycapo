@@ -25,7 +25,22 @@ from utils import populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
 
 @rpcmethod(name='dycapo.update_position', signature=['Response','Location'], permission='server.can_xmlrpc')
-def update_position(location,**kwargs):
+def update_position(position,**kwargs):
+    """
+    This method is for updating the actual position of a Person.
+        
+    TODO
+    
+    - verify user permissions
+    
+    PARAMETERS
+    
+    - ``position`` - a **Location** object, representing the current position of a Person.
+    
+    RETURNS 
+    
+    An object of type **Response**, containing all the details of the operation and results (if any)
+    """
     dict_position = location
     position = Location()
     position = populate_object_from_dictionary(position,dict_position)
@@ -38,9 +53,21 @@ def update_position(location,**kwargs):
 
 @rpcmethod(name='dycapo.get_position', signature=['Response','Person'], permission='server.can_xmlrpc')
 def get_position(person):
-    '''
-    TODO: check permissions!
-    '''
+    """
+    This method is for getting the actual position of a Person.
+        
+    TODO
+    
+    - verify user permissions
+    
+    PARAMETERS
+    
+    - ``person`` - a **Person** object, representing the Person we would like to know the position.
+    
+    RETURNS 
+    
+    An object of type **Response**, containing all the details of the operation and results (if any)
+    """
     dict_person = person
     person = Person.objects.get(username=person['username'])
     

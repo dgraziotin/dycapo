@@ -28,11 +28,21 @@ import response_codes
 @rpcmethod(name='dycapo.search_trip', signature=['Response','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination, **kwargs):
         """
-        This method will be used by a rider to search a Trip, given its current position and the destination.
-        TODO:
-        -verify user permissions
-        -use serializers.serialize and use_natural_keys
-        -implement an algorithm to really search a Trip :)
+        This method is used by a rider to search a Trip, given its current position and the destination.
+        
+        TODO
+        
+        - verify user permissions
+        - implement an algorithm to really search a Trip :)
+    
+        PARAMETERS
+    
+        - ``source`` - a **Location** object, representing where the Rider is located
+        - ``destination`` - a **Location** object, representing where the Rider wants to go to
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         dict_destination = destination
         destination = Location()
@@ -42,9 +52,7 @@ def search_trip(source, destination, **kwargs):
         #    return False
         # at the moment we just return the first available trips that are also active
         trips = Trip.objects.filter(active=True)
-        """
-        dummy algorithm: search in active Trips that have the same destination of the driver
-        """
+       
         
         if not trips:
                 resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,str(False.__class__),False)
@@ -62,10 +70,20 @@ def search_trip(source, destination, **kwargs):
 def request_ride(trip, **kwargs):
         """
         This method is for a rider to request a Ride in a Trip.
-        TODO:
-        -verify user permissions
-        -check if there is vacancy in the current trip
-        -check if the trip is not expired
+        
+        TODO
+        
+        - verify user permissions
+        - check if there is vacancy in the current trip
+        - check if the trip is not expired
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Rider would like to join.
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])

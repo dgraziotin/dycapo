@@ -30,6 +30,23 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         """
         Inserts a new Trip in Dycapo System. It supports a source, a destination and
         the trip mode. See the models for more information.
+        
+        TODO
+        
+        - verify user permissions
+        - multiple waypoints
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Driver is willing to save
+        - ``mode`` - a **Mode** object, representing the modalities of the Trip
+        - ``preferences`` - a **Prefs** object, representing the Trip preferences
+        - ``source`` - a **Location** object, representing where the Trip will start.
+        - ``destination`` - a **Location** object, representing where the Trip will end.
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         dict_trip = trip
         dict_mode = mode
@@ -78,8 +95,19 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
 @rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def start_trip(trip, **kwargs):
         """
-        TODO:
-        -verify user permissions
+        Starts a Trip
+        
+        TODO
+        
+        - verify user permissions
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Driver is starting
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
@@ -109,9 +137,19 @@ def start_trip(trip, **kwargs):
 def check_ride_requests(trip, **kwargs):
         """
         This method is for a driver to see if there are ride requests for his Trip
-        TODO:
+        
+        TODO
+        
         -verify user permissions
         -what if there is more than a ride request? Should we return just one per time?
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Driver is checking
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
 
@@ -136,10 +174,22 @@ def check_ride_requests(trip, **kwargs):
 @rpcmethod(name='dycapo.accept_ride_request', signature=['Response','Trip','Person'], permission='server.can_xmlrpc')
 def accept_ride_request(trip, person, **kwargs):
         """
-        This method is for a driver to accept a ride request by a rider.
-        TODO:
+        his method is for a driver to accept a ride request by a rider.
+        
+        TODO
+        
         -verify user permissions
-        """ 
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip in which the Driver is accepting a ride.
+        - ``person`` - a **Person** object, representing the Rider that the Driver is accepting
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
+        """
+
         trip_dict = trip
         person_dict = person
         
