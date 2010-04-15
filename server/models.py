@@ -286,12 +286,17 @@ class Participation(models.Model):
     role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False) # EXT
     requested = models.BooleanField(blank=False, default=False) # EXT
     requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    requested_position = models.ForeignKey(Location,related_name="requested_position",blank=True,null=True) # EXT
     accepted = models.BooleanField(blank=False, default=False) # EXT
     accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    accepted_position = models.ForeignKey(Location,related_name="accepted_position",blank=True,null=True) # EXT
     started = models.BooleanField(blank=False, default=False) # EXT
     started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    started_position = models.ForeignKey(Location,related_name="started_position",blank=True,null=True) # EXT    
     finished = models.BooleanField(blank=False, default=False) # EXT    
     finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
+    finished_position = models.ForeignKey(Location,related_name="finished_position",blank=True,null=True) # EXT
+
     
     def __unicode__(self):
         return str(self.person) + " -> " + str(self.trip)

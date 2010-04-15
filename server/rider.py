@@ -77,7 +77,10 @@ def request_ride(trip, **kwargs):
         participation.role = 'rider'
         participation.requested = True
         participation.requested_timestamp = datetime.now()
-        
+        try:
+            participation.requested_position = rider.position
+        except Location.DoesNotExist:
+            participation.requested_position = None
         try:
                 participation_check = Participation.objects.get(trip=trip,person=rider)
                 participation_check = synchronize_objects(participation_check,participation)

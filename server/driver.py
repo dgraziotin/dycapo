@@ -76,7 +76,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         return resp.to_xmlrpc()
 
 @rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
-def start_trip(trip):
+def start_trip(trip, **kwargs):
         """
         TODO:
         -verify user permissions
@@ -84,6 +84,7 @@ def start_trip(trip):
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
         participation = Participation.objects.get(trip=trip,role='driver')
+        driver = get_xmlrpc_user(kwargs)
         
         # return False if the driver already started this trip
         if participation.started:
@@ -92,6 +93,10 @@ def start_trip(trip):
         
         participation.started = True
         participation.started_timestamp = datetime.now()
+        try:
+            participation.started_position = driver.position
+        except Location.DoesNotExist:
+            participation.started_position = None
         participation.save()
         trip.active = True
         trip.save()
@@ -129,7 +134,7 @@ def check_ride_requests(trip, **kwargs):
 
 
 @rpcmethod(name='dycapo.accept_ride_request', signature=['Response','Trip','Person'], permission='server.can_xmlrpc')
-def accept_ride_request(trip, person):
+def accept_ride_request(trip, person, **kwargs):
         """
         This method is for a driver to accept a ride request by a rider.
         TODO:
@@ -145,6 +150,10 @@ def accept_ride_request(trip, person):
         if rider_participation.requested and not rider_participation.accepted:
                 rider_participation.accepted = True
                 rider_participation.accepted_timestamp = datetime.now()
+                try:
+                    rider_participation.accepted_position = rider.position
+                except Location.DoesNotExist:
+                    rider_participation.accepted_position = None
                 rider_participation.save()
                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
                 return resp.to_xmlrpc()
