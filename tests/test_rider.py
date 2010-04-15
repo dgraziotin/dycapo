@@ -114,6 +114,7 @@ class RiderTest(Thread):
         attempts = 5
         attempts_orig = attempts
         found = False
+        self.update_position()
         while not found:
             if attempts==0: 
                 print "*" * 80

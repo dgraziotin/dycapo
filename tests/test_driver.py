@@ -158,6 +158,7 @@ class DriverTest(Thread):
     
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
+        self.update_position()
         trip = self.insert_trip()
         common_classes_and_methods.wait_random_seconds()
         trip_response = self.start_trip(trip)
@@ -165,6 +166,7 @@ class DriverTest(Thread):
         attempts = 8
         attempts_orig = 8
         found = False
+        
         while not found:
             if attempts==0: 
                 print "#" * 80

@@ -41,7 +41,7 @@ def update_position(position,**kwargs):
     
     An object of type **Response**, containing all the details of the operation and results (if any)
     """
-    dict_position = location
+    dict_position = position
     position = Location()
     position = populate_object_from_dictionary(position,dict_position)
     user = get_xmlrpc_user(kwargs)
