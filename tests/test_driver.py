@@ -51,7 +51,7 @@ class DriverTest(Thread):
         self.fixed_destination = fixed_destination
         self.username = username
         self.position = common_classes_and_methods.Location()
-        self.position.georss_point="66.66 33.33"
+        self.position.georss_point="46.462822799999998, 11.3343092"
         self.position.leaves = common_classes_and_methods.now()
         
     def insert_trip(self):
@@ -168,6 +168,9 @@ class DriverTest(Thread):
         found = False
         
         while not found:
+            self.update_position()
+            self.get_position()
+      
             if attempts==0: 
                 print "#" * 80
                 print "RIDE REQUEST NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"

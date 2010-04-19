@@ -23,6 +23,7 @@ requesting rides in random locations.
 from test_driver import DriverTest
 from test_rider import RiderTest
 import os, sys
+import settings
 
 if __name__=="__main__":
     for i in range(0,settings.DRIVER_THREADS):

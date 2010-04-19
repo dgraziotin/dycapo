@@ -34,6 +34,7 @@ def search_trip(source, destination, **kwargs):
         
         - verify user permissions
         - implement an algorithm to really search a Trip :)
+        - verify trip vacancy
     
         PARAMETERS
     
@@ -48,9 +49,7 @@ def search_trip(source, destination, **kwargs):
         destination = Location()
         destination = populate_object_from_dictionary(destination,dict_destination)
         user = get_xmlrpc_user(kwargs)
-        #if user.is_travelling():
-        #    return False
-        # at the moment we just return the first available trips that are also active
+       
         trips = Trip.objects.filter(active=True)
        
         

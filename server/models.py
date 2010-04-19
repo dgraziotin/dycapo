@@ -102,19 +102,82 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255,blank=True) # OPT
     days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True) # OPT
     leaves = models.DateTimeField(blank=False) # MUST
+    
+    def address_to_point(self):
+        """
+        Given Geolocation information, it retrieves GeoRSS.
+        the return value of geocoder.geocode is in the form
+        (u'Street name, Street Number, Postcode City Province, Country', (latitude, longitude))
+        """
+        try:
+            geocoder = geocoders.Google(GOOGLE_MAPS_API_KEY)
+            address = self.street + ", " + str(self.postcode) + " " + self.town
+            geo_info = geocoder.geocode(address)
+            self.georss_point = str(geo_info[1][0]) + ' ' +str(geo_info[1][1])
+            point = Point.from_string(self.georss_point)
+            self.georss_point_latitude = point.latitude
+            self.georss_point_longitude = point.longitude
+        except:
+            self.georss_point = "0 0"
+            self.georss_point_latitude = 0
+            self.georss_point_longitude = 0
+        
+    def point_to_address(self):
+        """
+        Given GeoRSS point, it retrieves GeoLocation information in form of String
+        the return value of geocoder.reverse is in the form
+        (u'Street name, Street Number, Postcode City Province, Country', (latitude, longitude))
+        """
+        try:
+            point = Point.from_string(self.georss_point)
+            geocoder = geocoders.Google(GOOGLE_MAPS_API_KEY)
+            geocoding_result = geocoder.reverse((point.latitude,point.longitude))
+            full_address = geocoding_result[0].split(",")
+            self.street = full_address[0] + ',' + full_address[1]
+            self.postcode = int(full_address[2].split(" ")[1])
+            full_town = full_address[2].split(" ")[2:]
+            self.town = " ".join(full_town) 
+        except:
+            self.town = ""
+            self.street = ""
+            self.postcode = 0            
+        self.georss_point_latitude = point.latitude
+        self.georss_point_longitude = point.longitude
             
     
     def save(self, force_insert=False, force_update=False):
         """
         Ensures integrity
         """
-        if self.address == "" and self.georss_point == "":
-            raise IntegrityError('either address or georss_point must have a value')
-        if self.georss_point != "":
-            point = Point.from_string(self.georss_point)
-            self.georss_point_latitude = point.latitude
-            self.georss_point_longitude = point.longitude
-        super(Location, self).save(force_insert, force_update) # Call the "real" save() method.
+        if not self.point:
+            raise IntegrityError('Attribute point must be given.')
+        if not self.leaves:
+            raise IntegrityError('Attribute leaves must be given.')
+        if ((not self.street or not self.town or not self.postcode) and not self.georss_point):
+            raise IntegrityError('Give either address details or georss_point')
+        
+        if not self.georss_point:
+            """
+            At this point we have Address details as string but not GeoRSS point.
+            """
+            check_location = Location.objects.filter(point=self.point,label=self.label,street=self.street,town=self.town,postcode=self.postcode)
+            if len(check_location) == 0:
+                self.address_to_point()
+                super(Location, self).save(force_insert=True) # Call the "real" save() method.
+            else:
+                super(Location, check_location[0]).save(force_update=True) # Call the "real" save() method.
+                self.id=check_location[0].id
+        else:
+            """
+            At this point we have a GeoRSS point but not Address details
+            """
+            check_location = Location.objects.filter(georss_point=self.georss_point,label=self.label)
+            if len(check_location) == 0:
+                self.point_to_address()
+                super(Location, self).save(force_insert=True) # Call the "real" save() method.
+            else:
+                super(Location, check_location[0]).save(force_update=True) # Call the "real" save() method.
+                self.id=check_location[0].id
         
    
     def __unicode__(self):
@@ -168,7 +231,6 @@ class Person(User):
         -what else about the driver?
         """
         person_dict = {
-            'id' : self.id,
             'username': self.username
         }
         return person_dict
@@ -238,7 +300,6 @@ class Trip(models.Model):
     published = models.DateTimeField(auto_now_add=True, blank=False) # MUST
     updated = models.DateTimeField(auto_now=True, blank=False) # MUST
     expires = models.DateTimeField(blank=False) # MUST
-    content = models.TextField(blank=False) # MUST
     active = models.BooleanField(default=False) # MUST
     author = models.ForeignKey(Person,related_name='author', blank=False) # OPT
     locations = models.ManyToManyField(Location, blank=False) # MUST
@@ -249,13 +310,24 @@ class Trip(models.Model):
     def __unicode__(self):
         return self.id
     
+    def update_vacancy(self):
+        """
+        Checks how many seats are still available in car and updates the attribute consistently
+        """
+        participations_for_trip = Participation.objects.filter(trip=self).exclude(role='driver').filter(started=True).filter(finished=False)
+        self.mode.vacancy = len(participations_for_trip)
+        self.mode.save()
+        
+    def has_vacancy(self):
+        if self.mode.capacity - self.mode.vacancy > 0:
+            return True
+        return False
+    
     def to_xmlrpc(self):
         """
         Prepares the dictionary to be returned when riders search a ride.
         TODO:
-        -use OpenTrip id, not Django internal id
         -choose what will be marshalled for Mode and Prefs objects
-        -use django serializers instead of this
         -what else about the driver?
         """
         locations = self.locations.all()
@@ -267,11 +339,8 @@ class Trip(models.Model):
             'published' : self.published,
             'updated': self.updated,
             'expires': self.expires,
-            'content': self.content,
+            'content': {'mode': self.mode.to_xmlrpc(), 'prefs' : self.prefs.to_xmlrpc(), 'locations' : locations_dict},
             'author': self.author.username,
-            'mode': self.mode.to_xmlrpc(),
-            'prefs': self.prefs.to_xmlrpc(),
-            'locations':locations_dict,
         }
         return trip_dict
     

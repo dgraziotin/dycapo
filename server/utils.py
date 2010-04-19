@@ -21,7 +21,7 @@ This module holds some utility functions.
 """
 import settings
 from copy import deepcopy
-from models import Person
+from models import Person, Response
  
 
 def populate_object_from_dictionary(obj,dictionary):
@@ -41,4 +41,8 @@ def get_xmlrpc_user(kwargs):
     except Person.DoesNotExist:
         return None
 
+def check_vacancy(trip):
+    trip.update_vacancy()
+    return trip.has_vacancy
+        
                 
