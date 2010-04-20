@@ -52,6 +52,7 @@ WAYPOINT_CHOICES = (
         (u'orig', u'Origin'),
         (u'dest', u'Destination'),
         (u'wayp', u'Waypoint'),
+        (u'posi', u'Position'),
 )
 
 RECURS_CHOICES = (
@@ -145,7 +146,7 @@ class Location(models.Model):
         self.georss_point_longitude = point.longitude
             
     
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         """
         Ensures integrity
         """
@@ -163,9 +164,9 @@ class Location(models.Model):
             check_location = Location.objects.filter(point=self.point,label=self.label,street=self.street,town=self.town,postcode=self.postcode)
             if len(check_location) == 0:
                 self.address_to_point()
-                super(Location, self).save(force_insert=True) # Call the "real" save() method.
+                super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
             else:
-                super(Location, check_location[0]).save(force_update=True) # Call the "real" save() method.
+                super(Location, check_location[0]).save(force_update=True, *args, **kwargs) # Call the "real" save() method.
                 self.id=check_location[0].id
         else:
             """
@@ -174,9 +175,9 @@ class Location(models.Model):
             check_location = Location.objects.filter(georss_point=self.georss_point,label=self.label)
             if len(check_location) == 0:
                 self.point_to_address()
-                super(Location, self).save(force_insert=True) # Call the "real" save() method.
+                super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
             else:
-                super(Location, check_location[0]).save(force_update=True) # Call the "real" save() method.
+                super(Location, check_location[0]).save(force_update=True, *args, **kwargs) # Call the "real" save() method.
                 self.id=check_location[0].id
         
    
@@ -258,6 +259,14 @@ class Mode(models.Model):
     lic = models.CharField(max_length=255,blank=True) # OPT
     cost = models.FloatField(blank=True,null=True) # OPT
     
+    def save(self, *args, **kwargs):
+        """
+        Ensures integrity
+        """
+        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model or self.make=='cacca':
+            raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
+        super(Mode, self).save(*args, **kwargs) # Call the "real" save() method.
+        
     def to_xmlrpc(self):
         """
         Prepares the dictionary to be returned when returned as XML-RPC
@@ -322,6 +331,16 @@ class Trip(models.Model):
         if self.mode.capacity - self.mode.vacancy > 0:
             return True
         return False
+    
+    
+    
+    def save(self, *args, **kwargs):
+        if not self.expires or not self.mode or not self.prefs or not self.author:
+            raise IntegrityError('Trip objects MUST have expires and content attributes.')
+        super(Trip, self).save(*args, **kwargs) # Call the "real" save() method.
+    
+
+
     
     def to_xmlrpc(self):
         """

@@ -160,6 +160,7 @@ class DriverTest(Thread):
         common_classes_and_methods.wait_random_seconds()
         self.update_position()
         trip = self.insert_trip()
+        """
         common_classes_and_methods.wait_random_seconds()
         trip_response = self.start_trip(trip)
         
@@ -187,7 +188,7 @@ class DriverTest(Thread):
         if self.clean_responses:
             self.delete_trip(trip)
         
-        
+        """
                 
     def run(self):
         self.start_test()

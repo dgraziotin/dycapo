@@ -20,6 +20,7 @@ This file is part of Dycapo.
 This module holds all the XML-RPC methods that a Driver needs.
 """
 from rpc4django import rpcmethod
+from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs, Response
 from datetime import datetime
 from utils import populate_object_from_dictionary, get_xmlrpc_user
@@ -58,30 +59,41 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         
         source = Location()
         source = populate_object_from_dictionary(source,dict_source)
-        source.save()
+        
         
         destination = Location()
         destination = populate_object_from_dictionary(destination,dict_destination)
-        destination.save()
         
         mode = Mode()
         mode = populate_object_from_dictionary(mode,dict_mode)
-        mode.save()
+       
         
         preferences = Prefs()
         preferences = populate_object_from_dictionary(preferences,dict_prefs)
-        preferences.save()
+        
+        try:
+            source.save()
+            destination.save()
+            mode.save()
+            preferences.save()
+        except IntegrityError, e:
+            resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+            return resp.to_xmlrpc()
         
         trip = Trip()
         trip = populate_object_from_dictionary(trip,dict_trip)
         trip.author = driver
         trip.mode = mode
         trip.prefs = preferences
-        trip.save()
+        try:
+            trip.save()
+        except IntegrityError, e:
+            resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+            return resp.to_xmlrpc()
+        
         trip.locations.add(source)
         trip.locations.add(destination)
-        trip.save()
-        
+    
 
         participation = Participation()
         participation.person = driver
@@ -110,7 +122,11 @@ def start_trip(trip, **kwargs):
         An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
-        trip = Trip.objects.get(id=trip_dict['id'])
+        try:
+            trip = Trip.objects.get(id=trip_dict['id'])
+        except Trip.DoesNotExist:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
+            return resp.to_xmlrpc()
         participation = Participation.objects.get(trip=trip,role='driver')
         driver = get_xmlrpc_user(kwargs)
         
@@ -153,7 +169,11 @@ def check_ride_requests(trip, **kwargs):
         """
         trip_dict = trip
 
-        trip = Trip.objects.get(id=trip_dict['id'])
+        try:
+            trip = Trip.objects.get(id=trip_dict['id'])
+        except Trip.DoesNotExist:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
+            return resp.to_xmlrpc()
         driver = get_xmlrpc_user(kwargs)
 
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
@@ -193,8 +213,18 @@ def accept_ride_request(trip, person, **kwargs):
         trip_dict = trip
         person_dict = person
         
-        trip = Trip.objects.get(id=trip_dict['id'])
-        rider = Person.objects.get(username=person_dict['username'])
+        try:
+            trip = Trip.objects.get(id=trip_dict['id'])
+        except Trip.DoesNotExist:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
+            return resp.to_xmlrpc()
+        
+        try:
+            rider = Person.objects.get(username=person_dict['username'])
+        except Trip.DoesNotExist:
+            resp = Response(response_codes.NEGATIVE,response_codes.PERSON_NOT_FOUND,"Trip",person_dict)
+            return resp.to_xmlrpc()
+        
         
         rider_participation = Participation.objects.get(trip=trip,person=rider)
         if rider_participation.requested and not rider_participation.accepted:

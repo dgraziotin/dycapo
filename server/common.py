@@ -45,7 +45,12 @@ def update_position(position,**kwargs):
     position = Location()
     position = populate_object_from_dictionary(position,dict_position)
     user = get_xmlrpc_user(kwargs)
-    position.save()
+    try:
+        position.save()
+    except IntegrityError, e: 
+        resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+        return resp.to_xmlrpc()
+    
     user.position = position
     user.save()
     resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,str(True.__class__),True)
