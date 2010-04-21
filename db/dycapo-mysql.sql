@@ -4,7 +4,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-04-17 19:01:19 +0200
+# Generation Time: 2010-04-21 13:07:12 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -825,7 +825,7 @@ LOCK TABLES `server_person` WRITE;
 /*!40000 ALTER TABLE `server_person` DISABLE KEYS */;
 INSERT INTO `server_person` (`user_ptr_id`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
 VALUES
-	(2,'http://john.drivers.com','555-5924-594',11,29,'M',1,0,0,0),
+	(2,'http://john.drivers.com','555-5924-594',0,29,'M',1,0,0,0),
 	(3,'http://lorena.riders.com','44593-21349-3443',0,26,'F',0,0,0,0);
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;

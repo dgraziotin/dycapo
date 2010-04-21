@@ -63,7 +63,7 @@ class DriverTest(Thread):
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
         point_lon = random.choice(points)
-        source.georss_point=str(point_lat) + " " + str(point_lon)
+        source.georss_point="46.462822799999998, 11.3343092"
         source.label="home"
         source.point="orig"
         source.leaves = common_classes_and_methods.now()
@@ -160,7 +160,6 @@ class DriverTest(Thread):
         common_classes_and_methods.wait_random_seconds()
         self.update_position()
         trip = self.insert_trip()
-        """
         common_classes_and_methods.wait_random_seconds()
         trip_response = self.start_trip(trip)
         
@@ -188,7 +187,6 @@ class DriverTest(Thread):
         if self.clean_responses:
             self.delete_trip(trip)
         
-        """
                 
     def run(self):
         self.start_test()

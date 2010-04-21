@@ -58,7 +58,6 @@ def extract_response(response):
     
 class Location():
     town = 'Trento'
-    georss_radius = 500
     point = ''
     georss_point = ''
     country = 'IT'
@@ -75,23 +74,23 @@ class Location():
     intersection = 'Via Sommarive'
     recurs = 'weekly'
     def __init__(self):
-        self.town = ''#'Trento'
-        self.georss_radius = 500
+        #self.town = ''#'Trento'
+        #self.georss_radius = 500
         self.point = 'orig'
         self.georss_point = ''
-        self.country = '' #'IT'
-        self.region = '' #'Trentino-Alto Adige'
+        #self.country = '' #'IT'
+        #self.region = '' #'Trentino-Alto Adige'
         self.offset = 30
-        self.subregion = '' #'Trentino'
-        self.days = '' #'MTW'
+        #self.subregion = '' #'Trentino'
+        #self.days = '' #'MTW'
         self.label = 'Home'
-        self.street = ''#'Via Sommarive'
-        self.georss_box = ''#'46.06693 11.15065 46.20000 11.20000'
+        #self.street = ''#'Via Sommarive'
+        #self.georss_box = ''#'46.06693 11.15065 46.20000 11.20000'
         self.postcode = 0 #38100
-        self.address = '' #'18 Via Sommarive, 38100 Trento'
+        #self.address = '' #'18 Via Sommarive, 38100 Trento'
         self.leaves = ''
-        self.intersection = '' #'Via Sommarive'
-        self.recurs = ''#'weekly'
+        #self.intersection = '' #'Via Sommarive'
+        #self.recurs = ''#'weekly'
 
 class Trip():
     expires = ''

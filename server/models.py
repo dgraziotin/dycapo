@@ -22,7 +22,7 @@ from django.db import IntegrityError
 from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
 from geopy import geocoders
 from geopy.point import Point
-from copy import deepcopy
+import copy
 
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
@@ -185,7 +185,11 @@ class Location(models.Model):
         return self.georss_point
     
     def to_xmlrpc(self):
-        return self.__dict__
+        location_dict = copy.deepcopy(self.__dict__)
+        del location_dict['georss_point_latitude']
+        del location_dict['georss_point_longitude']
+        del location_dict['id']
+        return location_dict
 
 class Person(User):
     """
@@ -271,9 +275,9 @@ class Mode(models.Model):
         """
         Prepares the dictionary to be returned when returned as XML-RPC
         """
-        dict_mode = self.__dict__
-        del dict_mode['id']
-        return dict_mode
+        mode_dict = copy.deepcopy(self.__dict__)
+        del mode_dict['id']
+        return mode_dict
         
     
 class Prefs(models.Model):
@@ -293,9 +297,9 @@ class Prefs(models.Model):
         """
         Prepares the dictionary to be returned when returned as XML-RPC
         """
-        dict_prefs = self.__dict__
-        del dict_prefs['id']
-        return dict_prefs
+        prefs_dict = copy.deepcopy(self.__dict__)
+        del prefs_dict['id']
+        return prefs_dict
 
 
 class Trip(models.Model):
@@ -359,7 +363,7 @@ class Trip(models.Model):
             'updated': self.updated,
             'expires': self.expires,
             'content': {'mode': self.mode.to_xmlrpc(), 'prefs' : self.prefs.to_xmlrpc(), 'locations' : locations_dict},
-            'author': self.author.username,
+            'author': self.author.to_xmlrpc(),
         }
         return trip_dict
     
