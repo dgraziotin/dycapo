@@ -23,6 +23,7 @@ from rpc4django import rpcmethod
 from models import Location, Person, Mode, Prefs, Trip, Response
 from utils import populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
+from django.db import IntegrityError 
 
 @rpcmethod(name='dycapo.update_position', signature=['Response','Location'], permission='server.can_xmlrpc')
 def update_position(position,**kwargs):
