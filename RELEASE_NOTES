@@ -1,12 +1,13 @@
 RELEASE NOTES
 ***************
 
-2010-04-03  Daniel Graziotin  <daniel DOT graziotin AT gmail DOT com>
+2010-04-21  Daniel Graziotin  <daniel DOT graziotin AT gmail DOT com>
 
-Dycapo v0.1.0 is the first prototype version on which we are beginning to build our APIs.
+Dycapo v0.2.0 is the second prototype version on which we are beginning to build our APIs.
 
-Dycapo v0.1.0 incorporates and shows:
-* The introduction of an open Protocol heavily inspired by OpenTrip Core [http://www.opentrip.info] based on XML-RPC calls
+Dycapo v0.2.0 incorporates and shows:
+* Adoption of Dycapo Protocol [http://dycapo.org/Protocol]
+* The introduction of API [http://dycapo.org/Server/API]
 * Integration of Dycapo models with Django models
 * Authentication system
 * Insertion of a trip by a driver
@@ -14,33 +15,41 @@ Dycapo v0.1.0 incorporates and shows:
 * Search of a trip by a rider
 * Send a ride request to a driver
 * Let the driver accept the ride request
+* Geolocation methods of Persons
 * A complete testing framework
 
-CHANGES SINCE v0.0.2
+CHANGES SINCE v0.1.0
 ***************
-
-General
-* sqlite no more included, we make use of MySQL for testing (dump is included)
-* docs/ directory is cleaner
-* SemVer [http://semver.org] adopted
-* Refactoring
-* Return values adjusted thanks to new Response object, now used eveywhere
-* Use of get_xmlrpc_user() and new RPC4DJANGO feature to get the logged in user
-
-tests/:
-* Use of the new Response object
-* More verbose, clearer
-* Refactoring
-* Can be configured throught a file, settings.py
-
-server/models.py
-* New Response object, the default returning value of every XML-RPC call. Acts as an Envelope, like in Soap.
-
-server/response_codes.py (NEW)
-* Contains the default codes and strings to be returned from Response objects
+General:
+* OpenTrip left out for Dycapo Protocol (which is based on OpenTrip anyway)
+* Added reStructured Text [http://docutils.sourceforge.net/rst.html] documentation in XML-RPC methods 
 
 server/utils.py
-* util function get_xmlrpc_user(), that returns the Person object making the XML-RPC call
+* Methods regarding OpenTrip ids deleted
 
-server/rider.py
-* Better documentation
+
+server/common.py
+* Added Geolocation methods for Persons: update_position() and get_position()
+
+server/driver.py
+* Methods updated to support Response objects also in case of some errors
+
+rider.py
+* Methods updated to support Response objects also in case of some errors
+
+server/models.py
+* Dycapo Protocol [http://dycapo.org/Protocol] fully adopted
+* All to_xmlrpc() methods now use copy.deepcopy() for safe object.__dict__ copy operations
+* WAYPOINT_CHOICES now has 'posi' attribute, to indicate that a Location is representing the
+  position of a Person
+* Deleted 'intersection' and 'address' attributes to Location (redundancy reasons).
+* Deleted all attributes regarding GeoRSS but georss_point
+* Added geocoding and reverse geocoding methods to Location (using Geopy) 
+* Added functionalities to avoid redundancy when trying to add Location objects
+* Deleted 'alias' and 'userid' attributes to Person (redundancy reasons)
+* Deleted 'content' attribute in Trip. It was a String, now it is just returned when
+  constructing xml-rpc representations of Trips
+* Added has_vacany() and update_vacancy() methods to Trip
+* Added requested_position, accepted_position, started_position, finished_position 
+  attributes to Participation, that will hold the position of the user when he/she
+  does Participation operations (safety reasons)
