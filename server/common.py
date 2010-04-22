@@ -48,7 +48,7 @@ def update_position(position,**kwargs):
     user = get_xmlrpc_user(kwargs)
     try:
         position.save()
-    except IntegrityError, e: 
+    except (IntegrityError, ValueError), e: 
         resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
         return resp.to_xmlrpc()
     

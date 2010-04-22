@@ -76,7 +76,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
             destination.save()
             mode.save()
             preferences.save()
-        except IntegrityError, e:
+        except (IntegrityError, ValueError), e:
             resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
             return resp.to_xmlrpc()
         
@@ -87,7 +87,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         trip.prefs = preferences
         try:
             trip.save()
-        except IntegrityError, e:
+        except (IntegrityError, ValueError), e:
             resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
             return resp.to_xmlrpc()
         

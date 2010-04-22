@@ -122,6 +122,9 @@ class Location(models.Model):
             self.georss_point = "0 0"
             self.georss_point_latitude = 0
             self.georss_point_longitude = 0
+            raise ValueError('Could not retrieve Address information with the given GeoRSS point')
+        self.georss_point_latitude = point.latitude
+        self.georss_point_longitude = point.longitude
         
     def point_to_address(self):
         """
@@ -141,7 +144,8 @@ class Location(models.Model):
         except:
             self.town = ""
             self.street = ""
-            self.postcode = 0            
+            self.postcode = 0       
+            raise ValueError('Could not retrieve GeoRSS point information with the given Address.')     
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude
             
