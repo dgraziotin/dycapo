@@ -4,7 +4,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-04-21 13:07:12 +0200
+# Generation Time: 2010-04-22 16:55:47 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -155,7 +155,7 @@ LOCK TABLES `auth_user` WRITE;
 INSERT INTO `auth_user` (`id`,`username`,`first_name`,`last_name`,`email`,`password`,`is_staff`,`is_active`,`is_superuser`,`last_login`,`date_joined`)
 VALUES
 	(1,'admin','','','admin@admins.com','sha1$de73b$20d52a554a8564deaca930d34754c472cc71685e',1,1,1,'2010-04-13 04:34:25','2010-04-09 04:00:06'),
-	(2,'driver1','John','Driver','driver1@drivers.com','sha1$a62af$db4bc3984f81c872bb66adaba5337bf969217c30',0,1,0,'2010-04-17 08:39:01','2010-04-09 04:00:51'),
+	(2,'driver1','John','Driver','driver1@drivers.com','sha1$a62af$db4bc3984f81c872bb66adaba5337bf969217c30',0,1,0,'2010-04-22 07:37:34','2010-04-09 04:00:51'),
 	(3,'rider1','Lorena','Rider','rider1@riders.com','sha1$3688c$31af2df5aebe9937101b61ca780615547fd0fdb3',0,1,0,'2010-04-15 07:45:02','2010-04-09 04:01:49');
 
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
@@ -692,7 +692,20 @@ VALUES
 	('60130b48f96dc1f8f090df776a333f51','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-01 08:38:59'),
 	('87fa63cd57f4f96a44aa143ab8c62297','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-01 08:39:01'),
 	('cf8d551819a7534d240a721caa29fcea','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-01 08:39:01'),
-	('23e1dac4abb58ce07b6489af1bce1ef6','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-01 08:39:01');
+	('23e1dac4abb58ce07b6489af1bce1ef6','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-01 08:39:01'),
+	('d32d099413898c8426403a8c97b2cca7','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:07:16'),
+	('d1db9db8a9342bf98701d36d75922696','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:07:16'),
+	('7f4dec191ac9f96968e9dadb99d96f0b','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:08:21'),
+	('065fc8910e6d4eeb155e467fba922a48','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:08:22'),
+	('0684aa8fc9c448c15523ea96a3a22593','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:09:38'),
+	('5488c9667f3af10bf26afe071cc8104c','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:09:39'),
+	('d09e8e80b33a89a2c25273184096b7c0','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:09:41'),
+	('97e04daf29fa770379dee5ea5da41a8c','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:34:57'),
+	('778ab3138c76df4bbd8827cc0088f778','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:34:58'),
+	('baa1902ac139e41fa9851628c3f86f0d','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:35:16'),
+	('360a8fc0cb8bc59414a8fa5a5086830b','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:36:16'),
+	('5fd8cdcf5e12ea692d7bb4147833b311','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:37:09'),
+	('c61e89ad9d369f577a6b70546b5e7c61','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:37:34');
 
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -743,8 +756,16 @@ CREATE TABLE `server_location` (
   `days` varchar(255) NOT NULL,
   `leaves` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
+LOCK TABLES `server_location` WRITE;
+/*!40000 ALTER TABLE `server_location` DISABLE KEYS */;
+INSERT INTO `server_location` (`id`,`label`,`street`,`point`,`country`,`region`,`town`,`postcode`,`subregion`,`georss_point`,`georss_point_latitude`,`georss_point_longitude`,`offset`,`recurs`,`days`,`leaves`)
+VALUES
+	(1,'Home','Sankt Jakobstrasse, 13','orig','','','Laives BZ',39055,'','46.462822799999998, 11.3343092',46.4628228,11.3343092,30,'','','2010-04-22 16:07:13');
+
+/*!40000 ALTER TABLE `server_location` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table server_mode
@@ -825,7 +846,7 @@ LOCK TABLES `server_person` WRITE;
 /*!40000 ALTER TABLE `server_person` DISABLE KEYS */;
 INSERT INTO `server_person` (`user_ptr_id`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
 VALUES
-	(2,'http://john.drivers.com','555-5924-594',0,29,'M',1,0,0,0),
+	(2,'http://john.drivers.com','555-5924-594',1,29,'M',1,0,0,0),
 	(3,'http://lorena.riders.com','44593-21349-3443',0,26,'F',0,0,0,0);
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;

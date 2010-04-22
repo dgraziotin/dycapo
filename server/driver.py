@@ -25,6 +25,7 @@ from models import Trip, Location, Person, Mode, Participation, Prefs, Response
 from datetime import datetime
 from utils import populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
+from django.core.exceptions import ValidationError
 
 @rpcmethod(name='dycapo.add_trip', signature=['Response','Trip','Mode','Prefs','Location','Location'], permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination, **kwargs):
@@ -76,7 +77,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
             destination.save()
             mode.save()
             preferences.save()
-        except (IntegrityError, ValueError), e:
+        except Exception, e:
             resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
             return resp.to_xmlrpc()
         
@@ -87,7 +88,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         trip.prefs = preferences
         try:
             trip.save()
-        except (IntegrityError, ValueError), e:
+        except Exception, e:
             resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
             return resp.to_xmlrpc()
         
@@ -237,6 +238,7 @@ def accept_ride_request(trip, person, **kwargs):
                 rider_participation.save()
                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
                 return resp.to_xmlrpc()
+            
         resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
         return resp.to_xmlrpc()
 

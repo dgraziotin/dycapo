@@ -159,6 +159,7 @@ class DriverTest(Thread):
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         self.update_position()
+        """
         trip = self.insert_trip()
         common_classes_and_methods.wait_random_seconds()
         trip_response = self.start_trip(trip)
@@ -168,9 +169,11 @@ class DriverTest(Thread):
         found = False
         
         while not found:
+            
             self.update_position()
+            
             self.get_position()
-      
+            
             if attempts==0: 
                 print "#" * 80
                 print "RIDE REQUEST NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
@@ -186,7 +189,7 @@ class DriverTest(Thread):
             attempts = attempts - 1
         if self.clean_responses:
             self.delete_trip(trip)
-        
+        """
                 
     def run(self):
         self.start_test()

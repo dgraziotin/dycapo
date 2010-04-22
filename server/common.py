@@ -24,6 +24,7 @@ from models import Location, Person, Mode, Prefs, Trip, Response
 from utils import populate_object_from_dictionary, get_xmlrpc_user
 import response_codes
 from django.db import IntegrityError 
+from django.core.exceptions import ValidationError
 
 @rpcmethod(name='dycapo.update_position', signature=['Response','Location'], permission='server.can_xmlrpc')
 def update_position(position,**kwargs):
@@ -48,7 +49,7 @@ def update_position(position,**kwargs):
     user = get_xmlrpc_user(kwargs)
     try:
         position.save()
-    except (IntegrityError, ValueError), e: 
+    except Exception, e: 
         resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
         return resp.to_xmlrpc()
     
@@ -75,7 +76,15 @@ def get_position(person):
     An object of type **Response**, containing all the details of the operation and results (if any)
     """
     dict_person = person
-    person = Person.objects.get(username=person['username'])
+    try:
+        person = Person.objects.get(username=person['username'])
+    except Person.DoesNotExist:
+        resp = Response(response_codes.ERROR,response_codes.PERSON_NOT_FOUND,'Error',False)
+        return resp.to_xmlrpc()
     
-    resp = Response(response_codes.POSITIVE,response_codes.POSITION_FOUND,'Location',person.position.to_xmlrpc())
-    return resp.to_xmlrpc()
+    if not person.position:
+        resp = Response(response_codes.ERROR,response_codes.LOCATION_NOT_FOUND,'Error',False)
+        return resp.to_xmlrpc()
+    else:
+        resp = Response(response_codes.POSITIVE,response_codes.POSITION_FOUND,'Location',person.position.to_xmlrpc())
+        return resp.to_xmlrpc()
