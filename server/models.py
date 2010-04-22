@@ -145,7 +145,7 @@ class Location(models.Model):
             self.town = ""
             self.street = ""
             self.postcode = 0       
-            raise ValueError('Could not retrieve GeoRSS point information with the given Address.')     
+            #raise ValueError('Could not retrieve GeoRSS point information with the given Address.')     
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude
             

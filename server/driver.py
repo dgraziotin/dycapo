@@ -238,7 +238,7 @@ def accept_ride_request(trip, person, **kwargs):
                 rider_participation.save()
                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
                 return resp.to_xmlrpc()
-            
+        
         resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
         return resp.to_xmlrpc()
 
