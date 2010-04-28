@@ -50,12 +50,12 @@ def update_position(position,**kwargs):
     try:
         position.save()
     except Exception, e: 
-        resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+        resp = Response(response_codes.NEGATIVE,str(e),"boolean",False)
         return resp.to_xmlrpc()
     
     user.position = position
     user.save()
-    resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,str(True.__class__),True)
+    resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,"boolean",True)
     return resp.to_xmlrpc()
 
 @rpcmethod(name='dycapo.get_position', signature=['Response','Person'], permission='server.can_xmlrpc')
@@ -79,11 +79,11 @@ def get_position(person):
     try:
         person = Person.objects.get(username=person['username'])
     except Person.DoesNotExist:
-        resp = Response(response_codes.ERROR,response_codes.PERSON_NOT_FOUND,'Error',False)
+        resp = Response(response_codes.ERROR,response_codes.PERSON_NOT_FOUND,'boolean',False)
         return resp.to_xmlrpc()
     
     if not person.position:
-        resp = Response(response_codes.ERROR,response_codes.LOCATION_NOT_FOUND,'Error',False)
+        resp = Response(response_codes.ERROR,response_codes.LOCATION_NOT_FOUND,'boolean',False)
         return resp.to_xmlrpc()
     else:
         resp = Response(response_codes.POSITIVE,response_codes.POSITION_FOUND,'Location',person.position.to_xmlrpc())

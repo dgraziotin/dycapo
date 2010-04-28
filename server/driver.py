@@ -78,7 +78,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
             mode.save()
             preferences.save()
         except Exception, e:
-            resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+            resp = Response(response_codes.NEGATIVE,str(e),"boolean",False)
             return resp.to_xmlrpc()
         
         trip = Trip()
@@ -89,7 +89,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         try:
             trip.save()
         except Exception, e:
-            resp = Response(response_codes.NEGATIVE,str(e),"Error",False)
+            resp = Response(response_codes.NEGATIVE,str(e),"boolean",False)
             return resp.to_xmlrpc()
         
         trip.locations.add(source)
@@ -133,7 +133,7 @@ def start_trip(trip, **kwargs):
         
         # return False if the driver already started this trip
         if participation.started:
-                resp = Response(response_codes.NEGATIVE,response_codes.TRIP_ALREADY_STARTED,str(False.__class__),False)
+                resp = Response(response_codes.NEGATIVE,response_codes.TRIP_ALREADY_STARTED,"boolean",False)
                 return resp.to_xmlrpc()
         
         participation.started = True
@@ -146,7 +146,7 @@ def start_trip(trip, **kwargs):
         trip.active = True
         trip.save()
         
-        resp = Response(response_codes.POSITIVE,response_codes.TRIP_STARTED,str(True.__class__),True)
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_STARTED,"boolean",True)
         return resp.to_xmlrpc()
 
 
@@ -180,7 +180,7 @@ def check_ride_requests(trip, **kwargs):
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
 
         if len(participations_for_trip) == 0:
-                resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
+                resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,"boolean",False)
                 return resp.to_xmlrpc()
         else:
                 for participation in participations_for_trip:
@@ -188,7 +188,7 @@ def check_ride_requests(trip, **kwargs):
                                 resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTS_FOUND,"Person",participation.person.to_xmlrpc())
                                 return resp.to_xmlrpc()
                             
-        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,str(False.__class__),False)
+        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUESTS_NOT_FOUND,"boolean",False)
         return resp.to_xmlrpc()
 
 
@@ -236,10 +236,10 @@ def accept_ride_request(trip, person, **kwargs):
                 except Location.DoesNotExist:
                     rider_participation.accepted_position = None
                 rider_participation.save()
-                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,str(True.__class__),True)
+                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUEST_ACCEPTED,"boolean",True)
                 return resp.to_xmlrpc()
         
-        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,str(False.__class__),False)
+        resp = Response(response_codes.NEGATIVE,response_codes.RIDE_REQUEST_REFUSED,"boolean",False)
         return resp.to_xmlrpc()
 
         
@@ -257,6 +257,6 @@ def delete_trip(trip):
         trip.prefs.delete()
         trip.participation.clear()
         trip.delete()
-        resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,str(True.__class__),True)
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,"boolean",True)
         return resp.to_xmlrpc()
         

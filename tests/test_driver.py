@@ -51,7 +51,7 @@ class DriverTest(Thread):
         self.fixed_destination = fixed_destination
         self.username = username
         self.position = common_classes_and_methods.Location()
-        self.position.georss_point="46.462822799999998, 11.3343092"
+        self.position.georss_point='45.96304996635425, 11.106381118297577'#"46.462822799999998, 11.3343092"
         self.position.leaves = common_classes_and_methods.now()
         
     def insert_trip(self):
@@ -159,7 +159,6 @@ class DriverTest(Thread):
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         self.update_position()
-        """
         trip = self.insert_trip()
         common_classes_and_methods.wait_random_seconds()
         trip_response = self.start_trip(trip)
@@ -189,7 +188,6 @@ class DriverTest(Thread):
             attempts = attempts - 1
         if self.clean_responses:
             self.delete_trip(trip)
-        """
                 
     def run(self):
         self.start_test()
