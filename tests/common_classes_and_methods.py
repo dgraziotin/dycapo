@@ -24,6 +24,9 @@ from time import time,sleep
 from xmlrpclib import ServerProxy
 import random
 
+delta_lat = 0.00286
+delta_lon = 0.00054
+
 def now():
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)

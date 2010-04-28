@@ -86,12 +86,17 @@ class RiderTest(Thread):
             print self.username + ": ERROR: you are already participating on this trip!"
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
+  
     
-     
-    def update_position(self):
+    def update_position(self,georss_point=None):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
+        if georss_point:
+            self.position.georss_point = georss_point
+            self.position.street = ''
+            self.position.postcode = ''
+            self.position.point = 'posi'
         response = self.client.dycapo.update_position(self.position)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80

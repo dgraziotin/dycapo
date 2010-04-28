@@ -137,6 +137,21 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
+    
+    def update_position(self,georss_point=None):
+        print "#" * 80
+        print self.username + ": UPDATING POSITION..."
+        print "#" * 80
+        if georss_point:
+            self.position.georss_point = georss_point
+            self.position.street = ''
+            self.position.postcode = ''
+            self.position.point = 'posi'
+        response = self.client.dycapo.update_position(self.position)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
+    
     def get_position(self):
         print "#" * 80
         print self.username + ": GETTING POSITION..."
@@ -144,6 +159,15 @@ class DriverTest(Thread):
         person = common_classes_and_methods.Person()
         person.username = self.username
         response = self.client.dycapo.get_position(person)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return common_classes_and_methods.extract_response(response)
+    
+    def persons_near(self):
+        print "#" * 80
+        print self.username + ": PERSONS NEAR..."
+        print "#" * 80
+        response = self.client.dycapo.persons_near()
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)

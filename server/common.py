@@ -88,3 +88,40 @@ def get_position(person):
     else:
         resp = Response(response_codes.POSITIVE,response_codes.POSITION_FOUND,'Location',person.position.to_xmlrpc())
         return resp.to_xmlrpc()
+    
+@rpcmethod(name='dycapo.persons_near', signature=['Response'], permission='server.can_xmlrpc')
+def persons_near(**kwargs):
+    """
+    This is an experimental method to demonstrate algorithmic things. It will not be present in Dycapo.
+    
+    RETURNS 
+    
+    An object of type **Response**, containing all the details of the operation and results (if any)
+    """
+    user = get_xmlrpc_user(kwargs)
+    position = user.position
+    if not position:
+        resp = Response(response_codes.NEGATIVE,response_codes.PERSON_NOT_FOUND,"boolean",False)
+        return resp.to_xmlrpc()
+    lat_delta = 0.00286000000001
+    lon_delta = 0.00054000000001
+    
+    person_lat_max = position.georss_point_latitude + lat_delta
+    person_lat_min = position.georss_point_latitude - lat_delta
+    person_lon_max = position.georss_point_longitude + lon_delta
+    person_lon_min = position.georss_point_longitude - lon_delta
+    
+    persons_near = (Person.objects
+                    .filter(position__georss_point_latitude__range=(person_lat_min,person_lat_max))
+                    .filter(position__georss_point_longitude__range=(person_lon_min,person_lon_max))
+                    .exclude(username=user.username))
+    
+    persons_near_xmlrpc = []
+    for person in persons_near:
+        persons_near_xmlrpc.append(person.to_xmlrpc())
+    if persons_near_xmlrpc:
+        resp = Response(response_codes.POSITIVE,response_codes.PERSON_FOUND,"Person",persons_near_xmlrpc)
+    else:
+        resp = Response(response_codes.NEGATIVE,response_codes.PERSON_NOT_FOUND,"boolean",False)
+    return resp.to_xmlrpc()
+    

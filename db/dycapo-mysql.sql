@@ -4,7 +4,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-04-22 16:55:47 +0200
+# Generation Time: 2010-04-28 12:15:00 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -58,7 +58,7 @@ CREATE TABLE `auth_message` (
   `message` longtext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `auth_message_user_id` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 
 
@@ -148,15 +148,19 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
 INSERT INTO `auth_user` (`id`,`username`,`first_name`,`last_name`,`email`,`password`,`is_staff`,`is_active`,`is_superuser`,`last_login`,`date_joined`)
 VALUES
-	(1,'admin','','','admin@admins.com','sha1$de73b$20d52a554a8564deaca930d34754c472cc71685e',1,1,1,'2010-04-13 04:34:25','2010-04-09 04:00:06'),
+	(1,'admin','','','admin@admins.com','sha1$de73b$20d52a554a8564deaca930d34754c472cc71685e',1,1,1,'2010-04-28 03:05:57','2010-04-09 04:00:06'),
 	(2,'driver1','John','Driver','driver1@drivers.com','sha1$a62af$db4bc3984f81c872bb66adaba5337bf969217c30',0,1,0,'2010-04-22 07:37:34','2010-04-09 04:00:51'),
-	(3,'rider1','Lorena','Rider','rider1@riders.com','sha1$3688c$31af2df5aebe9937101b61ca780615547fd0fdb3',0,1,0,'2010-04-15 07:45:02','2010-04-09 04:01:49');
+	(3,'rider1','Lorena','Rider','rider1@riders.com','sha1$3688c$31af2df5aebe9937101b61ca780615547fd0fdb3',0,1,0,'2010-04-15 07:45:02','2010-04-09 04:01:49'),
+	(4,'luca','Luca','De Gasperi','luca.degasperi@gmail.com','sha1$5bf7c$9a97497ca16109ca17e9a75b741a6fa41ea5798a',0,1,0,'2010-04-28 03:06:34','2010-04-28 03:06:34'),
+	(5,'paola','Paola','Sandreini','paola.sandreini@hotmail.com','sha1$3bbd5$1624316af78b68c0e3589b0012654385aad27f7d',0,1,0,'2010-04-28 03:08:24','2010-04-28 03:08:24'),
+	(6,'andrea','Andrea','Ercolini','andrea@ercolini.net','sha1$a74bc$2997f4f7c4814c56fc456ec335ed51807b252a3c',0,1,0,'2010-04-28 03:09:09','2010-04-28 03:09:09'),
+	(7,'serena','Serena','Rossi','rossi.s@yahoo.com','sha1$8b91b$4177c7f476932aa8b1b809e6f1c58524c0e84dfc',0,1,0,'2010-04-28 03:09:42','2010-04-28 03:09:42');
 
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -190,14 +194,18 @@ CREATE TABLE `auth_user_user_permissions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`permission_id`),
   KEY `permission_id_refs_id_67e79cb` (`permission_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `auth_user_user_permissions` WRITE;
 /*!40000 ALTER TABLE `auth_user_user_permissions` DISABLE KEYS */;
 INSERT INTO `auth_user_user_permissions` (`id`,`user_id`,`permission_id`)
 VALUES
 	(1,2,31),
-	(3,3,31);
+	(3,3,31),
+	(9,4,31),
+	(10,5,31),
+	(6,6,31),
+	(7,7,31);
 
 /*!40000 ALTER TABLE `auth_user_user_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -220,7 +228,7 @@ CREATE TABLE `django_admin_log` (
   PRIMARY KEY (`id`),
   KEY `django_admin_log_user_id` (`user_id`),
   KEY `django_admin_log_content_type_id` (`content_type_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
@@ -228,7 +236,14 @@ INSERT INTO `django_admin_log` (`id`,`action_time`,`user_id`,`content_type_id`,`
 VALUES
 	(1,'2010-04-09 04:01:49',1,10,'2','driver1',1,''),
 	(2,'2010-04-09 04:02:59',1,10,'3','rider1',1,''),
-	(3,'2010-04-09 04:04:43',1,10,'3','rider1',2,'Changed password.');
+	(3,'2010-04-09 04:04:43',1,10,'3','rider1',2,'Changed password.'),
+	(4,'2010-04-28 03:08:24',1,10,'4','Luca',1,''),
+	(5,'2010-04-28 03:09:09',1,10,'5','Paola',1,''),
+	(6,'2010-04-28 03:09:42',1,10,'6','andrea',1,''),
+	(7,'2010-04-28 03:10:26',1,10,'7','serena',1,''),
+	(8,'2010-04-28 03:11:01',1,3,'4','Luca',2,'Changed password.'),
+	(9,'2010-04-28 03:11:13',1,3,'4','luca',2,'Changed username.'),
+	(10,'2010-04-28 03:11:22',1,3,'5','paola',2,'Changed username.');
 
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -705,7 +720,8 @@ VALUES
 	('baa1902ac139e41fa9851628c3f86f0d','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:35:16'),
 	('360a8fc0cb8bc59414a8fa5a5086830b','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:36:16'),
 	('5fd8cdcf5e12ea692d7bb4147833b311','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:37:09'),
-	('c61e89ad9d369f577a6b70546b5e7c61','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:37:34');
+	('c61e89ad9d369f577a6b70546b5e7c61','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigECdS4xOWJhYTUwOWQ0ODU3MDhk\nYTY0NDZjOTNlNzVhZGMxMQ==\n','2010-05-06 07:37:34'),
+	('1494e00dae9cef206a80c5f0b7ec42e0','gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUsZHljYXBvLmF1dGhfYmFja2VuZHMuRHljYXBv\nUmVtb3RlVXNlckJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEEigEBdS43ODI2YTQ1Mjk4MWZmMmUy\nMzVmZDQ0ZWM3OGUxZGE1ZA==\n','2010-05-12 03:05:58');
 
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -758,14 +774,6 @@ CREATE TABLE `server_location` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
-LOCK TABLES `server_location` WRITE;
-/*!40000 ALTER TABLE `server_location` DISABLE KEYS */;
-INSERT INTO `server_location` (`id`,`label`,`street`,`point`,`country`,`region`,`town`,`postcode`,`subregion`,`georss_point`,`georss_point_latitude`,`georss_point_longitude`,`offset`,`recurs`,`days`,`leaves`)
-VALUES
-	(1,'Home','Sankt Jakobstrasse, 13','orig','','','Laives BZ',39055,'','46.462822799999998, 11.3343092',46.4628228,11.3343092,30,'','','2010-04-22 16:07:13');
-
-/*!40000 ALTER TABLE `server_location` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table server_mode
@@ -847,7 +855,11 @@ LOCK TABLES `server_person` WRITE;
 INSERT INTO `server_person` (`user_ptr_id`,`uri`,`phone`,`position_id`,`age`,`gender`,`smoker`,`blind`,`deaf`,`dog`)
 VALUES
 	(2,'http://john.drivers.com','555-5924-594',1,29,'M',1,0,0,0),
-	(3,'http://lorena.riders.com','44593-21349-3443',0,26,'F',0,0,0,0);
+	(3,'http://lorena.riders.com','44593-21349-3443',0,26,'F',0,0,0,0),
+	(4,'','23394320492',NULL,23,'M',0,0,0,0),
+	(5,'','239839024890283',NULL,18,'F',0,0,0,0),
+	(6,'','23489238',NULL,45,'M',1,0,0,0),
+	(7,'','44494939423',NULL,32,'F',0,0,0,1);
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;
 UNLOCK TABLES;
