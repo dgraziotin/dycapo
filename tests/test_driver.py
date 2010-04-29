@@ -85,7 +85,7 @@ class DriverTest(Thread):
         mode.lic = '1234f434'
         mode.make = 'ford'
         mode.model = 'fiesta'
-        mode.year = 2003
+        #mode.year = 2003
         mode.kind = 'auto'
         
         prefs.age = '18-40'

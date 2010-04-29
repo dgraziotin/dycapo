@@ -108,7 +108,7 @@ class Mode():
     make = ''
     vacancy = 0
     cost = 0
-    year = 0
+    #year = 0
     model = ''
     
 class Prefs():

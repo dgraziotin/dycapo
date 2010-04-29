@@ -84,25 +84,25 @@ class Location(models.Model):
     """
     label = models.CharField(max_length=255, blank=True) # OPT
     street = models.CharField(max_length=255, blank=True)
-    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES, blank=False) # OPT
+    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES, blank=True) # OPT
     country = models.CharField(max_length=2, blank=True) # OPT
     region = models.CharField(max_length=255, blank=True) # OPT
     town = models.CharField(max_length=255, blank=True) # OPT
-    postcode = models.PositiveIntegerField(blank=True,null=True) # OPT
+    postcode = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
     subregion = models.CharField(max_length=255, blank=True) # OPT
     georss_point = models.CharField(max_length=255, blank=True)  # RECOM
     """
     georss_pont_latitude and georss_point_longitude should be just used internally
     """
-    georss_point_latitude = models.FloatField(null=True) #EXT
-    georss_point_longitude = models.FloatField(null=True) #EXT
+    georss_point_latitude = models.FloatField(null=True,default=0) #EXT
+    georss_point_longitude = models.FloatField(null=True,default=0) #EXT
     """
     The following should be members of a separate Date-Time class but are included here for simplicity
     """
-    offset = models.PositiveIntegerField(blank=True,null=True) # OPT
+    offset = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
     recurs = models.CharField(max_length=255,blank=True) # OPT
     days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True) # OPT
-    leaves = models.DateTimeField(blank=False) # MUST
+    leaves = models.DateTimeField(blank=True,null=True) # MUST
     
     def address_to_point(self):
         """
@@ -211,10 +211,10 @@ class Person(User):
     # username from Django
     # password from Django
     uri = models.CharField(max_length=200,blank=True) # OPT
-    phone = models.CharField(max_length=200,blank=False) # OPT
+    phone = models.CharField(max_length=200,null=True) # OPT
     position = models.ForeignKey(Location,blank=True,null=True) # EXT
-    age = models.PositiveIntegerField(null=True) # OPT
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False) # OPT
+    age = models.PositiveIntegerField(null=True,default=0) # OPT
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False,null=True) # OPT
     smoker = models.BooleanField(default=False) # OPT
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
@@ -258,14 +258,14 @@ class Mode(models.Model):
     See `OpenTrip_Core#Mode_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs>`_ for more info.
     """
     kind = models.CharField(max_length=255,choices=MODE_CHOICES,blank=False) # MUST
-    capacity = models.PositiveIntegerField(blank=False) # OPT
-    vacancy = models.PositiveIntegerField(blank=False) # OPT
+    capacity = models.PositiveIntegerField(blank=False,null=True,default=0) # OPT
+    vacancy = models.PositiveIntegerField(blank=False,null=True,default=0) # OPT
     make = models.CharField(max_length=255,blank=True) # OPT
     model = models.CharField(max_length=255,blank=True) # OPT
-    year = models.PositiveIntegerField(blank=True) # OPT
+    year = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
     color = models.CharField(max_length=255,blank=True) # OPT
     lic = models.CharField(max_length=255,blank=True) # OPT
-    cost = models.FloatField(blank=True,null=True) # OPT
+    cost = models.FloatField(blank=True,null=True,default=0) # OPT
     
     def save(self, *args, **kwargs):
         """
@@ -314,14 +314,14 @@ class Trip(models.Model):
     in case of an export of a Trip in OpenTrip Feed format.
     TODO: return Prefs and Mode in XML_RPC
     """
-    published = models.DateTimeField(auto_now_add=True, blank=False) # MUST
-    updated = models.DateTimeField(auto_now=True, blank=False) # MUST
-    expires = models.DateTimeField(blank=False) # MUST
+    published = models.DateTimeField(auto_now_add=True, blank=False, null=True) # MUST
+    updated = models.DateTimeField(auto_now=True, blank=False, null=True) # MUST
+    expires = models.DateTimeField(blank=False, null=True) # MUST
     active = models.BooleanField(default=False) # MUST
-    author = models.ForeignKey(Person,related_name='author', blank=False) # OPT
+    author = models.ForeignKey(Person,related_name='author', blank=False, null=True) # OPT
     locations = models.ManyToManyField(Location, blank=False) # MUST
-    mode = models.ForeignKey(Mode, blank=False) # MUST
-    prefs = models.ForeignKey(Prefs) # OPT
+    mode = models.ForeignKey(Mode, blank=False, null=True) # MUST
+    prefs = models.ForeignKey(Prefs, null=True) # OPT
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
     
     def __unicode__(self):
