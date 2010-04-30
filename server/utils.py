@@ -26,7 +26,7 @@ from models import Person, Response
 
 def populate_object_from_dictionary(obj,dictionary):
         for key in dictionary:
-                obj.__dict__[key] = dictionary[key]
+            obj.__dict__[key] = dictionary[key]
         return obj
 
 def synchronize_objects(old_obj,new_obj):

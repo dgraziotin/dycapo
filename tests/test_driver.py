@@ -190,7 +190,6 @@ class DriverTest(Thread):
         attempts = 8
         attempts_orig = 8
         found = False
-        
         while not found:
             
             self.update_position()

@@ -19,9 +19,9 @@ This file is part of Dycapo.
 """
 This file contains useful configurations for the tests. Adjust them here.
 """
-DYCAPO_URL = 'https://127.0.0.1'
+DYCAPO_URL = 'http://127.0.0.1'
 CLEAN_DATABASE_AFTER_TESTS = True
-XMLRPC_CLIENT_VERBOSE = 0
+XMLRPC_CLIENT_VERBOSE = 1
 
 DRIVER_USERNAME = 'driver1'
 DRIVER_PASSWORD = 'password'
