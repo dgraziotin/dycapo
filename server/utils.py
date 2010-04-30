@@ -22,7 +22,11 @@ This module holds some utility functions.
 import settings
 from copy import deepcopy
 from models import Person, Response
- 
+
+def clean_ids(dictionary):
+    if 'id' in dictionary.keys():
+        del dict_trip['id']
+    return dictionary
 
 def populate_object_from_dictionary(obj,dictionary):
         for key in dictionary:

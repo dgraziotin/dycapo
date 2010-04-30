@@ -23,7 +23,7 @@ from rpc4django import rpcmethod
 from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs, Response
 from datetime import datetime
-from utils import populate_object_from_dictionary, get_xmlrpc_user
+from utils import populate_object_from_dictionary, get_xmlrpc_user, clean_ids
 import response_codes
 from django.core.exceptions import ValidationError
 
@@ -50,11 +50,11 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
     
         An object of type **Response**, containing all the details of the operation and results (if any)
         """
-        dict_trip = trip
-        dict_mode = mode
-        dict_prefs = preferences
-        dict_source= source
-        dict_destination = destination
+        dict_trip = clean_ids(trip)
+        dict_mode = clean_ids(mode)
+        dict_prefs = clean_ids(preferences)
+        dict_source= clean_ids(source)
+        dict_destination = clean_ids(destination)
         
         driver = get_xmlrpc_user(kwargs)
         
@@ -80,7 +80,7 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         except Exception, e:
             resp = Response(response_codes.NEGATIVE,str(e),"boolean",False)
             return resp.to_xmlrpc()
-        
+            
         trip = Trip()
         trip = populate_object_from_dictionary(trip,dict_trip)
         trip.author = driver
