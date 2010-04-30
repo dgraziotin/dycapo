@@ -128,6 +128,9 @@ def start_trip(trip, **kwargs):
         except Trip.DoesNotExist:
             resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
             return resp.to_xmlrpc()
+        except KeyError:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrp()
         participation = Participation.objects.get(trip=trip,role='driver')
         driver = get_xmlrpc_user(kwargs)
         
@@ -175,6 +178,9 @@ def check_ride_requests(trip, **kwargs):
         except Trip.DoesNotExist:
             resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
             return resp.to_xmlrpc()
+        except KeyError:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrp()
         driver = get_xmlrpc_user(kwargs)
 
         participations_for_trip = Participation.objects.filter(trip=trip).exclude(person=driver)
@@ -225,6 +231,9 @@ def accept_ride_request(trip, person, **kwargs):
         except Trip.DoesNotExist:
             resp = Response(response_codes.NEGATIVE,response_codes.PERSON_NOT_FOUND,"Trip",person_dict)
             return resp.to_xmlrpc()
+        except KeyError:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrp()
         
         
         rider_participation = Participation.objects.get(trip=trip,person=rider)

@@ -85,7 +85,11 @@ def request_ride(trip, **kwargs):
         An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
-        trip = Trip.objects.get(id=trip_dict['id'])
+        try:
+            trip = Trip.objects.get(id=trip_dict['id'])
+        except KeyError:
+            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrp()
         rider = get_xmlrpc_user(kwargs)
         
         participation = Participation()
