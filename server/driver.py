@@ -101,8 +101,8 @@ def add_trip(trip, mode, preferences, source, destination, **kwargs):
         participation.trip = trip
         participation.role = 'driver'
         participation.save()
-        
-        resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,"Trip",trip.to_xmlrpc())
+        trip_stored = Trip.objects.get(id=trip.id)
+        resp = Response(response_codes.POSITIVE,response_codes.TRIP_INSERTED,"Trip",trip_stored.to_xmlrpc())
         return resp.to_xmlrpc()
 
 @rpcmethod(name='dycapo.start_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
