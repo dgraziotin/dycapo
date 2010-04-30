@@ -25,7 +25,7 @@ from models import Person, Response
 
 def clean_ids(dictionary):
     if 'id' in dictionary.keys():
-        del dict_trip['id']
+        del dictionary['id']
     return dictionary
 
 def populate_object_from_dictionary(obj,dictionary):
