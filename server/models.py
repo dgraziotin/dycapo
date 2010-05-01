@@ -325,7 +325,7 @@ class Trip(models.Model):
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
     
     def __unicode__(self):
-        return self.id
+        return str(self.id)
     
     def update_vacancy(self):
         """

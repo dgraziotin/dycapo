@@ -48,5 +48,35 @@ def get_xmlrpc_user(kwargs):
 def check_vacancy(trip):
     trip.update_vacancy()
     return trip.has_vacancy
-        
-                
+
+def get_persons_near(position,user):
+    
+    # around 300meters, computed empirically
+    lat_delta = 0.00265800000001
+    lon_delta = 0.00818400000001
+    
+    person_lat_max = position.georss_point_latitude + lat_delta
+    person_lat_min = position.georss_point_latitude - lat_delta
+    person_lon_max = position.georss_point_longitude + lon_delta
+    person_lon_min = position.georss_point_longitude - lon_delta
+    
+    persons_near = (Person.objects
+                    .filter(position__georss_point_latitude__range=(person_lat_min,person_lat_max))
+                    .filter(position__georss_point_longitude__range=(person_lon_min,person_lon_max))
+                    .exclude(username=user.username))
+    return persons_near
+
+def get_trips_similar_destination(destination):
+    lat_delta = 0.00265800000001
+    lon_delta = 0.00818400000001
+    lat_max = destination.georss_point_latitude + lat_delta
+    lat_min = destination.georss_point_latitude - lat_delta
+    lon_max = destination.georss_point_longitude + lon_delta
+    lon_min = destination.georss_point_longitude - lon_delta
+
+    trips = Trip.objects.filter(
+                    active=True,
+                    locations__point='dest',
+                    locations__georss_point_latitude__range=(lat_min,lat_max),
+                    locations__georss_point_longitude__range=(lon_min,lon_max)
+            )

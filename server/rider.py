@@ -48,22 +48,29 @@ def search_trip(source, destination, **kwargs):
         dict_destination = destination
         destination = Location()
         destination = populate_object_from_dictionary(destination,dict_destination)
+        destination.point_to_address()
         user = get_xmlrpc_user(kwargs)
        
-        trips = Trip.objects.filter(active=True)
-       
+        lat_delta = 0.00265800000001
+        lon_delta = 0.00818400000001
         
-        if not trips:
-                resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-                return resp.to_xmlrpc()
-        for trip in trips:
-                for location in trip.locations.filter(point="dest"):
-                        if location.georss_point==destination.georss_point:
-                                resp = Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",trip.to_xmlrpc())
-                                return resp.to_xmlrpc()
-        resp = Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-        return resp.to_xmlrpc()
+        lat_max = destination.georss_point_latitude + lat_delta
+        lat_min = destination.georss_point_latitude - lat_delta
+        lon_max = destination.georss_point_longitude + lon_delta
+        lon_min = destination.georss_point_longitude - lon_delta
+
+        trips_similar_destination = Trip.objects.filter(
+                    active=True,
+                    locations__point='dest',
+                    locations__georss_point_latitude__range=(lat_min,lat_max),
+                    locations__georss_point_longitude__range=(lon_min,lon_max)
+        )    
         
+        if not trips_similar_destination:
+            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
+        else:
+            return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_similar_destination])
+            
         
 @rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def request_ride(trip, **kwargs):

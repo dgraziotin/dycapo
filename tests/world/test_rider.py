@@ -143,6 +143,6 @@ class RiderTest(Thread):
 
 if __name__ == "__main__": 
     for i in range(0,1):
-        rider = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.0670192 11.1505136")
+        rider = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065")
         rider.start()
     

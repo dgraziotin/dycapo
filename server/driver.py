@@ -260,11 +260,6 @@ def delete_trip(trip):
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
-        for location in trip.locations.all():
-                location.delete()
-        trip.mode.delete()
-        trip.prefs.delete()
-        trip.participation.clear()
         trip.delete()
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,"boolean",True)
         return resp.to_xmlrpc()
