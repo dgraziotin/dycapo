@@ -52,11 +52,12 @@ class Person():
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
-        if location: self.position = location
-        response = self.client.dycapo.update_position(self.position)
+        if not location:
+            location = self.position
+        response = self.client.dycapo.update_position(location)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
-        return utils.extract_response(response)
+        return response
     
     def get_position(self,username=None):
         print "#" * 80
@@ -67,15 +68,17 @@ class Person():
         response = self.client.dycapo.get_position(person)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
-        return utils.extract_response(response)
+        return response
     
-    def delete_trip(self):
+    def delete_trip(self,trip=None):
         print "#" * 80
         print "DELETING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.delete_trip(self.trip)
+        if not trip:
+            trip = self.trip
+        response = self.client.dycapo.delete_trip(trip)
         print "#" * 80
-        return utils.extract_response(response)
+        return response
 
 class Driver(Person):
     def insert_trip(self):
@@ -93,24 +96,29 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)
+        return response
         
-    def start_trip(self):
+    def start_trip(self,trip=None):
         print "#" * 80
         print self.username + ": STARTING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.start_trip(self.trip)
+        if not trip:
+            trip = self.trip
+        response = self.client.dycapo.start_trip(trip)
         print response
         print "#" * 80
-        return utils.extract_response(response)
+        return response
     
-    def check_ride_requests(self):
+    def check_ride_requests(self,trip=None):
         print "#" * 80
         print self.username + ": SEARCHING FOR RIDERS..."
         print "#" * 80
-        response = self.client.dycapo.check_ride_request(self.trip)
+        if not trip:
+            trip = self.trip
+        response = self.client.dycapo.check_ride_requests(trip)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
-        return utils.extract_response(response)
+        return response
     
     def accept_ride_request(self,person):
         print "#" * 80
@@ -119,17 +127,21 @@ class Driver(Person):
         response = self.client.dycapo.accept_ride_request(self.trip,person)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
-        return utils.extract_response(response)
+        return response
     
 class Rider(Person):
-    def search_ride(self):
+    def search_ride(self,position=None,destination=None):
+        if not position:
+            position = self.position
+        if not destination:
+            destination = self.destination
         print "*" * 80
-        print self.username + ": SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
+        print self.username + ": SEARCHING FOR A RIDE from " + position.georss_point + " to " + destination.georss_point
         print "*" * 80
-        response = self.client.dycapo.search_trip(self.position.__dict__,self.destination.__dict__)
+        response = self.client.dycapo.search_trip(position.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "*" * 80
-        return utils.extract_response(response)
+        return response
     
     def request_ride(self,trip):
         print "*" * 80
@@ -137,6 +149,6 @@ class Rider(Person):
         print "*" * 80
         response = self.client.dycapo.request_ride(trip)
         print "Dycapo Response: \n" + str(response)
-        return utils.extract_response(response)
+        return response
   
 

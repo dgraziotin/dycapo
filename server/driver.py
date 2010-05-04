@@ -223,20 +223,23 @@ def accept_ride_request(trip, person, **kwargs):
         try:
             trip = Trip.objects.get(id=trip_dict['id'])
         except Trip.DoesNotExist:
-            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
+            resp = Response(response_codes.ERROR,response_codes.TRIP_NOT_FOUND,"Trip",trip_dict)
             return resp.to_xmlrpc()
         
         try:
             rider = Person.objects.get(username=person_dict['username'])
-        except Trip.DoesNotExist:
-            resp = Response(response_codes.NEGATIVE,response_codes.PERSON_NOT_FOUND,"Trip",person_dict)
+        except Person.DoesNotExist:
+            resp = Response(response_codes.ERROR,response_codes.PERSON_NOT_FOUND,"Person",person_dict)
             return resp.to_xmlrpc()
         except KeyError:
-            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
-            return resp.to_xmlrp()
+            resp = Response(response_codes.ERROR,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrpc()
         
-        
-        rider_participation = Participation.objects.get(trip=trip,person=rider)
+        try:
+            rider_participation = Participation.objects.get(trip=trip,person=rider)
+        except Participation.DoesNotExist:
+            resp = Response(response_codes.ERROR,response_codes.PERSON_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrpc()
         if rider_participation.requested and not rider_participation.accepted:
                 rider_participation.accepted = True
                 rider_participation.accepted_timestamp = datetime.now()

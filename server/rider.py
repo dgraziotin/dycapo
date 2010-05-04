@@ -95,8 +95,8 @@ def request_ride(trip, **kwargs):
         try:
             trip = Trip.objects.get(id=trip_dict['id'])
         except KeyError:
-            resp = Response(response_codes.NEGATIVE,response_codes.TRIP_NOT_FOUND,"boolean",False)
-            return resp.to_xmlrp()
+            resp = Response(response_codes.ERROR,response_codes.TRIP_NOT_FOUND,"boolean",False)
+            return resp.to_xmlrpc()
         rider = get_xmlrpc_user(kwargs)
         
         participation = Participation()
