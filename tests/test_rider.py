@@ -43,5 +43,4 @@ class TestRider():
             trip = self.trip
         response = self.rider.request_ride(trip)
         assert response['code'] == response_codes.ERROR
-        
     

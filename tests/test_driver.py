@@ -14,7 +14,7 @@ class TestDriver():
         self.rider_destination = '46.500891  11.344306'
         
     def teardown_class(self):
-        self.driver.delete_trip(self.driver.trip)
+        pass#self.driver.delete_trip(self.driver.trip)
 
 
     def setup_method(self,method):

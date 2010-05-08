@@ -22,10 +22,11 @@ This module holds all the XML-RPC methods that a Rider needs.
 from rpc4django import rpcmethod
 
 
-from models import Trip, Location, Person, Participation, Response
+from models import Location, Person, Participation, Response
+from models import Trip
 from datetime import datetime
 
-from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, exclude_trips_driver_closest_to_destination, location_approaching_factor
+from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, exclude_trips_driver_closest_to_destination, location_approaching_factor, get_trips_destination_near_location
 import response_codes
 import utils
 import geopy
@@ -55,31 +56,18 @@ def search_trip(source, destination, **kwargs):
         destination = populate_object_from_dictionary(destination,dict_destination)
         destination.point_to_address()
         rider = get_xmlrpc_user(kwargs)
-       
-        lat_delta = 0.00265800000001
-        lon_delta = 0.00818400000001
-        lat_max = destination.georss_point_latitude + lat_delta
-        lat_min = destination.georss_point_latitude - lat_delta
-        lon_max = destination.georss_point_longitude + lon_delta
-        lon_min = destination.georss_point_longitude - lon_delta
-
-        trips_similar_destination = Trip.objects.filter(
-                    active=True,
-                    locations__point='dest',
-                    locations__georss_point_latitude__range=(lat_min,lat_max),
-                    locations__georss_point_longitude__range=(lon_min,lon_max)
-        )
         
+        trips_common_destination = get_trips_destination_near_location(destination)
         
-        if not trips_similar_destination:
+        if not trips_common_destination:
+            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
+            
+        trips_driver_farther_driver = exclude_trips_driver_closest_to_destination(trips_common_destination, rider)
+        
+        if not trips_driver_farther_driver:
             return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
         
-        trips = exclude_trips_driver_closest_to_destination(trips_similar_destination, rider)
-        
-        if not trips:
-            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-        
-        return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_similar_destination])
+        return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_driver_farther_driver])
             
         
 @rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')

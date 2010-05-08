@@ -44,27 +44,27 @@ class TestSimpleMatching():
     def test_search_trip_before_start(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE  
-        
+    
     def test_start_trip(self):
         response = self.driver.start_trip()
         assert response['code'] == response_codes.POSITIVE
-    
-    def test_search_trip_driver_closest_to_destination(self):
-        driver_position = '46.50060 11.345050'
-        self.driver.position = classes.Location(georss_point=driver_position)
-        self.driver.update_position()
-        
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
-        self.driver.position = classes.Location(georss_point=self.driver_position)
-        self.driver.update_position()
         
     
     def test_search_trip_after_start(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.POSITIVE
         self.rider.trip = response['value'][0]
-
+        
+    def test_search_trip_driver_closest_to_destination(self):
+        driver_position = '46.500730 11.345070'
+        self.driver.position = classes.Location(georss_point=driver_position,point='posi')
+        self.driver.update_position()
+        
+        response = self.rider.search_ride(self.rider.position,self.rider.destination)
+        assert response['code'] == response_codes.NEGATIVE
+        self.driver.position = classes.Location(georss_point=self.driver_position)
+        self.driver.update_position()
+    
     def test_check_ride_requests_before_request(self):
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.NEGATIVE
@@ -80,4 +80,4 @@ class TestSimpleMatching():
     def test_check_ride_requests_after_request(self):
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.POSITIVE
-
+    

@@ -376,8 +376,7 @@ class Trip(models.Model):
         if self.mode.capacity - self.mode.vacancy > 0:
             return True
         return False
-    
-    
+        
     
     def save(self, *args, **kwargs):
         if not self.expires or not self.mode or not self.prefs or not self.author:

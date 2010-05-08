@@ -21,7 +21,7 @@ This module holds some utility functions.
 """
 import settings
 from copy import deepcopy
-from models import Person, Response
+from models import Person, Response, Trip
 import numpy
 from geopy import point
 from datetime import datetime, timedelta
@@ -123,17 +123,19 @@ def location_approaching_factor(distances):
     return factor
 
 
-def get_trips_similar_destination(destination):
+def get_trips_destination_near_location(location):
     lat_delta = 0.00265800000001
     lon_delta = 0.00818400000001
-    lat_max = destination.georss_point_latitude + lat_delta
-    lat_min = destination.georss_point_latitude - lat_delta
-    lon_max = destination.georss_point_longitude + lon_delta
-    lon_min = destination.georss_point_longitude - lon_delta
+    lat_max = location.georss_point_latitude + lat_delta
+    lat_min = location.georss_point_latitude - lat_delta
+    lon_max = location.georss_point_longitude + lon_delta
+    lon_min = location.georss_point_longitude - lon_delta
 
-    trips = Trip.objects.filter(
+    trips_destination_near_location = Trip.objects.filter(
                     active=True,
                     locations__point='dest',
                     locations__georss_point_latitude__range=(lat_min,lat_max),
                     locations__georss_point_longitude__range=(lon_min,lon_max)
-            )
+    )
+    
+    return trips_destination_near_location
