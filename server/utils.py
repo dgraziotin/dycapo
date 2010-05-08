@@ -23,7 +23,7 @@ import settings
 from copy import deepcopy
 from models import Person, Response, Trip
 import numpy
-from geopy import point
+import geopy
 from datetime import datetime, timedelta
 from time import time
 
@@ -95,6 +95,28 @@ def exclude_trips_driver_closest_to_destination(trips,rider):
             
     return trips
 
+def exclude_trips_driver_not_approaching_destination(trips):
+    for trip in trips:
+        driver = trip.author
+        destination = trip.get_destination()
+        if get_approaching_factor(trip.author,destination) < -1:
+            trips = trips.exclude(id=trip.id)
+            
+    return trips
+
+
+def get_approaching_factor(person,position):
+    """
+    Given a person and a location, it determines if the person is approaching it
+    or getting away from it
+    """
+    recent_locations = person.get_recent_locations(30)
+    recent_locations_distance_from_position = []
+    for location in recent_locations:
+        recent_locations_distance_from_position.append(location.distance(position))
+    approaching_factor = location_approaching_factor(recent_locations_distance_from_position)
+    return approaching_factor
+    
 def location_distance_factor(distance1, distance2):
     """
     Given two distances, returns 1 if the first distance is greater than the second one.
