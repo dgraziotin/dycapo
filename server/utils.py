@@ -22,6 +22,40 @@ This module holds some utility functions.
 import settings
 from copy import deepcopy
 from models import Person, Response
+import numpy
+from geopy import point
+from datetime import datetime, timedelta
+from time import time
+
+def now():
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    return now_date.isoformat(' ')
+
+def now_plus_days(num_days):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date + timedelta(days=num_days)
+    return now_plus.isoformat(' ')
+
+def now_minus_days(num_days):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date - timedelta(days=num_days)
+    return now_minus.isoformat(' ')
+
+def now_plus_minutes(num_minutes):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date + timedelta(minutes=num_minutes)
+    return now_plus.isoformat(' ')
+
+def now_minus_minutes(num_minutes):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    now_minus = now_date - timedelta(minutes=num_minutes)
+    return now_minus.isoformat(' ')
+
 
 def clean_ids(dictionary):
     if 'id' in dictionary.keys():
@@ -49,22 +83,59 @@ def check_vacancy(trip):
     trip.update_vacancy()
     return trip.has_vacancy
 
-def get_persons_near(position,user):
+
+def cosv(v1,v2):
+   return numpy.dot(v1,v2)/((numpy.dot(v1,v1)*numpy.dot(v2,v2))**.5)
+
+def direction(rider_position,rider_destination,driver_position,driver_destination):
+   rider_position = numpy.array((rider_position.georss_point_latitude,rider_position.georss_point_longitude))
+   rider_destination = numpy.array((rider_destination.georss_point_latitude,rider_destination.georss_point_longitude))
+   driver_position = numpy.array((driver_position.georss_point_latitude,driver_position.georss_point_longitude))
+   driver_destination = numpy.array((driver_destination.georss_point_latitude,driver_destination.georss_point_longitude))
+   return cosv(rider_destination-rider_position,driver_destination-driver_position)
+
+import math
+def distance(rider_position,driver_position):
+   #daniel, place your method here (euclidean distance among x1 and x2)
+   #it returns how close they are in meters
+   #uhm, or otherwise adapt the code in order to use "filter" of python or django.
+   return math.hypot(rider_position.georss_point_latitude-driver_position.georss_point_longitude,rider_position.georss_point_longitude-driver_position.georss_point_longitude)
+
+def filter_trips_driver_closest_to_destination(trips,rider):
+    for index,trip in enumerate(trips):
+        driver_distance_from_destination = driver.position.distance(destination)
+        rider_distance_from_destination = rider.position.distance(destination)
+        if driver_distance_from_destination < rider_distance_from_destination:
+            trips.remove(index)
+    return trips
+
+def location_distance_factor(distance1, distance2):
+    """
+    Given two distances, returns 1 if the first distance is greater than the second one.
+    Returns -1 if the first distance is less than the second one.
+    Returns 0 if they are equal. 
+    """
+    if distance1 > distance2: return 1
+    if distance1 < distance2: return -1
+    return 0
+
+
+def location_approaching_factor(distances):
+    """
+    Given a list of numbers, it computes the approaching factor which is a natural number in (-inf , +inf)
+    If factor > 0, the numbers in list tend to decrease
+    If factor == 0, the numbers in list tend to stay around the same value
+    If factor < 0, the numbers in list tend to increase.
     
-    # around 300meters, computed empirically
-    lat_delta = 0.00265800000001
-    lon_delta = 0.00818400000001
-    
-    person_lat_max = position.georss_point_latitude + lat_delta
-    person_lat_min = position.georss_point_latitude - lat_delta
-    person_lon_max = position.georss_point_longitude + lon_delta
-    person_lon_min = position.georss_point_longitude - lon_delta
-    
-    persons_near = (Person.objects
-                    .filter(position__georss_point_latitude__range=(person_lat_min,person_lat_max))
-                    .filter(position__georss_point_longitude__range=(person_lon_min,person_lon_max))
-                    .exclude(username=user.username))
-    return persons_near
+    In our case, we pass a list of distances from a location, in Kms, ordered by timestamp. If the function returns a number > 0, it means
+    that the Person is approaching the location
+    """
+    factor = 0
+    for i in range(0,len(distances)):
+        if i==len(distances)-1: break
+        factor += location_distance_factor(distances[i],distances[i+1])
+    return factor
+
 
 def get_trips_similar_destination(destination):
     lat_delta = 0.00265800000001

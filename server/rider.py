@@ -20,10 +20,15 @@ This file is part of Dycapo.
 This module holds all the XML-RPC methods that a Rider needs.
 """
 from rpc4django import rpcmethod
+
+
 from models import Trip, Location, Person, Participation, Response
 from datetime import datetime
-from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
+
+from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, filter_trips_driver_closest_to_destination, location_approaching_factor
 import response_codes
+import utils
+import geopy
 
 @rpcmethod(name='dycapo.search_trip', signature=['Response','Location','Location'], permission='server.can_xmlrpc')
 def search_trip(source, destination, **kwargs):
@@ -49,11 +54,10 @@ def search_trip(source, destination, **kwargs):
         destination = Location()
         destination = populate_object_from_dictionary(destination,dict_destination)
         destination.point_to_address()
-        user = get_xmlrpc_user(kwargs)
+        rider = get_xmlrpc_user(kwargs)
        
         lat_delta = 0.00265800000001
         lon_delta = 0.00818400000001
-        
         lat_max = destination.georss_point_latitude + lat_delta
         lat_min = destination.georss_point_latitude - lat_delta
         lon_max = destination.georss_point_longitude + lon_delta
@@ -64,12 +68,16 @@ def search_trip(source, destination, **kwargs):
                     locations__point='dest',
                     locations__georss_point_latitude__range=(lat_min,lat_max),
                     locations__georss_point_longitude__range=(lon_min,lon_max)
-        )    
+        )
+        
         
         if not trips_similar_destination:
             return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-        else:
-            return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_similar_destination])
+        
+        #trips = filter_trips_driver_closest_to_destination(trips_similar_destination, rider)
+        
+        
+        return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_similar_destination])
             
         
 @rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')
@@ -105,6 +113,7 @@ def request_ride(trip, **kwargs):
         participation.role = 'rider'
         participation.requested = True
         participation.requested_timestamp = datetime.now()
+
         try:
             participation.requested_position = rider.position
         except Location.DoesNotExist:

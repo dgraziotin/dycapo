@@ -1,3 +1,4 @@
+*.kpf
 *.pyc
 *.DS_Store
 *.bak

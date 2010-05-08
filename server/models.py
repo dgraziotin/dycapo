@@ -20,9 +20,10 @@ from django.db import models
 from django.contrib.auth.models import User, UserManager
 from django.db import IntegrityError
 from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
-from geopy import geocoders
-from geopy.point import Point
+import geopy
 import copy
+from time import time
+from datetime import datetime, timedelta
 
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
@@ -72,6 +73,38 @@ MODE_CHOICES = (
         (u'bus', u'Bus'),
 )
 
+from geopy import distance
+
+def now():
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    return now_date.isoformat(' ')
+
+def now_plus_days(num_days):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date + timedelta(days=num_days)
+    return now_plus.isoformat(' ')
+
+def now_minus_days(num_days):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date - timedelta(days=num_days)
+    return now_minus.isoformat(' ')
+
+def now_plus_minutes(num_minutes):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    nowplus = now_date + timedelta(minutes=num_minutes)
+    return now_plus.isoformat(' ')
+
+def now_minus_minutes(num_minutes):
+    now_seconds = time()
+    now_date = datetime.fromtimestamp(now_seconds)
+    now_minus = now_date - timedelta(minutes=num_minutes)
+    return now_minus.isoformat(' ')
+
+
 
 """
 Dycapo models
@@ -104,6 +137,15 @@ class Location(models.Model):
     days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True) # OPT
     leaves = models.DateTimeField(blank=True,null=True) # MUST
     
+    def distance(self,location):
+        """
+        Returns the distance in KMs from this location to a given location
+        """
+        current_point = geopy.point.Point(self.georss_point)
+        location_point = geopy.point.Point(location.georss_point)
+        distance = geopy.distance.distance(current_point,location_point)
+        return distance.kilometers
+    
     def address_to_point(self):
         """
         Given Geolocation information, it retrieves GeoRSS.
@@ -115,7 +157,7 @@ class Location(models.Model):
             address = self.street + ", " + str(self.postcode) + " " + self.town
             geo_info = geocoder.geocode(address)
             self.georss_point = str(geo_info[1][0]) + ' ' +str(geo_info[1][1])
-            point = Point.from_string(self.georss_point)
+            point = geopy.point.Point.from_string(self.georss_point)
             self.georss_point_latitude = point.latitude
             self.georss_point_longitude = point.longitude
         except:
@@ -132,8 +174,8 @@ class Location(models.Model):
         the return value of geocoder.reverse is in the form
         (u'Street name, Street Number, Postcode City Province, Country', (latitude, longitude))
         """
+        point = geopy.point.Point.from_string(self.georss_point)
         try:
-            point = Point.from_string(self.georss_point)
             geocoder = geocoders.Google(GOOGLE_MAPS_API_KEY)
             geocoding_result = geocoder.reverse((point.latitude,point.longitude))
             full_address = geocoding_result[0].split(",")
@@ -165,24 +207,14 @@ class Location(models.Model):
             """
             At this point we have Address details as string but not GeoRSS point.
             """
-            check_location = Location.objects.filter(point=self.point,label=self.label,street=self.street,town=self.town,postcode=self.postcode)
-            if len(check_location) == 0:
-                self.address_to_point()
-                super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
-            else:
-                super(Location, check_location[0]).save(force_update=True, *args, **kwargs) # Call the "real" save() method.
-                self.id=check_location[0].id
+            self.address_to_point()
+            super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
         else:
             """
             At this point we have a GeoRSS point but not Address details
             """
-            check_location = Location.objects.filter(georss_point=self.georss_point,label=self.label)
-            if len(check_location) == 0:
-                self.point_to_address()
-                super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
-            else:
-                super(Location, check_location[0]).save(force_update=True, *args, **kwargs) # Call the "real" save() method.
-                self.id=check_location[0].id
+            self.point_to_address()
+            super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
         
    
     def __unicode__(self):
@@ -219,6 +251,7 @@ class Person(User):
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
     dog = models.BooleanField(default=False) # OPT
+    locations = models.ManyToManyField(Location, related_name="locations", blank=True, null=True) # MUST
     
     class Meta:
         permissions = (
@@ -243,15 +276,12 @@ class Person(User):
             'username': self.username
         }
         return person_dict
+    
+    def get_recent_locations(self,minutes=10):
+        recent_locations = self.locations.filter(leaves__gte=now_minus_minutes(minutes)).order_by('leaves')[:5]
+        return recent_locations
+    
         
-
-    
-    def is_travelling(self):
-        participation = Trip.objects.filter()
-        if participation:
-            return True
-        return False
-    
 class Mode(models.Model):
     """
     Represents additional information about the mode of transportation being used.
@@ -323,6 +353,9 @@ class Trip(models.Model):
     mode = models.ForeignKey(Mode, blank=False, null=True) # MUST
     prefs = models.ForeignKey(Prefs, null=True) # OPT
     participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
+    
+    def __repr__(self):
+        return str(self.id)
     
     def __unicode__(self):
         return str(self.id)
