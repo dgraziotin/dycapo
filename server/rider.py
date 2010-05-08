@@ -25,7 +25,7 @@ from rpc4django import rpcmethod
 from models import Trip, Location, Person, Participation, Response
 from datetime import datetime
 
-from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, filter_trips_driver_closest_to_destination, location_approaching_factor
+from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, exclude_trips_driver_closest_to_destination, location_approaching_factor
 import response_codes
 import utils
 import geopy
@@ -74,8 +74,10 @@ def search_trip(source, destination, **kwargs):
         if not trips_similar_destination:
             return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
         
-        #trips = filter_trips_driver_closest_to_destination(trips_similar_destination, rider)
+        trips = exclude_trips_driver_closest_to_destination(trips_similar_destination, rider)
         
+        if not trips:
+            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
         
         return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips_similar_destination])
             

@@ -360,6 +360,10 @@ class Trip(models.Model):
     def __unicode__(self):
         return str(self.id)
     
+    def get_destination(self):
+        destination = self.locations.filter(point='dest')[0]
+        return destination
+    
     def update_vacancy(self):
         """
         Checks how many seats are still available in car and updates the attribute consistently

@@ -83,30 +83,16 @@ def check_vacancy(trip):
     trip.update_vacancy()
     return trip.has_vacancy
 
-
-def cosv(v1,v2):
-   return numpy.dot(v1,v2)/((numpy.dot(v1,v1)*numpy.dot(v2,v2))**.5)
-
-def direction(rider_position,rider_destination,driver_position,driver_destination):
-   rider_position = numpy.array((rider_position.georss_point_latitude,rider_position.georss_point_longitude))
-   rider_destination = numpy.array((rider_destination.georss_point_latitude,rider_destination.georss_point_longitude))
-   driver_position = numpy.array((driver_position.georss_point_latitude,driver_position.georss_point_longitude))
-   driver_destination = numpy.array((driver_destination.georss_point_latitude,driver_destination.georss_point_longitude))
-   return cosv(rider_destination-rider_position,driver_destination-driver_position)
-
-import math
-def distance(rider_position,driver_position):
-   #daniel, place your method here (euclidean distance among x1 and x2)
-   #it returns how close they are in meters
-   #uhm, or otherwise adapt the code in order to use "filter" of python or django.
-   return math.hypot(rider_position.georss_point_latitude-driver_position.georss_point_longitude,rider_position.georss_point_longitude-driver_position.georss_point_longitude)
-
-def filter_trips_driver_closest_to_destination(trips,rider):
-    for index,trip in enumerate(trips):
+def exclude_trips_driver_closest_to_destination(trips,rider):
+    for trip in trips:
+        driver = trip.author
+        destination = trip.get_destination()
         driver_distance_from_destination = driver.position.distance(destination)
         rider_distance_from_destination = rider.position.distance(destination)
+        
         if driver_distance_from_destination < rider_distance_from_destination:
-            trips.remove(index)
+            trips = trips.exclude(id=trip.id)
+            
     return trips
 
 def location_distance_factor(distance1, distance2):
