@@ -8,17 +8,22 @@ class TestMatchingAlgorithm():
     def setup_class(self):
         self.driver = classes.Driver('driver1','password','http://127.0.0.1')
         self.rider = classes.Rider('rider1','password','http://127.0.0.1')
-        self.driver_position = '46.490200 11.342294'
-        self.driver_destination = '46.500740 11.345073'
-        self.rider_position = '46.494957  11.340239'
-        self.rider_destination = '46.500891  11.344306'
-        self.rider.position_lat = 46.494957
-        self.rider.position_lon = 11.340239
-        self.driver.position_lat = 46.490200
-        self.driver.position_lon = 11.342294
+        
+        self.driver_position    = '46.500000  11.340000'
+        # rider is +0.002000 North
+        self.rider_position     = '46.502000  11.340000'
+        # driver will move to +0.005000 North  
+        self.driver_destination = '46.505000  11.340000'
+        # rider will move to +0.002000 North
+        self.rider_destination  = '46.504000  11.340000'
+        
+        self.driver.position_lat    = 46.500000
+        self.rider.position_lat     = 46.502000
+        self.driver.position_lon    = 11.340000
+        self.rider.position_lon     = 11.340000
         
     def teardown_class(self):
-        self.driver.delete_trip(self.driver.trip)
+        self.driver.finish_trip(self.driver.trip)
 
     def setup_method(self,method):
         self.driver.position = classes.Location(georss_point=self.driver_position)
@@ -49,75 +54,79 @@ class TestMatchingAlgorithm():
         response = self.driver.start_trip()
         assert response['code'] == response_codes.POSITIVE
     
-    def test_search_trip_driver_closest_to_destination(self):
-        driver_position = '46.50060 11.345050'
-        self.driver.position = classes.Location(georss_point=driver_position)
-        self.driver.update_position()
-        
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
-        self.driver.position = classes.Location(georss_point=self.driver_position)
-        self.driver.update_position()
-    
-    def test_search_trip(self):
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.POSITIVE
-        self.rider.trip = response['value'][0]
-    
-    def test_search_trip_valid_1(self):
-        self.driver.position_lat += 0.000030
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(self.driver.position_lat, self.driver.position_lon),leaves=utils.nowplusminutes(1))
-        response = self.driver.update_position(location=self.driver.position)
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.POSITIVE
-        self.rider.trip = response['value'][0]
-    
-    def test_search_trip_valid_2(self):
-        self.driver.position_lat += 0.000030
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(self.driver.position_lat, self.driver.position_lon),leaves=utils.nowplusminutes(2))
-        response = self.driver.update_position(location=self.driver.position)
+    def test_search_trip_base(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.POSITIVE
         self.rider.trip = response['value'][0]
         
-    def test_search_trip_valid_3(self):
-        self.driver.position_lat += 0.000030
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(self.driver.position_lat, self.driver.position_lon),leaves=utils.nowplusminutes(3))
-        response = self.driver.update_position(location=self.driver.position)
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.POSITIVE
-        self.rider.trip = response['value'][0]
-    
-    def test_search_trip_not_valid_1(self):
-        self.driver.position_lon = self.rider.position_lon
-        self.driver.position_lat = self.rider.position_lat + 0.000030
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(self.driver.position_lat, self.driver.position_lon),leaves=utils.nowplusminutes(4))
-        response = self.driver.update_position(location=self.driver.position)
-        
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
-        
-    def test_search_trip_not_valid_2(self):
-        self.driver.position_lon = self.rider.position_lon + 0.000030
-        self.driver.position_lat = self.rider.position_lat
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(self.driver.position_lat, self.driver.position_lon),leaves=utils.nowplusminutes(5))
-        response = self.driver.update_position(location=self.driver.position)
-        
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
-        
-    def test_search_trip_not_valid_3(self):
-        latitude = 46.494957
-        longitude = 11.340239
-        self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(latitude,longitude),leaves=utils.nowplusminutes(0))
-        response = self.driver.update_position(location=self.driver.position)
-        for i in range (0,10):
-            latitude -= 0.000500
-            self.driver.position = classes.Location(georss_point=utils.georss_point_from_coords(latitude,longitude),leaves=utils.nowplusminutes(0))
+    def test_search_trip_valid(self):
+        '''
+        We move Driver + 0.00010 North 20 times, until he reaches rider
+        position. Rider is +0.002000 North initially.
+        Before this method:
+            Driver Position:    '46.500000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        After this method:
+            Driver Position:    '46.502000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        '''
+        for i in range (1,21):
+            self.driver.position_lat += 0.000100
+            self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
+            self.driver.position = classes.Location(georss_point=self.driver_position)
             response = self.driver.update_position(location=self.driver.position)
-            
+            assert response['code'] == response_codes.POSITIVE
+            response = self.rider.search_ride(self.rider.position,self.rider.destination)
+            assert response['code'] == response_codes.POSITIVE
+            self.rider.trip = response['value'][0]
+        
+        driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
+        rider_position = utils.coords_from_georss_point(self.rider.get_position()['value']['georss_point'])
+        assert driver_position == rider_position
+        
+    
+    def test_search_trip_driver_closer_to_destination(self):
+        '''
+        Rider and driver are now at the same latitude, 46.502000. We move Driver to
+        46.503000 North (+0.01000). Therefore, driver is after rider and closer to
+        the destination.
+        Before this method:
+            Driver Position:    '46.502000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        After this method:
+            Driver Position:    '46.503000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        '''
+        self.driver.position_lat += 0.001000
+        self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
+        self.driver.position = classes.Location(georss_point=self.driver_position)
+        response = self.driver.update_position(location=self.driver.position)
+        assert response['code'] == response_codes.POSITIVE
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE
         
-    
+    def test_search_trip_driver_moving_away_from_rider(self):
+        '''
+        We now move the Driver to South, making it moving away from rider.
+        Therefore, rider should not get his trip in a search.
+        Before this method:
+            Driver Position:    '46.503000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        After this method:
+            Driver Position:    '46.501000  11.340000'
+            Rider Position:     '46.502000  11.340000'
+        '''
+        for i in range (1,21):
+            self.driver.position_lat -= 0.0001
+            self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
+            self.driver.position = classes.Location(georss_point=self.driver_position)
+            response = self.driver.update_position(location=self.driver.position)
+            assert response['code'] == response_codes.POSITIVE
+        driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
+        assert driver_position[0] == 46.501000
+        assert driver_position[1] == 11.340000
         
+        response = self.rider.search_ride(self.rider.position,self.rider.destination)
+        assert response['code'] == response_codes.NEGATIVE
+            
+    

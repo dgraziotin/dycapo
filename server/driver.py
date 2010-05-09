@@ -256,17 +256,15 @@ def accept_ride_request(trip, person, **kwargs):
 
         
 
-@rpcmethod(name='dycapo.delete_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
-def delete_trip(trip):
+@rpcmethod(name='dycapo.finish_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
+def finish_trip(trip,**kwargs):
         """
         This method is only for testing. It will be removed in the final version of Dycapo!
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
-        trip.prefs.delete()
-        trip.mode.delete()
-
-        trip.delete()
+        trip.active = False
+        trip.save()
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,"boolean",True)
         return resp.to_xmlrpc()
         

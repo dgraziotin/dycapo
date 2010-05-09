@@ -1,10 +1,10 @@
-﻿# Sequel Pro dump
-# Version 1630
+# Sequel Pro dump
+# Version 2210
 # http://code.google.com/p/sequel-pro
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-04-30 14:55:23 +0200
+# Generation Time: 2010-05-08 18:18:56 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -1158,6 +1158,22 @@ VALUES
 
 /*!40000 ALTER TABLE `server_person` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+# Dump of table server_person_locations
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `server_person_locations`;
+
+CREATE TABLE `server_person_locations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `person_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `person_id` (`person_id`,`location_id`),
+  KEY `location_id_refs_id_834d4e8` (`location_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 
 
 # Dump of table server_prefs

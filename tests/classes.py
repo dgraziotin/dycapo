@@ -70,13 +70,13 @@ class Person():
         print "#" * 80
         return response
     
-    def delete_trip(self,trip=None):
+    def finish_trip(self,trip=None):
         print "#" * 80
         print "DELETING TRIP..."
         print "#" * 80
         if not trip:
             trip = self.trip
-        response = self.client.dycapo.delete_trip(trip)
+        response = self.client.dycapo.finish_trip(trip)
         print "#" * 80
         return response
 
