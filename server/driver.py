@@ -24,6 +24,7 @@ from django.db import IntegrityError
 from models import Trip, Location, Person, Mode, Participation, Prefs, Response
 from datetime import datetime
 from utils import populate_object_from_dictionary, get_xmlrpc_user, clean_ids
+import utils
 import response_codes
 from django.core.exceptions import ValidationError
 
@@ -263,8 +264,15 @@ def finish_trip(trip,**kwargs):
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])
+        driver = get_xmlrpc_user(kwargs)
+        if driver.is_participating():
+                participation = driver.get_active_participation()
+                participation.finished = True
+                participation.finished_timestamp = utils.now()
+                participation.save()
         trip.active = False
         trip.save()
+        
         resp = Response(response_codes.POSITIVE,response_codes.TRIP_DELETED,"boolean",True)
         return resp.to_xmlrpc()
         

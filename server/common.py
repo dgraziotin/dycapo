@@ -48,6 +48,7 @@ def update_position(position,**kwargs):
     position = Location()
     position = populate_object_from_dictionary(position,dict_position)
     user = get_xmlrpc_user(kwargs)
+        
     try:
         position.save()
     except Exception, e: 
@@ -56,7 +57,13 @@ def update_position(position,**kwargs):
     
     user.position = position
     user.locations.add(position)
+    
+    if user.is_participating():
+        participation = user.get_active_participation()
+        participation.locations.add(position)
+        
     user.save()
+    
     resp = Response(response_codes.POSITIVE,response_codes.POSITION_UPDATED,"boolean",True)
     return resp.to_xmlrpc()
 

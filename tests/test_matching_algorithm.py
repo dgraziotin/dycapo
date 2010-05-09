@@ -123,8 +123,6 @@ class TestMatchingAlgorithm():
             response = self.driver.update_position(location=self.driver.position)
             assert response['code'] == response_codes.POSITIVE
         driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
-        assert driver_position[0] == 46.501000
-        assert driver_position[1] == 11.340000
         
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE

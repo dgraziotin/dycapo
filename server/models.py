@@ -251,7 +251,7 @@ class Person(User):
     blind = models.BooleanField(default=False) # OPT
     deaf = models.BooleanField(default=False) # OPT
     dog = models.BooleanField(default=False) # OPT
-    locations = models.ManyToManyField(Location, related_name="locations", blank=True, null=True) # MUST
+    locations = models.ManyToManyField(Location, related_name="person_locations", blank=True, null=True) # MUST
     
     class Meta:
         permissions = (
@@ -278,9 +278,30 @@ class Person(User):
         return person_dict
     
     def get_recent_locations(self,max_results=10):
-        recent_locations = list(self.locations.all().order_by('-id')[:max_results])
+        if self.get_active_participation() and self.get_active_participation().role=='driver':
+                participation = self.get_active_participation()
+                recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
+        else:
+                recent_locations = list(self.locations.all().order_by('-id')[:max_results])
         recent_locations.reverse()
         return recent_locations
+    
+    def is_participating(self):
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return False
+        return True
+
+    def get_active_participation(self):
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return None
+        if len(participations) > 1: return None
+        return participations[0]
+
+    def get_participating_trip(self):
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return None
+        if len(participations) > 1: return None
+        return participations[0].trip
     
         
 class Mode(models.Model):
@@ -384,7 +405,9 @@ class Trip(models.Model):
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, **kwargs) # Call the "real" save() method.
     
-
+    def get_participations():
+        participations = Participation.objects.filter(trip=self)
+        return participations
 
     
     def to_xmlrpc(self):
@@ -429,6 +452,7 @@ class Participation(models.Model):
     finished = models.BooleanField(blank=False, default=False) # EXT    
     finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
     finished_position = models.ForeignKey(Location,related_name="finished_position",blank=True,null=True) # EXT
+    locations = models.ManyToManyField(Location, related_name="participaion_locations") # used internally
 
     
     def __unicode__(self):

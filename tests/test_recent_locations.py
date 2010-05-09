@@ -18,6 +18,6 @@ class TestRecentLocations():
     def test_position(self):
         for i in range (0,10):
             self.rider.position_lon += 0.000030
-            self.rider.position = classes.Location(georss_point=utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon),leaves=utils.nowplusminutes())
+            self.rider.position = classes.Location(georss_point=utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon),leaves=utils.nowplusminutes(0))
             response = self.rider.update_position(location=self.rider.position)
             assert response['code']==response_codes.POSITIVE
