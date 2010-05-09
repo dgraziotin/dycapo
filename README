@@ -19,7 +19,7 @@ As the implementation continues and succedes, the whole national territory could
 It is currently a solo project started by Daniel Graziotin for his BSC thesis 
 at the Free University of Bolzano/Bozen.
 
-More information on http://www.opensocialcapital.com/dynamic_carpooling/wiki/DyCaPo
+More information on http://dycapo.org/Server
 Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
 
 STATUS
@@ -31,7 +31,8 @@ Therefore, v1.0.0 will be considered stable, with fixed API.
 PROTOCOL
 ***************
 Dycapo defines a new Protocol for Dynamic Carpooling, heavily inspired on <http://opentrip.info/wiki/Home> Protocol.
-The Protocol (which currently has no name) is based on XML-RPC calls
+The Protocol, called Dycapo Protocol, is based on XML-RPC calls.
+See http://dycapo.org/Protocol for more information
 
 API
 ***************
@@ -46,7 +47,6 @@ We provide 3 registered users to test Dycapo functionalities:
 
 All of them with password set to "password".
 
-There are some tiny python clients located under tests/
-They use threads to perform some Trip insertions, lookup and accept.
-to run te tests, simply do a
-python tests/test_all.py
+We provide a testing framework, located under tests/.
+We are using py.test <http://codespeak.net/py/dist/test/>.
+To run all tests, simply run run_tests.py

@@ -115,27 +115,27 @@ class Location(models.Model):
     Represents a single location.
     See `OpenTrip_Core#Location_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Location_Constructs>`_ for more info.
     """
-    label = models.CharField(max_length=255, blank=True) # OPT
+    label = models.CharField(max_length=255, blank=True)
     street = models.CharField(max_length=255, blank=True)
-    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES, blank=True) # OPT
-    country = models.CharField(max_length=2, blank=True) # OPT
-    region = models.CharField(max_length=255, blank=True) # OPT
-    town = models.CharField(max_length=255, blank=True) # OPT
-    postcode = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
-    subregion = models.CharField(max_length=255, blank=True) # OPT
-    georss_point = models.CharField(max_length=255, blank=True)  # RECOM
+    point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES, blank=True)
+    country = models.CharField(max_length=2, blank=True)
+    region = models.CharField(max_length=255, blank=True)
+    town = models.CharField(max_length=255, blank=True)
+    postcode = models.PositiveIntegerField(blank=True,null=True,default=0)
+    subregion = models.CharField(max_length=255, blank=True)
+    georss_point = models.CharField(max_length=255, blank=True)
     """
     georss_pont_latitude and georss_point_longitude should be just used internally
     """
-    georss_point_latitude = models.FloatField(null=True,default=0) #EXT
-    georss_point_longitude = models.FloatField(null=True,default=0) #EXT
+    georss_point_latitude = models.FloatField(null=True,default=0)
+    georss_point_longitude = models.FloatField(null=True,default=0)
     """
     The following should be members of a separate Date-Time class but are included here for simplicity
     """
-    offset = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
-    recurs = models.CharField(max_length=255,blank=True) # OPT
-    days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True) # OPT
-    leaves = models.DateTimeField(blank=True,null=True) # MUST
+    offset = models.PositiveIntegerField(blank=True,null=True,default=0)
+    recurs = models.CharField(max_length=255,blank=True)
+    days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True)
+    leaves = models.DateTimeField(blank=True,null=True)
     
     def distance(self,location):
         """
@@ -221,6 +221,10 @@ class Location(models.Model):
         return self.georss_point
     
     def to_xmlrpc(self):
+        """
+        Returns a Python dict that contains just the attributes we want to expose
+        in out XML-RPC methods
+        """
         location_dict = copy.deepcopy(self.__dict__)
         del location_dict['georss_point_latitude']
         del location_dict['georss_point_longitude']
@@ -234,7 +238,6 @@ class Person(User):
     `this blog <http://steps.ucdavis.edu/People/jbremson/extending-the-user-model-in-django>`_  to get Person objects
     instead of User objects when requesting a user.
     """
-    
     # first_name from Django
     # last_name from Django
     # email from Django
@@ -242,17 +245,59 @@ class Person(User):
     # date_joined from Django
     # username from Django
     # password from Django
-    uri = models.CharField(max_length=200,blank=True) # OPT
-    phone = models.CharField(max_length=200,null=True) # OPT
-    position = models.ForeignKey(Location,blank=True,null=True) # EXT
-    age = models.PositiveIntegerField(null=True,default=0) # OPT
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False,null=True) # OPT
-    smoker = models.BooleanField(default=False) # OPT
-    blind = models.BooleanField(default=False) # OPT
-    deaf = models.BooleanField(default=False) # OPT
-    dog = models.BooleanField(default=False) # OPT
+    uri = models.CharField(max_length=200,blank=True)
+    phone = models.CharField(max_length=200,null=True)
+    position = models.ForeignKey(Location,blank=True,null=True)
+    age = models.PositiveIntegerField(null=True,default=0)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False,null=True)
+    smoker = models.BooleanField(default=False)
+    blind = models.BooleanField(default=False)
+    deaf = models.BooleanField(default=False)
+    dog = models.BooleanField(default=False)
     locations = models.ManyToManyField(Location, related_name="person_locations", blank=True, null=True) # MUST
     
+    def get_recent_locations(self,max_results=10):
+        """
+        Returns the last n locations of a Person. If the person is participating
+        in a Trip as a Driver, it directly returns the last n locations stored
+        in the Participation, for having better results in research algorithms
+        """
+        if self.get_active_participation() and self.get_active_participation().role=='driver':
+                participation = self.get_active_participation()
+                recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
+        else:
+                recent_locations = list(self.locations.all().order_by('-id')[:max_results])
+        recent_locations.reverse()
+        return recent_locations
+    
+    def is_participating(self):
+        """
+        Returns true if the Person is actively participating in a Trip
+        """
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return False
+        return True
+
+    def get_active_participation(self):
+        """
+        Returns the currently Participation of the Person in a Trip.
+        """
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return None
+        # TODO: we should purge here in case of multiple Participations returned
+        if len(participations) > 1: return None
+        return participations[0]
+
+    def get_participating_trip(self):
+        """
+        Returns the Trip in which the Person is Participating
+        """
+        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        if not participations: return None
+        # TODO: we should purge here in case of multiple Participations returned
+        if len(participations) > 1: return None
+        return participations[0].trip
+        
     class Meta:
         permissions = (
             ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
@@ -266,42 +311,13 @@ class Person(User):
     
     def to_xmlrpc(self):
         """
-        TODO:
-        -use OpenTrip id, not Django internal id
-        -choose what will be marshalled for Mode and Prefs objects
-        -use django serializers instead of this
-        -what else about the driver?
+        Returns a Python dict that contains just the attributes we want to expose
+        in out XML-RPC methods
         """
         person_dict = {
             'username': self.username
         }
         return person_dict
-    
-    def get_recent_locations(self,max_results=10):
-        if self.get_active_participation() and self.get_active_participation().role=='driver':
-                participation = self.get_active_participation()
-                recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
-        else:
-                recent_locations = list(self.locations.all().order_by('-id')[:max_results])
-        recent_locations.reverse()
-        return recent_locations
-    
-    def is_participating(self):
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
-        if not participations: return False
-        return True
-
-    def get_active_participation(self):
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
-        if not participations: return None
-        if len(participations) > 1: return None
-        return participations[0]
-
-    def get_participating_trip(self):
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
-        if not participations: return None
-        if len(participations) > 1: return None
-        return participations[0].trip
     
         
 class Mode(models.Model):
@@ -309,15 +325,15 @@ class Mode(models.Model):
     Represents additional information about the mode of transportation being used.
     See `OpenTrip_Core#Mode_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs>`_ for more info.
     """
-    kind = models.CharField(max_length=255,choices=MODE_CHOICES,blank=False) # MUST
-    capacity = models.PositiveIntegerField(blank=False,null=True,default=0) # OPT
-    vacancy = models.PositiveIntegerField(blank=False,null=True,default=0) # OPT
-    make = models.CharField(max_length=255,blank=True) # OPT
-    model = models.CharField(max_length=255,blank=True) # OPT
-    year = models.PositiveIntegerField(blank=True,null=True,default=0) # OPT
-    color = models.CharField(max_length=255,blank=True) # OPT
-    lic = models.CharField(max_length=255,blank=True) # OPT
-    cost = models.FloatField(blank=True,null=True,default=0) # OPT
+    kind = models.CharField(max_length=255,choices=MODE_CHOICES,blank=False)
+    capacity = models.PositiveIntegerField(blank=False,null=True,default=0)
+    vacancy = models.PositiveIntegerField(blank=False,null=True,default=0)
+    make = models.CharField(max_length=255,blank=True)
+    model = models.CharField(max_length=255,blank=True)
+    year = models.PositiveIntegerField(blank=True,null=True,default=0)
+    color = models.CharField(max_length=255,blank=True)
+    lic = models.CharField(max_length=255,blank=True)
+    cost = models.FloatField(blank=True,null=True,default=0)
     
     def save(self, *args, **kwargs):
         """
@@ -329,7 +345,8 @@ class Mode(models.Model):
         
     def to_xmlrpc(self):
         """
-        Prepares the dictionary to be returned when returned as XML-RPC
+        Returns a Python dict that contains just the attributes we want to expose
+        in out XML-RPC methods
         """
         mode_dict = copy.deepcopy(self.__dict__)
         del mode_dict['id']
@@ -343,11 +360,11 @@ class Prefs(models.Model):
     We kept drive and ride attributes just for compatibility reasons: in OpenTrip Dynamic just a driver should be
     the author of a Trip.
     """
-    age = models.CharField(max_length=50,blank=True) # OPT
-    nonsmoking = models.BooleanField(blank=True) # OPT
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True) # OPT
-    drive = models.BooleanField(default=False) # OPT
-    ride = models.BooleanField(default=False) # OPT
+    age = models.CharField(max_length=50,blank=True)
+    nonsmoking = models.BooleanField(blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True)
+    drive = models.BooleanField(default=False)
+    ride = models.BooleanField(default=False)
    
     def to_xmlrpc(self):
         """
@@ -366,15 +383,15 @@ class Trip(models.Model):
     in case of an export of a Trip in OpenTrip Feed format.
     TODO: return Prefs and Mode in XML_RPC
     """
-    published = models.DateTimeField(auto_now_add=True, blank=False, null=True) # MUST
-    updated = models.DateTimeField(auto_now=True, blank=False, null=True) # MUST
-    expires = models.DateTimeField(blank=False, null=True) # MUST
-    active = models.BooleanField(default=False) # MUST
-    author = models.ForeignKey(Person,related_name='author', blank=False, null=True) # OPT
-    locations = models.ManyToManyField(Location, blank=False) # MUST
-    mode = models.ForeignKey(Mode, blank=False, null=True) # MUST
-    prefs = models.ForeignKey(Prefs, null=True) # OPT
-    participation = models.ManyToManyField(Person,through='Participation',related_name='participation') # EXT
+    published = models.DateTimeField(auto_now_add=True, blank=False, null=True)
+    updated = models.DateTimeField(auto_now=True, blank=False, null=True)
+    expires = models.DateTimeField(blank=False, null=True)
+    active = models.BooleanField(default=False)
+    author = models.ForeignKey(Person,related_name='author', blank=False, null=True)
+    locations = models.ManyToManyField(Location, blank=False)
+    mode = models.ForeignKey(Mode, blank=False, null=True)
+    prefs = models.ForeignKey(Prefs, null=True)
+    participation = models.ManyToManyField(Person,through='Participation',related_name='participation')
     
     def __repr__(self):
         return str(self.id)
@@ -383,6 +400,9 @@ class Trip(models.Model):
         return str(self.id)
     
     def get_destination(self):
+        """
+        Returns the location representing the destination of the Trip
+        """
         destination = self.locations.filter(point='dest')[0]
         return destination
     
@@ -395,27 +415,34 @@ class Trip(models.Model):
         self.mode.save()
         
     def has_vacancy(self):
+        """
+        Returns True if there are emtpy seats available
+        """
         if self.mode.capacity - self.mode.vacancy > 0:
             return True
         return False
         
     
     def save(self, *args, **kwargs):
+        """
+        Ensures integrity.
+        """
         if not self.expires or not self.mode or not self.prefs or not self.author:
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, **kwargs) # Call the "real" save() method.
     
     def get_participations():
+        """
+        Returns all the Participations of the Trip
+        """
         participations = Participation.objects.filter(trip=self)
         return participations
 
     
     def to_xmlrpc(self):
         """
-        Prepares the dictionary to be returned when riders search a ride.
-        TODO:
-        -choose what will be marshalled for Mode and Prefs objects
-        -what else about the driver?
+        Returns a Python dict that contains just the attributes we want to expose
+        in out XML-RPC methods
         """
         locations = self.locations.all()
         locations_dict = []
@@ -437,22 +464,22 @@ class Participation(models.Model):
     This is an OpenTrip extension and should be considered as a proposal for OpenTrip Dynamic.
     It is currently used internally in Dycapo
     """
-    person = models.ForeignKey(Person, related_name="participant") # used internally
-    trip = models.ForeignKey(Trip, related_name="trip") # used internally
-    role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False) # EXT
-    requested = models.BooleanField(blank=False, default=False) # EXT
-    requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
-    requested_position = models.ForeignKey(Location,related_name="requested_position",blank=True,null=True) # EXT
-    accepted = models.BooleanField(blank=False, default=False) # EXT
-    accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
-    accepted_position = models.ForeignKey(Location,related_name="accepted_position",blank=True,null=True) # EXT
-    started = models.BooleanField(blank=False, default=False) # EXT
-    started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
-    started_position = models.ForeignKey(Location,related_name="started_position",blank=True,null=True) # EXT    
-    finished = models.BooleanField(blank=False, default=False) # EXT    
-    finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True) # EXT
-    finished_position = models.ForeignKey(Location,related_name="finished_position",blank=True,null=True) # EXT
-    locations = models.ManyToManyField(Location, related_name="participaion_locations") # used internally
+    person = models.ForeignKey(Person, related_name="participant")
+    trip = models.ForeignKey(Trip, related_name="trip")
+    role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False)
+    requested = models.BooleanField(blank=False, default=False)
+    requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
+    requested_position = models.ForeignKey(Location,related_name="requested_position",blank=True,null=True)
+    accepted = models.BooleanField(blank=False, default=False)
+    accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
+    accepted_position = models.ForeignKey(Location,related_name="accepted_position",blank=True,null=True)
+    started = models.BooleanField(blank=False, default=False)
+    started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
+    started_position = models.ForeignKey(Location,related_name="started_position",blank=True,null=True) 
+    finished = models.BooleanField(blank=False, default=False)
+    finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
+    finished_position = models.ForeignKey(Location,related_name="finished_position",blank=True,null=True)
+    locations = models.ManyToManyField(Location, related_name="participaion_locations")
 
     
     def __unicode__(self):

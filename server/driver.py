@@ -202,7 +202,7 @@ def check_ride_requests(trip, **kwargs):
 @rpcmethod(name='dycapo.accept_ride_request', signature=['Response','Trip','Person'], permission='server.can_xmlrpc')
 def accept_ride_request(trip, person, **kwargs):
         """
-        his method is for a driver to accept a ride request by a rider.
+        This method is for a driver to accept a ride request by a rider.
         
         TODO
         
@@ -260,7 +260,19 @@ def accept_ride_request(trip, person, **kwargs):
 @rpcmethod(name='dycapo.finish_trip', signature=['Response','Trip'], permission='server.can_xmlrpc')
 def finish_trip(trip,**kwargs):
         """
-        This method is only for testing. It will be removed in the final version of Dycapo!
+        This method is for a driver to close a Trip.
+        
+        TODO
+        
+        -verify user permissions
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the driver is closing
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the operation and results (if any)
         """
         trip_dict = trip
         trip = Trip.objects.get(id=trip_dict['id'])

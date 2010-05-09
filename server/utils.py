@@ -16,6 +16,7 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+
 """
 This module holds some utility functions.
 """
@@ -28,29 +29,48 @@ from datetime import datetime, timedelta
 from time import time
 
 def now():
+    """
+    Returns a timestamp representing the current time, suitable for XML-RPC
+    """
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)
     return now_date.isoformat(' ')
 
 def now_plus_days(num_days):
+    """
+    Returns a timestamp representing the current time plus a given number
+    of days, suitable for XML-RPC
+    """
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)
     nowplus = now_date + timedelta(days=num_days)
     return now_plus.isoformat(' ')
 
 def now_minus_days(num_days):
+    """
+    Returns a timestamp representing the current time minus a given number
+    of days, suitable for XML-RPC
+    """
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)
     nowplus = now_date - timedelta(days=num_days)
     return now_minus.isoformat(' ')
 
 def now_plus_minutes(num_minutes):
+    """
+    Returns a timestamp representing the current time plus a given number
+    of minutes, suitable for XML-RPC
+    """
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)
     nowplus = now_date + timedelta(minutes=num_minutes)
     return now_plus.isoformat(' ')
 
 def now_minus_minutes(num_minutes):
+    """
+    Returns a timestamp representing the current time minus a given number
+    of minutes, suitable for XML-RPC
+    """
     now_seconds = time()
     now_date = datetime.fromtimestamp(now_seconds)
     now_minus = now_date - timedelta(minutes=num_minutes)
@@ -58,106 +78,37 @@ def now_minus_minutes(num_minutes):
 
 
 def clean_ids(dictionary):
+    """
+    Removes attributes with key 'id' from dictionaries. Suitable for XML-RPC
+    returns
+    """
     if 'id' in dictionary.keys():
         del dictionary['id']
     return dictionary
 
 def populate_object_from_dictionary(obj,dictionary):
-        for key in dictionary:
-            obj.__dict__[key] = dictionary[key]
-        return obj
+    """
+    Given an object and a dictionary, it updates all the object's attributes with
+    name matching a key of the dictionary
+    """
+    for key in dictionary:
+        obj.__dict__[key] = dictionary[key]
+    return obj
 
 def synchronize_objects(old_obj,new_obj):
-        for key in old_obj.__dict__:
-                if key != 'id' and key!= '_state':
-                        old_obj.__dict__[key] = new_obj.__dict__[key]
-        return old_obj
+    """
+    Synchronizes attributes values of two objects
+    """
+    for key in old_obj.__dict__:
+        if key != 'id' and key!= '_state':
+            old_obj.__dict__[key] = new_obj.__dict__[key]
+    return old_obj
                 
 def get_xmlrpc_user(kwargs):
+    """
+    Returns the Person object that is performing an XML-RPC call
+    """
     try:
         return Person.objects.get(username=kwargs['request'].META['REMOTE_USER'])
     except Person.DoesNotExist:
         return None
-
-def check_vacancy(trip):
-    trip.update_vacancy()
-    return trip.has_vacancy
-
-def exclude_trips_driver_closest_to_destination(trips,rider):
-    for trip in trips:
-        driver = trip.author
-        destination = trip.get_destination()
-        driver_distance_from_destination = driver.position.distance(destination)
-        rider_distance_from_destination = rider.position.distance(destination)
-        
-        if driver_distance_from_destination < rider_distance_from_destination:
-            trips = trips.exclude(id=trip.id)
-            
-    return trips
-
-def exclude_trips_driver_not_approaching_rider(trips,rider):
-    for trip in trips:
-        driver = trip.author
-        destination = trip.get_destination()
-        if get_approaching_factor(trip.author,rider.position) < -2:
-            trips = trips.exclude(id=trip.id)
-            
-    return trips
-
-
-def get_approaching_factor(person,position):
-    """
-    Given a person and a location, it determines if the person is approaching it
-    or getting away from it
-    """
-    recent_locations = person.get_recent_locations(10)
-    recent_locations_distance_from_position = []
-    for location in recent_locations:
-        recent_locations_distance_from_position.append(location.distance(position))
-    approaching_factor = location_approaching_factor(recent_locations_distance_from_position)
-    return approaching_factor
-    
-def location_distance_factor(distance1, distance2):
-    """
-    Given two distances, returns 1 if the first distance is greater than the second one.
-    Returns -1 if the first distance is less than the second one.
-    Returns 0 if they are equal. 
-    """
-    if distance1 > distance2: return 1
-    if distance1 < distance2: return -1
-    return 0
-
-
-def location_approaching_factor(distances):
-    """
-    Given a list of numbers, it computes the approaching factor which is a natural number in (-inf , +inf)
-    If factor > 0, the numbers in list tend to decrease
-    If factor == 0, the numbers in list tend to stay around the same value
-    If factor < 0, the numbers in list tend to increase.
-    
-    In our case, we pass a list of distances from a location, in Kms, ordered by timestamp. If the function returns a number > 0, it means
-    that the Person is approaching the location
-    """
-    factor = 0
-    for i in range(0,len(distances)):
-        if i==len(distances)-1: break
-        factor += location_distance_factor(distances[i],distances[i+1])
-    return factor
-
-
-def get_trips_destination_near_location(location):
-    lat_delta = 0.00265800000001
-    lon_delta = 0.00818400000001
-    lat_max = location.georss_point_latitude + lat_delta
-    lat_min = location.georss_point_latitude - lat_delta
-    lon_max = location.georss_point_longitude + lon_delta
-    lon_min = location.georss_point_longitude - lon_delta
-
-    trips_destination_near_location = Trip.objects.filter(
-                    active=True,
-                    locations__point='dest',
-                    locations__georss_point_latitude__range=(lat_min,lat_max),
-                    locations__georss_point_longitude__range=(lon_min,lon_max)
-    )
-    
-    return trips_destination_near_location
