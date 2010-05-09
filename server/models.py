@@ -277,8 +277,9 @@ class Person(User):
         }
         return person_dict
     
-    def get_recent_locations(self,minutes=10):
-        recent_locations = self.locations.filter(leaves__gte=now_minus_minutes(minutes)).order_by('-leaves').reverse()[:10]
+    def get_recent_locations(self,max_results=10):
+        recent_locations = list(self.locations.all().order_by('-id')[:max_results])
+        recent_locations.reverse()
         return recent_locations
     
         

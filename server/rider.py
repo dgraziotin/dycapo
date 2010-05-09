@@ -26,7 +26,7 @@ from models import Location, Person, Participation, Response
 from models import Trip
 from datetime import datetime
 
-from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, exclude_trips_driver_closest_to_destination, location_approaching_factor, get_trips_destination_near_location, get_approaching_factor, exclude_trips_driver_not_approaching_destination
+from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user, exclude_trips_driver_closest_to_destination, location_approaching_factor, get_trips_destination_near_location, get_approaching_factor, exclude_trips_driver_not_approaching_rider
 import response_codes
 import utils
 import geopy
@@ -67,7 +67,7 @@ def search_trip(source, destination, **kwargs):
         if not trips_driver_farther_driver:
             return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
         
-        trips = exclude_trips_driver_not_approaching_destination(trips_driver_farther_driver)
+        trips = exclude_trips_driver_not_approaching_rider(trips_driver_farther_driver,rider)
         
         if not trips:
             return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
