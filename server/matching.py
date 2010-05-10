@@ -20,13 +20,7 @@ This file is part of Dycapo.
 """
 This module holds all the functions involved in the matching Algorithm of Dycapo
 """
-import settings
-from copy import deepcopy
-from models import Person, Response, Trip
-import numpy
-import geopy
-from datetime import datetime, timedelta
-from time import time
+import models
 
 def check_vacancy(trip):
     """
@@ -52,16 +46,16 @@ def get_trips_destination_near_location(location):
     lon_max = location.georss_point_longitude + lon_delta
     lon_min = location.georss_point_longitude - lon_delta
 
-    trips_destination_near_location = Trip.objects.filter(
-                    active=True,
-                    locations__point='dest',
-                    locations__georss_point_latitude__range=(lat_min,lat_max),
-                    locations__georss_point_longitude__range=(lon_min,lon_max)
-    )
+    trips_destination_near_location = models.Trip.objects.filter(
+                                                                 active=True,
+                                                                 locations__point='dest',
+                                                                 locations__georss_point_latitude__range=(lat_min, lat_max),
+                                                                 locations__georss_point_longitude__range=(lon_min, lon_max)
+                                                                 )
     
     return trips_destination_near_location
 
-def exclude_trips_driver_closest_to_destination(trips,rider):
+def exclude_trips_driver_closest_to_destination(trips, rider):
     """
     Given a QuerySet of Trips, this function removes all the Trips for which the
     driver is closer to the destination than the rider
@@ -77,21 +71,22 @@ def exclude_trips_driver_closest_to_destination(trips,rider):
             
     return trips
 
-def exclude_trips_driver_not_approaching_rider(trips,rider):
+def exclude_trips_driver_not_approaching_rider(trips, rider):
     """
-    The most complicated part of the matching algorithm. Given a QuerySet of Trips
-    and a Person (the rider), it retrieves the approaching factor (defined later)
-    and removes the Trip from the QuerySet if the factor is less than a decided number
+    The most complicated part of the matching algorithm. Given a QuerySet of
+    Trips and a Person (the rider), it retrieves the
+    approaching factor (defined later)and removes the Trip from the QuerySet
+    if the factor is less than a decided number
     """
     for trip in trips:
         driver = trip.author
-        if get_proximity_factor(trip.author,rider.position) < -2:
+        if get_proximity_factor(trip.author, rider.position) < -2:
             trips = trips.exclude(id=trip.id)
             
     return trips
 
 
-def get_proximity_factor(person,position):
+def get_proximity_factor(person, position):
     """
     Given a person and a location, it determines if the person is approaching it
     or getting away from it, by retrieving some recent locations of the person and
@@ -101,26 +96,31 @@ def get_proximity_factor(person,position):
     recent_locations = person.get_recent_locations(10)
     recent_locations_distance_from_position = []
     for location in recent_locations:
-        recent_locations_distance_from_position.append(location.distance(position))
-    proximity_factor = location_proximity_factor(recent_locations_distance_from_position)
+        recent_locations_distance_from_position.append(
+                                                       location.distance(position))
+    proximity_factor = location_proximity_factor(
+                                                 recent_locations_distance_from_position)
     return proximity_factor
     
 def location_proximity_factor(distances):
     """
-    Given a list of distances, it computes the approaching factor which is a natural number in (-inf , +inf)
+    Given a list of distances, it computes the approaching factor which
+    is a natural number in (-inf , +inf)
     If factor > 0, the numbers in list tend to decrease
     If factor == 0, the numbers in list tend to stay around the same value
     If factor < 0, the numbers in list tend to increase.
     """
     factor = 0
-    for i in range(0,len(distances)):
-        if i==len(distances)-1: break
-        factor += location_distance_factor(distances[i],distances[i+1])
+    for i in range(0, len(distances)):
+        if i == len(distances) - 1:
+            break
+        factor += location_distance_factor(distances[i], distances[i + 1])
     return factor
 
 def location_distance_factor(distance1, distance2):
     """
-    Given two distances, returns 1 if the first distance is greater than the second one.
+    Given two distances, returns 1 if the first distance is greater than
+    the second one.
     Returns -1 if the first distance is less than the second one.
     Returns 0 if they are equal. 
     """

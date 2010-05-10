@@ -20,50 +20,28 @@ This file is part of Dycapo.
 """
 This module holds some utility functions.
 """
-import settings
-from copy import deepcopy
-from models import Person, Response, Trip
-import numpy
-import geopy
-from datetime import datetime, timedelta
-from time import time
+
+import time
+
+import datetime
+import models
 
 def now():
     """
     Returns a timestamp representing the current time, suitable for XML-RPC
     """
-    now_seconds = time()
-    now_date = datetime.fromtimestamp(now_seconds)
+    now_seconds = time.time()
+    now_date = datetime.datetime.fromtimestamp(now_seconds)
     return now_date.isoformat(' ')
-
-def now_plus_days(num_days):
-    """
-    Returns a timestamp representing the current time plus a given number
-    of days, suitable for XML-RPC
-    """
-    now_seconds = time()
-    now_date = datetime.fromtimestamp(now_seconds)
-    nowplus = now_date + timedelta(days=num_days)
-    return now_plus.isoformat(' ')
-
-def now_minus_days(num_days):
-    """
-    Returns a timestamp representing the current time minus a given number
-    of days, suitable for XML-RPC
-    """
-    now_seconds = time()
-    now_date = datetime.fromtimestamp(now_seconds)
-    nowplus = now_date - timedelta(days=num_days)
-    return now_minus.isoformat(' ')
 
 def now_plus_minutes(num_minutes):
     """
     Returns a timestamp representing the current time plus a given number
     of minutes, suitable for XML-RPC
     """
-    now_seconds = time()
-    now_date = datetime.fromtimestamp(now_seconds)
-    nowplus = now_date + timedelta(minutes=num_minutes)
+    now_seconds = time.time()
+    now_date = datetime.datetime.fromtimestamp(now_seconds)
+    now_plus = now_date + timedelta(minutes=num_minutes)
     return now_plus.isoformat(' ')
 
 def now_minus_minutes(num_minutes):
@@ -71,8 +49,8 @@ def now_minus_minutes(num_minutes):
     Returns a timestamp representing the current time minus a given number
     of minutes, suitable for XML-RPC
     """
-    now_seconds = time()
-    now_date = datetime.fromtimestamp(now_seconds)
+    now_seconds = time.time()
+    now_date = datetime.datetime.fromtimestamp(now_seconds)
     now_minus = now_date - timedelta(minutes=num_minutes)
     return now_minus.isoformat(' ')
 
@@ -86,21 +64,21 @@ def clean_ids(dictionary):
         del dictionary['id']
     return dictionary
 
-def populate_object_from_dictionary(obj,dictionary):
+def populate_object_from_dictionary(obj, dictionary):
     """
-    Given an object and a dictionary, it updates all the object's attributes with
-    name matching a key of the dictionary
+    Given an object and a dictionary, it updates all the object's
+    attributes with name matching a key of the dictionary
     """
     for key in dictionary:
         obj.__dict__[key] = dictionary[key]
     return obj
 
-def synchronize_objects(old_obj,new_obj):
+def synchronize_objects(old_obj, new_obj):
     """
     Synchronizes attributes values of two objects
     """
     for key in old_obj.__dict__:
-        if key != 'id' and key!= '_state':
+        if key != 'id' and key != '_state':
             old_obj.__dict__[key] = new_obj.__dict__[key]
     return old_obj
                 
@@ -109,6 +87,8 @@ def get_xmlrpc_user(kwargs):
     Returns the Person object that is performing an XML-RPC call
     """
     try:
-        return Person.objects.get(username=kwargs['request'].META['REMOTE_USER'])
-    except Person.DoesNotExist:
+        return models.Person.objects.get(
+                                         username=kwargs['request'].META['REMOTE_USER']
+                                         )
+    except models.Person.DoesNotExist:
         return None

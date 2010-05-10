@@ -27,8 +27,10 @@ TRIP_INSERTED = "Trip successfully inserted."
 TRIP_STARTED = "Trip successfully started."
 TRIP_STARTED = "Trip already started."
 TRIP_DELETED = ""
-TRIP_NOT_FOUND = "Trip not found. Please specify at least a valid id attribute."
-TRIP_PROTOCOL_ERROR = "Protocol Error. Trip attributes expires and content MUST be provided."
+TRIP_NOT_FOUND = """Trip not found. Please specify at least a
+                    valid id attribute."""
+TRIP_PROTOCOL_ERROR = """Protocol Error. Trip attributes expires and content
+                      MUST be provided."""
 RIDE_REQUESTS_NOT_FOUND = "Ride requests not found."
 RIDE_REQUESTS_FOUND = "Ride requests found."
 RIDE_REQUEST_ACCEPTED = "Ride request accepted."

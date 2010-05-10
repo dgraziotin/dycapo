@@ -19,66 +19,80 @@ This file is part of Dycapo.
 """
 This module holds all the XML-RPC methods that a Rider needs.
 """
-from rpc4django import rpcmethod
-
-
-from models import Location, Person, Participation, Response
-from models import Trip
-from datetime import datetime
-
-from utils import populate_object_from_dictionary, synchronize_objects, get_xmlrpc_user
-from matching import exclude_trips_driver_closest_to_destination, exclude_trips_driver_not_approaching_rider, get_trips_destination_near_location
-import response_codes
-import utils
+import datetime
 import geopy
+import matching
+import models
+import response_codes
+import rpc4django
+import utils
 
-@rpcmethod(name='dycapo.search_trip', signature=['Response','Location','Location'], permission='server.can_xmlrpc')
-def search_trip(source, destination, **kwargs):
-        """
-        This method is used by a rider to search a Trip, given its current position and the destination.
+@rpc4django.rpcmethod(name='dycapo.search_trip',
+                      signature=['Response', 'Location', 'Location'],
+                      permission='server.can_xmlrpc')
+def search_trip(source, destination, ** kwargs):
+    """
+        This method is used by a rider to search a Trip,
+        given its current position and the destination.
         
         TODO
         
         - verify user permissions
-        - implement an algorithm to really search a Trip :)
         - verify trip vacancy
     
         PARAMETERS
     
-        - ``source`` - a **Location** object, representing where the Rider is located
-        - ``destination`` - a **Location** object, representing where the Rider wants to go to
+        - ``source`` - a **Location** object, representing where
+        the Rider is located
+        - ``destination`` - a **Location** object, representing where
+        the Rider wants to go to
     
         RETURNS 
     
-        An object of type **Response**, containing all the details of the operation and results (if any)
+        An object of type **Response**, containing all the details of
+        the operation and results (if any)
         """
-        dict_destination = destination
-        destination = Location()
-        destination = populate_object_from_dictionary(destination,dict_destination)
-        destination.point_to_address()
-        rider = get_xmlrpc_user(kwargs)
+    dict_destination = destination
+    destination = models.Location()
+    destination = utils.populate_object_from_dictionary(destination,
+                                                        dict_destination)
+    destination.point_to_address()
+    rider = utils.get_xmlrpc_user(kwargs)
         
-        trips_common_destination = get_trips_destination_near_location(destination)
+    trips_common_destination = matching.get_trips_destination_near_location(
+                                                                            destination)
         
-        if not trips_common_destination:
-            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
+    if not trips_common_destination:
+        return models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDES_NOT_FOUND,
+                               "boolean", False)
+        
+    trips_driver_farther_driver = matching.exclude_trips_driver_closest_to_destination(
+                                                                                       trips_common_destination, rider)
+        
+    if not trips_driver_farther_driver:
+        return models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDES_NOT_FOUND,
+                               "boolean", False)
+        
+    trips = matching.exclude_trips_driver_not_approaching_rider(
+                                                                trips_driver_farther_driver, rider)
+        
+    if not trips:
+        return models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDES_NOT_FOUND,
+                               "boolean", False)
+        
+    return models.Response(response_codes.POSITIVE,
+                           response_codes.RIDES_FOUND,
+                           "Trip", [trip.to_xmlrpc() for trip in trips])
             
-        trips_driver_farther_driver = exclude_trips_driver_closest_to_destination(trips_common_destination, rider)
         
-        if not trips_driver_farther_driver:
-            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-        
-        trips = exclude_trips_driver_not_approaching_rider(trips_driver_farther_driver,rider)
-        
-        if not trips:
-            return Response(response_codes.NEGATIVE,response_codes.RIDES_NOT_FOUND,"boolean",False)
-        
-        return Response(response_codes.POSITIVE,response_codes.RIDES_FOUND,"Trip",[trip.to_xmlrpc() for trip in trips])
-            
-        
-@rpcmethod(name='dycapo.request_ride', signature=['Response','Trip'], permission='server.can_xmlrpc')
-def request_ride(trip, **kwargs):
-        """
+@rpc4django.rpcmethod(name='dycapo.request_ride',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def request_ride(trip, ** kwargs):
+    """
         This method is for a rider to request a Ride in a Trip.
         
         TODO
@@ -89,38 +103,48 @@ def request_ride(trip, **kwargs):
     
         PARAMETERS
     
-        - ``trip`` - a **Trip** object, representing the Trip that the Rider would like to join.
+        - ``trip`` - a **Trip** object, representing the Trip that the Rider
+        would like to join.
     
         RETURNS 
     
-        An object of type **Response**, containing all the details of the operation and results (if any)
+        An object of type **Response**, containing all the details of the
+        operation and results (if any)
         """
-        trip_dict = trip
-        try:
-            trip = Trip.objects.get(id=trip_dict['id'])
-        except KeyError:
-            resp = Response(response_codes.ERROR,response_codes.TRIP_NOT_FOUND,"boolean",False)
-            return resp.to_xmlrpc()
-        rider = get_xmlrpc_user(kwargs)
-        
-        participation = Participation()
-        participation.trip = trip
-        participation.person = rider
-        participation.role = 'rider'
-        participation.requested = True
-        participation.requested_timestamp = datetime.now()
-
-        try:
-            participation.requested_position = rider.position
-        except Location.DoesNotExist:
-            participation.requested_position = None
-        try:
-                participation_check = Participation.objects.get(trip=trip,person=rider)
-                participation_check = synchronize_objects(participation_check,participation)
-                participation_check.save()
-        except Participation.DoesNotExist:
-                participation.save()
-                resp = Response(response_codes.POSITIVE,response_codes.RIDE_REQUESTED,"boolean",True)
-                return resp.to_xmlrpc()
-        resp = Response(response_codes.ERROR,response_codes.RIDE_IN_COURSE,"boolean",True)
+    trip_dict = trip
+    try:
+        trip = models.Trip.objects.get(id=trip_dict['id'])
+    except KeyError:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
         return resp.to_xmlrpc()
+    rider = utils.get_xmlrpc_user(kwargs)
+        
+    participation = models.Participation()
+    participation.trip = trip
+    participation.person = rider
+    participation.role = 'rider'
+    participation.requested = True
+    participation.requested_timestamp = datetime.datetime.now()
+
+    try:
+        participation.requested_position = rider.position
+    except models.Location.DoesNotExist:
+        participation.requested_position = None
+    try:
+        participation_check = models.Participation.objects.get(
+                                                               trip=trip, person=rider)
+        participation_check = utils.synchronize_objects(
+                                                        participation_check, participation)
+        participation_check.save()
+    except models.Participation.DoesNotExist:
+        participation.save()
+        resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_REQUESTED,
+                               "boolean", True)
+        return resp.to_xmlrpc()
+    resp = models.Response(response_codes.ERROR,
+                           response_codes.RIDE_IN_COURSE,
+                           "boolean", True)
+    return resp.to_xmlrpc()

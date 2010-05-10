@@ -50,3 +50,15 @@ All of them with password set to "password".
 We provide a testing framework, located under tests/.
 We are using py.test <http://codespeak.net/py/dist/test/>.
 To run all tests, simply run run_tests.py
+
+ACKNOWLEDGEMENT
+***************
+<TODO>
+- Add pylint
+- Add CloneDigger
+- Add David Fischer
+- Add SoNet group
+- Add Riccardo Buttarelli
+- Add David Fischer
+- Add Community
+- Add Dan Kirshner

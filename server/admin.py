@@ -17,12 +17,11 @@ This file is part of Dycapo.
 
 """
 from django.contrib import admin
-from models import Location, Person, Mode, Prefs, Trip, Participation
+import models
 
-
-admin.site.register(Person)
-admin.site.register(Location)
-admin.site.register(Mode)
-admin.site.register(Prefs)
-admin.site.register(Trip)
-admin.site.register(Participation)
+admin.site.register(models.Person)
+admin.site.register(models.Location)
+admin.site.register(models.Mode)
+admin.site.register(models.Prefs)
+admin.site.register(models.Trip)
+admin.site.register(models.Participation)

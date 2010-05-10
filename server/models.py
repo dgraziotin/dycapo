@@ -16,14 +16,18 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-from django.db import models
-from django.contrib.auth.models import User, UserManager
-from django.db import IntegrityError
-from settings import GOOGLE_MAPS_API_KEY, SITE_DOMAIN
-import geopy
-import copy
 from time import time
-from datetime import datetime, timedelta
+
+import copy
+from datetime import datetime
+from datetime import timedelta
+from django.contrib.auth.models import User
+from django.contrib.auth.models import UserManager
+from django.db import IntegrityError
+from django.db import models
+import geopy
+from settings import GOOGLE_MAPS_API_KEY
+from settings import SITE_DOMAIN
 
 """
 This file contains all the models used in Dycapo. Each model is a port of the entities
@@ -45,33 +49,33 @@ All other attributes may be omitted
 Tuples that represent possible choices for some fields
 """
 GENDER_CHOICES = (
-        (u'M', u'Male'),
-        (u'F', u'Female'),
-)
+                  (u'M', u'Male'),
+                  (u'F', u'Female'),
+                  )
 
 WAYPOINT_CHOICES = (
-        (u'orig', u'Origin'),
-        (u'dest', u'Destination'),
-        (u'wayp', u'Waypoint'),
-        (u'posi', u'Position'),
-)
+                    (u'orig', u'Origin'),
+                    (u'dest', u'Destination'),
+                    (u'wayp', u'Waypoint'),
+                    (u'posi', u'Position'),
+                    )
 
 RECURS_CHOICES = (
-        (u'weekly', u'Weekly'),
-        (u'biweekly', u'Biweekly'),
-        (u'monthly', u'Monthly'),
-)
+                  (u'weekly', u'Weekly'),
+                  (u'biweekly', u'Biweekly'),
+                  (u'monthly', u'Monthly'),
+                  )
 
 ROLE_CHOICES = (
-        (u'rider', u'Rider'),
-        (u'driver', u'Driver'),
-)
+                (u'rider', u'Rider'),
+                (u'driver', u'Driver'),
+                )
 
 MODE_CHOICES = (
-        (u'auto', u'Auto'),
-        (u'van', u'Van'),
-        (u'bus', u'Bus'),
-)
+                (u'auto', u'Auto'),
+                (u'van', u'Van'),
+                (u'bus', u'Bus'),
+                )
 
 from geopy import distance
 
@@ -121,29 +125,29 @@ class Location(models.Model):
     country = models.CharField(max_length=2, blank=True)
     region = models.CharField(max_length=255, blank=True)
     town = models.CharField(max_length=255, blank=True)
-    postcode = models.PositiveIntegerField(blank=True,null=True,default=0)
+    postcode = models.PositiveIntegerField(blank=True, null=True, default=0)
     subregion = models.CharField(max_length=255, blank=True)
     georss_point = models.CharField(max_length=255, blank=True)
     """
     georss_pont_latitude and georss_point_longitude should be just used internally
     """
-    georss_point_latitude = models.FloatField(null=True,default=0)
-    georss_point_longitude = models.FloatField(null=True,default=0)
+    georss_point_latitude = models.FloatField(null=True, default=0)
+    georss_point_longitude = models.FloatField(null=True, default=0)
     """
     The following should be members of a separate Date-Time class but are included here for simplicity
     """
-    offset = models.PositiveIntegerField(blank=True,null=True,default=0)
-    recurs = models.CharField(max_length=255,blank=True)
-    days = models.CharField(max_length=255, choices=RECURS_CHOICES,blank=True)
-    leaves = models.DateTimeField(blank=True,null=True)
+    offset = models.PositiveIntegerField(blank=True, null=True, default=0)
+    recurs = models.CharField(max_length=255, blank=True)
+    days = models.CharField(max_length=255, choices=RECURS_CHOICES, blank=True)
+    leaves = models.DateTimeField(blank=True, null=True)
     
-    def distance(self,location):
+    def distance(self, location):
         """
         Returns the distance in KMs from this location to a given location
         """
         current_point = geopy.point.Point(self.georss_point)
         location_point = geopy.point.Point(location.georss_point)
-        distance = geopy.distance.distance(current_point,location_point)
+        distance = geopy.distance.distance(current_point, location_point)
         return distance.kilometers
     
     def address_to_point(self):
@@ -156,7 +160,7 @@ class Location(models.Model):
             geocoder = geocoders.Google(GOOGLE_MAPS_API_KEY)
             address = self.street + ", " + str(self.postcode) + " " + self.town
             geo_info = geocoder.geocode(address)
-            self.georss_point = str(geo_info[1][0]) + ' ' +str(geo_info[1][1])
+            self.georss_point = str(geo_info[1][0]) + ' ' + str(geo_info[1][1])
             point = geopy.point.Point.from_string(self.georss_point)
             self.georss_point_latitude = point.latitude
             self.georss_point_longitude = point.longitude
@@ -177,7 +181,7 @@ class Location(models.Model):
         point = geopy.point.Point.from_string(self.georss_point)
         try:
             geocoder = geocoders.Google(GOOGLE_MAPS_API_KEY)
-            geocoding_result = geocoder.reverse((point.latitude,point.longitude))
+            geocoding_result = geocoder.reverse((point.latitude, point.longitude))
             full_address = geocoding_result[0].split(",")
             self.street = full_address[0] + ',' + full_address[1]
             self.postcode = int(full_address[2].split(" ")[1])
@@ -192,7 +196,7 @@ class Location(models.Model):
         self.georss_point_longitude = point.longitude
             
     
-    def save(self, *args, **kwargs):
+    def save(self, * args, ** kwargs):
         """
         Ensures integrity
         """
@@ -208,13 +212,13 @@ class Location(models.Model):
             At this point we have Address details as string but not GeoRSS point.
             """
             self.address_to_point()
-            super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
+            super(Location, self).save(*args, ** kwargs) # Call the "real" save() method.
         else:
             """
             At this point we have a GeoRSS point but not Address details
             """
             self.point_to_address()
-            super(Location, self).save(*args, **kwargs) # Call the "real" save() method.
+            super(Location, self).save(*args, ** kwargs) # Call the "real" save() method.
         
    
     def __unicode__(self):
@@ -245,28 +249,28 @@ class Person(User):
     # date_joined from Django
     # username from Django
     # password from Django
-    uri = models.CharField(max_length=200,blank=True)
-    phone = models.CharField(max_length=200,null=True)
-    position = models.ForeignKey(Location,blank=True,null=True)
-    age = models.PositiveIntegerField(null=True,default=0)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False,null=True)
+    uri = models.CharField(max_length=200, blank=True)
+    phone = models.CharField(max_length=200, null=True)
+    position = models.ForeignKey(Location, blank=True, null=True)
+    age = models.PositiveIntegerField(null=True, default=0)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=True)
     smoker = models.BooleanField(default=False)
     blind = models.BooleanField(default=False)
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
     locations = models.ManyToManyField(Location, related_name="person_locations", blank=True, null=True) # MUST
     
-    def get_recent_locations(self,max_results=10):
+    def get_recent_locations(self, max_results=10):
         """
         Returns the last n locations of a Person. If the person is participating
         in a Trip as a Driver, it directly returns the last n locations stored
         in the Participation, for having better results in research algorithms
         """
-        if self.get_active_participation() and self.get_active_participation().role=='driver':
-                participation = self.get_active_participation()
-                recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
+        if self.get_active_participation() and self.get_active_participation().role == 'driver':
+            participation = self.get_active_participation()
+            recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
         else:
-                recent_locations = list(self.locations.all().order_by('-id')[:max_results])
+            recent_locations = list(self.locations.all().order_by('-id')[:max_results])
         recent_locations.reverse()
         return recent_locations
     
@@ -274,7 +278,7 @@ class Person(User):
         """
         Returns true if the Person is actively participating in a Trip
         """
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        participations = Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
         if not participations: return False
         return True
 
@@ -282,7 +286,7 @@ class Person(User):
         """
         Returns the currently Participation of the Person in a Trip.
         """
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        participations = Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
@@ -292,7 +296,7 @@ class Person(User):
         """
         Returns the Trip in which the Person is Participating
         """
-        participations = Participation.objects.filter(started=True,finished=False,person=self,trip__active=True)
+        participations = Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
@@ -300,10 +304,10 @@ class Person(User):
         
     class Meta:
         permissions = (
-            ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
-        )
+                       ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
+                       )
         
-     # Use UserManager to get the create_user method, etc.
+    # Use UserManager to get the create_user method, etc.
     objects = UserManager()
     
     def __unicode__(self):
@@ -325,23 +329,23 @@ class Mode(models.Model):
     Represents additional information about the mode of transportation being used.
     See `OpenTrip_Core#Mode_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs>`_ for more info.
     """
-    kind = models.CharField(max_length=255,choices=MODE_CHOICES,blank=False)
-    capacity = models.PositiveIntegerField(blank=False,null=True,default=0)
-    vacancy = models.PositiveIntegerField(blank=False,null=True,default=0)
-    make = models.CharField(max_length=255,blank=True)
-    model = models.CharField(max_length=255,blank=True)
-    year = models.PositiveIntegerField(blank=True,null=True,default=0)
-    color = models.CharField(max_length=255,blank=True)
-    lic = models.CharField(max_length=255,blank=True)
-    cost = models.FloatField(blank=True,null=True,default=0)
+    kind = models.CharField(max_length=255, choices=MODE_CHOICES, blank=False)
+    capacity = models.PositiveIntegerField(blank=False, null=True, default=0)
+    vacancy = models.PositiveIntegerField(blank=False, null=True, default=0)
+    make = models.CharField(max_length=255, blank=True)
+    model = models.CharField(max_length=255, blank=True)
+    year = models.PositiveIntegerField(blank=True, null=True, default=0)
+    color = models.CharField(max_length=255, blank=True)
+    lic = models.CharField(max_length=255, blank=True)
+    cost = models.FloatField(blank=True, null=True, default=0)
     
-    def save(self, *args, **kwargs):
+    def save(self, * args, ** kwargs):
         """
         Ensures integrity
         """
-        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model or self.make=='cacca':
+        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model or self.make == 'cacca':
             raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
-        super(Mode, self).save(*args, **kwargs) # Call the "real" save() method.
+        super(Mode, self).save(*args, ** kwargs) # Call the "real" save() method.
         
     def to_xmlrpc(self):
         """
@@ -360,9 +364,9 @@ class Prefs(models.Model):
     We kept drive and ride attributes just for compatibility reasons: in OpenTrip Dynamic just a driver should be
     the author of a Trip.
     """
-    age = models.CharField(max_length=50,blank=True)
+    age = models.CharField(max_length=50, blank=True)
     nonsmoking = models.BooleanField(blank=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     drive = models.BooleanField(default=False)
     ride = models.BooleanField(default=False)
    
@@ -387,11 +391,11 @@ class Trip(models.Model):
     updated = models.DateTimeField(auto_now=True, blank=False, null=True)
     expires = models.DateTimeField(blank=False, null=True)
     active = models.BooleanField(default=False)
-    author = models.ForeignKey(Person,related_name='author', blank=False, null=True)
+    author = models.ForeignKey(Person, related_name='author', blank=False, null=True)
     locations = models.ManyToManyField(Location, blank=False)
     mode = models.ForeignKey(Mode, blank=False, null=True)
     prefs = models.ForeignKey(Prefs, null=True)
-    participation = models.ManyToManyField(Person,through='Participation',related_name='participation')
+    participation = models.ManyToManyField(Person, through='Participation', related_name='participation')
     
     def __repr__(self):
         return str(self.id)
@@ -423,13 +427,13 @@ class Trip(models.Model):
         return False
         
     
-    def save(self, *args, **kwargs):
+    def save(self, * args, ** kwargs):
         """
         Ensures integrity.
         """
         if not self.expires or not self.mode or not self.prefs or not self.author:
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
-        super(Trip, self).save(*args, **kwargs) # Call the "real" save() method.
+        super(Trip, self).save(*args, ** kwargs) # Call the "real" save() method.
     
     def get_participations():
         """
@@ -449,11 +453,11 @@ class Trip(models.Model):
         for location in locations:
             locations_dict.append(location.to_xmlrpc())
         trip_dict = {
-            'id' : self.id,
-            'published' : self.published,
+            'id': self.id,
+            'published': self.published,
             'updated': self.updated,
             'expires': self.expires,
-            'content': {'mode': self.mode.to_xmlrpc(), 'prefs' : self.prefs.to_xmlrpc(), 'locations' : locations_dict},
+            'content': {'mode': self.mode.to_xmlrpc(), 'prefs': self.prefs.to_xmlrpc(), 'locations': locations_dict},
             'author': self.author.to_xmlrpc(),
         }
         return trip_dict
@@ -466,19 +470,19 @@ class Participation(models.Model):
     """
     person = models.ForeignKey(Person, related_name="participant")
     trip = models.ForeignKey(Trip, related_name="trip")
-    role = models.CharField(max_length=6,choices=ROLE_CHOICES,blank=False)
+    role = models.CharField(max_length=6, choices=ROLE_CHOICES, blank=False)
     requested = models.BooleanField(blank=False, default=False)
     requested_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
-    requested_position = models.ForeignKey(Location,related_name="requested_position",blank=True,null=True)
+    requested_position = models.ForeignKey(Location, related_name="requested_position", blank=True, null=True)
     accepted = models.BooleanField(blank=False, default=False)
     accepted_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
-    accepted_position = models.ForeignKey(Location,related_name="accepted_position",blank=True,null=True)
+    accepted_position = models.ForeignKey(Location, related_name="accepted_position", blank=True, null=True)
     started = models.BooleanField(blank=False, default=False)
     started_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
-    started_position = models.ForeignKey(Location,related_name="started_position",blank=True,null=True) 
+    started_position = models.ForeignKey(Location, related_name="started_position", blank=True, null=True)
     finished = models.BooleanField(blank=False, default=False)
     finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
-    finished_position = models.ForeignKey(Location,related_name="finished_position",blank=True,null=True)
+    finished_position = models.ForeignKey(Location, related_name="finished_position", blank=True, null=True)
     locations = models.ManyToManyField(Location, related_name="participaion_locations")
 
     
@@ -501,7 +505,7 @@ class Response(object):
     message = ""
     type = ""
     value = {}
-    def __init__(self,code,message,type,value):
+    def __init__(self, code, message, type, value):
         self.code = code
         self.message = message
         self.type = type
