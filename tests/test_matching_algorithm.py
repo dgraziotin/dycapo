@@ -19,13 +19,13 @@ This file is part of Dycapo.
 import classes
 import utils
 import copy
-
+import settings
 import response_codes
 
 class TestMatchingAlgorithm():
     def setup_class(self):
-        self.driver = classes.Driver('driver1','password','http://127.0.0.1')
-        self.rider = classes.Rider('rider1','password','http://127.0.0.1')
+        self.driver = classes.Driver(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL)
+        self.rider = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         
         self.driver_position    = '46.500000  11.340000'
         # rider is +0.002000 North
@@ -41,7 +41,8 @@ class TestMatchingAlgorithm():
         self.rider.position_lon     = 11.340000
         
     def teardown_class(self):
-        self.driver.finish_trip(self.driver.trip)
+        if settings.FINISH_TRIP_AFTER_TESTS:
+            self.driver.finish_trip(self.driver.trip)
 
     def setup_method(self,method):
         self.driver.position = classes.Location(georss_point=self.driver_position)

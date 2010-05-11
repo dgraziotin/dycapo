@@ -19,13 +19,13 @@ This file is part of Dycapo.
 import classes
 import utils
 import copy
-
+import settings
 import response_codes
 
 class TestRider():
     def setup_class(self):
-        self.driver = classes.Driver('driver1','password','http://127.0.0.1')
-        self.rider = classes.Rider('rider1','password','http://127.0.0.1')
+        self.driver = classes.Driver(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL)
+        self.rider = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.driver_position = '46.490200 11.342294'
         self.driver_destination = '46.500740 11.345073'
         self.rider_position = '46.494957  11.340239'

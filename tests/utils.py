@@ -19,6 +19,7 @@ This file is part of Dycapo.
 from datetime import datetime, timedelta
 from time import time
 from xmlrpclib import ServerProxy
+import settings
 
 
 def now():

@@ -65,7 +65,7 @@ def search_trip(source, destination, ** kwargs):
     if not trips_common_destination:
         return models.Response(response_codes.NEGATIVE,
                                response_codes.RIDES_NOT_FOUND,
-                               "boolean", False)
+                               "boolean", False).to_xmlrpc()
         
     trips_driver_farther_driver = matching.exclude_trips_driver_closest_to_destination(
                                                                                        trips_common_destination, rider)
@@ -73,7 +73,7 @@ def search_trip(source, destination, ** kwargs):
     if not trips_driver_farther_driver:
         return models.Response(response_codes.NEGATIVE,
                                response_codes.RIDES_NOT_FOUND,
-                               "boolean", False)
+                               "boolean", False).to_xmlrpc()
         
     trips = matching.exclude_trips_driver_not_approaching_rider(
                                                                 trips_driver_farther_driver, rider)
@@ -81,11 +81,11 @@ def search_trip(source, destination, ** kwargs):
     if not trips:
         return models.Response(response_codes.NEGATIVE,
                                response_codes.RIDES_NOT_FOUND,
-                               "boolean", False)
+                               "boolean", False).to_xmlrpc()
         
     return models.Response(response_codes.POSITIVE,
                            response_codes.RIDES_FOUND,
-                           "Trip", [trip.to_xmlrpc() for trip in trips])
+                           "Trip", [trip.to_xmlrpc() for trip in trips]).to_xmlrpc()
             
         
 @rpc4django.rpcmethod(name='dycapo.request_ride',

@@ -19,13 +19,13 @@ This file is part of Dycapo.
 import classes
 import utils
 import copy
-
+import settings
 import response_codes
 
 class TestRecentLocations():
     
     def setup_class(self):
-        self.rider = classes.Rider('rider1','password','http://127.0.0.1')
+        self.rider = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.rider.position_lat = 46.494957
         self.rider.position_lon = 11.340239
         self.rider_position = utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon)
