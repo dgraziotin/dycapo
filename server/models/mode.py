@@ -21,7 +21,7 @@ This file is part of Dycapo.
 This module holds the Mode model
 """
 
-from django.db import models
+from django.db import models, IntegrityError
 import copy
 
 MODE_CHOICES = (
@@ -45,13 +45,26 @@ class Mode(models.Model):
     lic = models.CharField(max_length=255, blank=True)
     cost = models.FloatField(blank=True, null=True, default=0)
     
+    """
+    For using this method we must at least assign Mode objects to a Person.
     def save(self, * args, ** kwargs):
-        """
-        Ensures integrity
-        """
-        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model or self.make == 'cacca':
+        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model:
             raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
-        super(Mode, self).save(*args, ** kwargs) # Call the "real" save() method.
+        try:
+            retrieven_mode = Mode.objects.get(kind=self.kind,
+                                              capacity=self.capacity,
+                                              vacancy=self.vacancy,
+                                              make=self.make,
+                                              model=self.model,
+                                              year=self.year,
+                                              color=self.color,
+                                              lic=self.lic)
+        except Mode.DoesNotExist:
+            super(Mode, self).save(force_insert=True)
+            return
+        self.id = retrieven_mode.id
+        super(Mode, self).save(force_update=True)
+    """    
         
     def to_xmlrpc(self):
         """

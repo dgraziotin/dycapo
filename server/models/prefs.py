@@ -41,6 +41,23 @@ class Prefs(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     drive = models.BooleanField(default=False)
     ride = models.BooleanField(default=False)
+    
+    def save(self, * args, ** kwargs):
+        """
+        Ensures integrity
+        """
+        try:
+            retrieven_prefs = Prefs.objects.get(age=self.age,
+                                              nonsmoking=self.nonsmoking,
+                                              gender=self.gender,
+                                              drive=self.drive,
+                                              ride=self.ride
+                                              )
+        except Prefs.DoesNotExist:
+            super(Prefs, self).save(force_insert=True)
+            return
+        self.id = retrieven_prefs.id
+        super(Prefs, self).save(force_update=True)
    
     def to_xmlrpc(self):
         """

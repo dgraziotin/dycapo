@@ -21,11 +21,12 @@ This file is part of Dycapo.
 This module holds the Trip model
 """
 
-from django.db import models
+from django.db import models, IntegrityError
 import person
 import location
 import mode as modulemode
 import prefs as moduleprefs
+import participation as moduleparticipation
 import participation
 
 class Trip(models.Model):
@@ -63,8 +64,8 @@ class Trip(models.Model):
         """
         Checks how many seats are still available in car and updates the attribute consistently
         """
-        participations_for_trip = Participation.objects.filter(trip=self).exclude(role='driver').filter(started=True).filter(finished=False)
-        self.mode.vacancy = len(participations_for_trip)
+        participations_for_trip = self.get_participations().exclude(role='driver').filter(started=True).filter(finished=False)
+        self.mode.vacancy = self.mode.capacity - len(participations_for_trip)
         self.mode.save()
         
     def has_vacancy(self):
@@ -84,11 +85,11 @@ class Trip(models.Model):
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, ** kwargs) # Call the "real" save() method.
     
-    def get_participations():
+    def get_participations(self):
         """
         Returns all the Participations of the Trip
         """
-        participations = Participation.objects.filter(trip=self)
+        participations = moduleparticipation.Participation.objects.filter(trip=self.id)
         return participations
 
     

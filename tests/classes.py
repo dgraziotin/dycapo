@@ -169,5 +169,21 @@ class Rider(Person):
         response = self.client.dycapo.request_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
+    
+    def start_ride(self,trip):
+        print "*" * 80
+        print self.username + ": STARTING A RIDE..."
+        print "*" * 80
+        response = self.client.dycapo.start_ride(trip)
+        print "Dycapo Response: \n" + str(response)
+        return response
+    
+    def finish_ride(self,trip):
+        print "*" * 80
+        print self.username + ": FINISHING A RIDE..."
+        print "*" * 80
+        response = self.client.dycapo.finish_ride(trip)
+        print "Dycapo Response: \n" + str(response)
+        return response
   
 

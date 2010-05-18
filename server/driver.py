@@ -75,7 +75,7 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         
     mode = models.Mode()
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
-       
+    
         
     preferences = models.Prefs()
     preferences = utils.populate_object_from_dictionary(preferences,
@@ -90,7 +90,6 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
                                False)
         return resp.to_xmlrpc()
-            
     trip = models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
     trip.author = driver

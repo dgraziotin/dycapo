@@ -91,12 +91,27 @@ class TestSimpleMatching():
     def test_request_ride(self):
         response = self.rider.request_ride(trip=self.rider.trip)
         assert response['code'] == response_codes.POSITIVE
-        
-    def test_accept_ride_request(self):
-        response = self.driver.accept_ride_request(self.rider.trip['author'])
-        assert response['code'] == response_codes.NEGATIVE
     
     def test_check_ride_requests_after_request(self):
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.POSITIVE
+        self.driver.ride_request = response['value']
+        
+    def test_accept_ride_request(self):
+        response = self.driver.accept_ride_request(self.driver.ride_request)
+        assert response['code'] == response_codes.POSITIVE
+    
+    def test_start_ride(self):
+        if not hasattr(self.rider,"trip"):
+            return
+        response = self.rider.start_ride(self.rider.trip)
+        assert response['code'] == response_codes.POSITIVE
+        
+    def test_finish_ride(self):
+        if not hasattr(self.rider,"trip"):
+            return
+        response = self.rider.finish_ride(self.rider.trip)
+        assert response['code'] == response_codes.POSITIVE
+    
+   
     

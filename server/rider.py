@@ -146,5 +146,94 @@ def request_ride(trip, ** kwargs):
         return resp.to_xmlrpc()
     resp = models.Response(response_codes.ERROR,
                            response_codes.RIDE_IN_COURSE,
-                           "boolean", True)
+                           "boolean", False)
     return resp.to_xmlrpc()
+    
+@rpc4django.rpcmethod(name='dycapo.start_ride',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def start_ride(trip, **kwargs):
+    """
+        This method is for a rider to start a Ride. It must be called from the
+        client when the Driver arrives to take the Rider.
+        
+        TODO
+        
+        - verify user permissions
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Rider
+        would like to join.
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the
+        operation and results (if any)
+        """
+    trip_dict = trip
+    try:
+        trip = models.Trip.objects.get(id=trip_dict['id'])
+    except KeyError:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+        
+    rider = utils.get_xmlrpc_user(kwargs)
+   
+    participation = trip.get_participations().filter(person=rider)[0]
+    participation.started = True
+    participation.started_timestamp = datetime.datetime.now()
+    participation.started_position = rider.position
+    participation.save()
+    trip.update_vacancy()
+    resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_STARTED,
+                               "boolean", True)
+    return resp.to_xmlrpc()
+
+@rpc4django.rpcmethod(name='dycapo.finish_ride',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def finish_ride(trip, **kwargs):
+    """
+        This method is for a rider to finish a Ride. It must be called from the
+        client when the Rider exits the car.
+        
+        TODO
+        
+        - verify user permissions
+    
+        PARAMETERS
+    
+        - ``trip`` - a **Trip** object, representing the Trip that the Rider
+        would like to join.
+    
+        RETURNS 
+    
+        An object of type **Response**, containing all the details of the
+        operation and results (if any)
+        """
+    trip_dict = trip
+    try:
+        trip = models.Trip.objects.get(id=trip_dict['id'])
+    except KeyError:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+        
+    rider = utils.get_xmlrpc_user(kwargs)
+   
+    participation = trip.get_participations().filter(person=rider)[0]
+    participation.finished = True
+    participation.finished_timestamp = datetime.datetime.now()
+    participation.finished_position = rider.position
+    participation.save()
+    trip.update_vacancy()
+    resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_STARTED,
+                               "boolean", True)
+    return resp.to_xmlrpc()
+    

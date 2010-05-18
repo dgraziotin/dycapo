@@ -92,3 +92,5 @@ def get_xmlrpc_user(kwargs):
                                          )
     except models.Person.DoesNotExist:
         return None
+    except KeyError:
+        return None

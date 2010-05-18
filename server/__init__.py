@@ -22,5 +22,5 @@ that we also want to expose to the public.
 """
 from driver import add_trip, start_trip, check_ride_requests
 from driver import accept_ride_request, finish_trip
-from rider import search_trip, request_ride
+from rider import search_trip, request_ride, start_ride, finish_ride
 from common import update_position, get_position

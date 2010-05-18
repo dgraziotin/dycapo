@@ -71,4 +71,3 @@ class TestDriver():
     def test_accept_ride_request(self):
         response = self.driver.accept_ride_request({'username':'rider1'})
         assert response['code'] == response_codes.ERROR
-    
