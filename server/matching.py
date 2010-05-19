@@ -22,14 +22,6 @@ This module holds all the functions involved in the matching Algorithm of Dycapo
 """
 import models
 
-def check_vacancy(trip):
-    """
-    Checks if the Trip has available seats
-    """
-    trip.update_vacancy()
-    return trip.has_vacancy
-
-
 def get_trips_destination_near_location(location):
     """
     Returns all the Trips with a destination near a given location.
@@ -52,6 +44,10 @@ def get_trips_destination_near_location(location):
                                                                  locations__georss_point_latitude__range=(lat_min, lat_max),
                                                                  locations__georss_point_longitude__range=(lon_min, lon_max)
                                                                  )
+    
+    for trip in trips_destination_near_location:
+        if trip.has_vacancy() == False:
+            trips_destination_near_location = trips_destination_near_location.exclude(id=trip.id)
     
     return trips_destination_near_location
 

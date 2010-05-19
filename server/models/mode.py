@@ -37,7 +37,7 @@ class Mode(models.Model):
     """
     kind = models.CharField(max_length=255, choices=MODE_CHOICES, blank=False)
     capacity = models.PositiveIntegerField(blank=False, null=True, default=0)
-    vacancy = models.PositiveIntegerField(blank=False, null=True, default=0)
+    vacancy = models.IntegerField(blank=False, null=True, default=0)
     make = models.CharField(max_length=255, blank=True)
     model = models.CharField(max_length=255, blank=True)
     year = models.PositiveIntegerField(blank=True, null=True, default=0)

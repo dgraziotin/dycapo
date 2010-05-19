@@ -72,7 +72,8 @@ class Trip(models.Model):
         """
         Returns True if there are emtpy seats available
         """
-        if self.mode.capacity - self.mode.vacancy > 0:
+        self.update_vacancy()
+        if self.mode.vacancy > 0:
             return True
         return False
         
