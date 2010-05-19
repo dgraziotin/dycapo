@@ -28,18 +28,18 @@ import utils
                       permission='server.can_xmlrpc')
 def update_position(position, ** kwargs):
     """ This method is for updating the actual position of a Person.
-        
+
     TODO
-    
+
     - verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``position`` - a **Location** object, representing the current
         position of a Person.
-    
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the operation
         and results (if any)
     """
@@ -47,23 +47,23 @@ def update_position(position, ** kwargs):
     position = models.Location()
     position = utils.populate_object_from_dictionary(position, dict_position)
     user = utils.get_xmlrpc_user(kwargs)
-        
+
     try:
         position.save()
     except Exception, e:
         resp = models.Response(response_codes.NEGATIVE, str(e),
                                "boolean", False)
         return resp.to_xmlrpc()
-    
+
     user.position = position
     user.locations.add(position)
-    
+
     if user.is_participating():
         participation = user.get_active_participation()
         participation.locations.add(position)
-        
+
     user.save()
-    
+
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.POSITION_UPDATED, "boolean", True)
     return resp.to_xmlrpc()
@@ -73,29 +73,29 @@ def update_position(position, ** kwargs):
                       permission='server.can_xmlrpc')
 def get_position(person):
     """ This method is for getting the actual position of a Person.
-        
+
     TODO
-    
+
     - verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``person`` - a **Person** object, representing the Person we would like to
         know the position.
-    
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the operation
         and results (if any)
     """
-    
+
     try:
         person = models.Person.objects.get(username=person['username'])
     except models.Person.DoesNotExist:
         resp = models.Response(response_codes.ERROR,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
-    
+
     if not person.position:
         resp = models.Response(response_codes.ERROR,
                                response_codes.LOCATION_NOT_FOUND,

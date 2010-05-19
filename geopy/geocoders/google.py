@@ -12,7 +12,7 @@ from geopy import Point, Location, util
 
 class Google(Geocoder):
     """Geocoder using the Google Maps API."""
-    
+
     def __init__(self, api_key=None, domain='maps.google.com',
                  resource='maps/geo', format_string='%s', output_format='kml'):
         """Initialize a customized Google geocoder with location-specific
@@ -33,7 +33,7 @@ class Google(Geocoder):
         ``format_string`` is a string containing '%s' where the string to
         geocode should be interpolated before querying the geocoder.
         For example: '%s, Mountain View, CA'. The default is just '%s'.
-        
+
         ``output_format`` can be 'json', 'xml', 'kml', 'csv', or 'js' and will
         control the output format of Google's response. The default is 'kml'
         since it is supported by both the 'maps' and 'maps/geo' resources. The
@@ -65,11 +65,11 @@ class Google(Geocoder):
         return self.geocode_url(url, exactly_one)
 
     def reverse(self, coord, exactly_one=True):
-	(lat,lng) = coord
-	params = {'q': self.format_string % lat+','+self.format_string % lng,
-		  'output': self.output_format.lower()
-		  }
-	if self.resource.rstrip('/').endswith('geo'):
+        (lat,lng) = coord
+        params = {'q': self.format_string % lat+','+self.format_string % lng,
+                  'output': self.output_format.lower()
+                  }
+        if self.resource.rstrip('/').endswith('geo'):
             # An API key is only required for the HTTP geocoder.
             params['key'] = self.api_key
 
@@ -79,7 +79,7 @@ class Google(Geocoder):
     def geocode_url(self, url, exactly_one=True, reverse=False):
         logging.getLogger().info("Fetching %s..." % url)
         page = urlopen(url)
-        
+
         dispatch = getattr(self, 'parse_' + self.output_format)
         return dispatch(page, exactly_one, reverse)
 
@@ -96,9 +96,9 @@ class Google(Geocoder):
             places = doc.getElementsByTagName('Placemark')
 
         if (exactly_one and len(places) != 1) and (not reverse):
-	    raise ValueError("Didn't find exactly one placemark! " \
-			     "(Found %d.)" % len(places))
-        
+            raise ValueError("Didn't find exactly one placemark! " \
+                             "(Found %d.)" % len(places))
+
         def parse_place(place):
             location = util.get_first_text(place, ['address', 'name']) or None
             points = place.getElementsByTagName('Point')
@@ -110,7 +110,7 @@ class Google(Geocoder):
                 latitude = longitude = None
                 _, (latitude, longitude) = self.geocode(location)
             return (location, (latitude, longitude))
-        
+
         if exactly_one:
             return parse_place(places[0])
         else:
@@ -142,7 +142,7 @@ class Google(Geocoder):
             administrative = place.get('AddressDetails',{}).get('Country',{}).get('AdministrativeArea',{}).get('AdministrativeAreaName')
 
             return util.RichResult((location, (latitude, longitude)), locality=locality, administrative=administrative)
-        
+
         if exactly_one:
             return parse_place(places[0])
         else:
@@ -162,7 +162,7 @@ class Google(Geocoder):
         LOCATION = r"[\s,]laddr:\s*'(?P<location>.*?)(?<!\\)',"
         ADDRESS = r"(?P<address>.*?)(?:(?: \(.*?@)|$)"
         MARKER = '.*?'.join([LATITUDE, LONGITUDE, LOCATION])
-        MARKERS = r"{markers: (?P<markers>\[.*?\]),\s*polylines:"            
+        MARKERS = r"{markers: (?P<markers>\[.*?\]),\s*polylines:"
 
         def parse_marker(marker):
             latitude, longitude, location = marker
@@ -173,15 +173,13 @@ class Google(Geocoder):
         match = re.search(MARKERS, page)
         markers = match and match.group('markers') or ''
         markers = re.findall(MARKER, markers)
-       
+
         if exactly_one:
             if len(markers) != 1 and (not reverse):
                 raise ValueError("Didn't find exactly one marker! " \
                                  "(Found %d.)" % len(markers))
-            
+
             marker = markers[0]
             return parse_marker(marker)
         else:
             return (parse_marker(marker) for marker in markers)
-
-

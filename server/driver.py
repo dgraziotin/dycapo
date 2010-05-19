@@ -30,17 +30,17 @@ import utils
                       'Location', 'Location'],
                       permission='server.can_xmlrpc')
 def add_trip(trip, mode, preferences, source, destination, ** kwargs):
-        
+
     """ Inserts a new Trip in Dycapo System. It supports a source, a
         destination and the trip mode. See the models for more information.
-        
+
         TODO
-        
+
         - verify user permissions
         - multiple waypoints
-    
+
         PARAMETERS
-    
+
         - ``trip`` - a **Trip** object, representing the Trip that the Driver
                 is willing to save
         - ``mode`` - a **Mode** object, representing the modalities of the Trip
@@ -50,29 +50,29 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         start.
         - ``destination`` - a **Location** object, representing where the Trip
         will end.
-    
-        RETURNS 
-    
+
+        RETURNS
+
         An object of type **Response**, containing all the details of the
                 operation and results (if any)
         """
-        
+
     dict_trip = utils.clean_ids(trip)
     dict_mode = utils.clean_ids(mode)
     dict_prefs = utils.clean_ids(preferences)
     dict_source = utils.clean_ids(source)
     dict_destination = utils.clean_ids(destination)
-        
+
     driver = utils.get_xmlrpc_user(kwargs)
-        
+
     source = models.Location()
     source = utils.populate_object_from_dictionary(source, dict_source)
-        
-        
+
+
     destination = models.Location()
     destination = utils.populate_object_from_dictionary(destination,
                                                         dict_destination)
-        
+
     mode = models.Mode()
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
     mode.person = driver
@@ -84,14 +84,14 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
                                                  kind=mode.kind)
         retrieven_mode.vacancy = mode.vacancy
         mode = retrieven_mode
-        
+
     except models.Mode.DoesNotExist:
         pass
-        
+
     preferences = models.Prefs()
     preferences = utils.populate_object_from_dictionary(preferences,
                                                         dict_prefs)
-        
+
     try:
         source.save()
         destination.save()
@@ -112,10 +112,10 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
                                False)
         return resp.to_xmlrpc()
-        
+
     trip.locations.add(source)
     trip.locations.add(destination)
-    
+
 
     participation = models.Participation()
     participation.person = driver
@@ -134,22 +134,22 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
 def start_trip(trip, ** kwargs):
     """
         Starts a Trip
-        
+
         TODO
-        
+
         - verify user permissions
-    
+
         PARAMETERS
-    
+
         - ``trip`` - a **Trip** object, representing the Trip that the Driver
         is starting
-    
-        RETURNS 
-    
+
+        RETURNS
+
         An object of type **Response**, containing all the details
         of the operation and results (if any)
     """
-        
+
     trip_dict = trip
     try:
         trip = models.Trip.objects.get(id=trip_dict['id'])
@@ -163,18 +163,18 @@ def start_trip(trip, ** kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrp()
-        
+
     participation = models.Participation.objects.get(trip=trip,
                                                      role='driver')
     driver = utils.get_xmlrpc_user(kwargs)
-        
+
     # return False if the driver already started this trip
     if participation.started:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_ALREADY_STARTED,
                                "boolean", False)
         return resp.to_xmlrpc()
-        
+
     participation.started = True
     participation.started_timestamp = datetime.datetime.now()
     try:
@@ -184,7 +184,7 @@ def start_trip(trip, ** kwargs):
     participation.save()
     trip.active = True
     trip.save()
-        
+
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_STARTED, "boolean", True)
     return resp.to_xmlrpc()
@@ -197,22 +197,22 @@ def check_ride_requests(trip, ** kwargs):
     """
         This method is for a driver to see if there are ride requests
         for his Trip
-        
+
         TODO
-        
+
         -verify user permissions
-        
+
         PARAMETERS
-    
+
         - ``trip`` - a **Trip** object, representing the Trip that the
         Driver is checking
-    
-        RETURNS 
-    
+
+        RETURNS
+
         An object of type **Response**, containing all the details of the
         operation and results (if any)
     """
-        
+
     trip_dict = trip
 
     try:
@@ -227,7 +227,7 @@ def check_ride_requests(trip, ** kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-            
+
     driver = utils.get_xmlrpc_user(kwargs)
 
     participations_for_trip = (models.Participation.objects.filter(trip=trip)
@@ -255,30 +255,30 @@ def check_ride_requests(trip, ** kwargs):
                       signature=['Response', 'Trip', 'Person'],
                       permission='server.can_xmlrpc')
 def accept_ride_request(trip, person, ** kwargs):
-        
+
     """
         This method is for a driver to accept a ride request by a rider.
-        
+
         TODO
-        
+
         -verify user permissions
-    
+
         PARAMETERS
-    
+
         - ``trip`` - a **Trip** object, representing the Trip in which
         the Driver is accepting a ride.
         - ``person`` - a **Person** object, representing the Rider that
         the Driver is accepting
-    
-        RETURNS 
-    
+
+        RETURNS
+
         An object of type **Response**, containing all the details of the
         operation and results (if any)
         """
 
     trip_dict = trip
     person_dict = person
-        
+
     try:
         trip = models.Trip.objects.get(id=trip_dict['id'])
     except models.Trip.DoesNotExist:
@@ -286,7 +286,7 @@ def accept_ride_request(trip, person, ** kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "Trip", trip_dict)
         return resp.to_xmlrpc()
-        
+
     try:
         rider = models.Person.objects.get(username=person_dict['username'])
     except models.Person.DoesNotExist:
@@ -299,7 +299,7 @@ def accept_ride_request(trip, person, ** kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-        
+
     try:
         rider_participation = models.Participation.objects.get(trip=trip,
                                                                person=rider)
@@ -315,43 +315,43 @@ def accept_ride_request(trip, person, ** kwargs):
             rider_participation.accepted_position = rider.position
         except models.Location.DoesNotExist:
             rider_participation.accepted_position = None
-                
+
         rider_participation.save()
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUEST_ACCEPTED,
                                "boolean", True)
         return resp.to_xmlrpc()
-        
+
     resp = models.Response(response_codes.NEGATIVE,
                            response_codes.RIDE_REQUEST_REFUSED,
                            "boolean", False)
     return resp.to_xmlrpc()
 
-        
+
 
 @rpc4django.rpcmethod(name='dycapo.finish_trip',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
 def finish_trip(trip, ** kwargs):
-        
+
     """
         This method is for a driver to close a Trip.
-        
+
         TODO
-        
+
         -verify user permissions
-    
+
         PARAMETERS
-    
+
         - ``trip`` - a **Trip** object, representing the Trip that the driver
         is closing
-    
-        RETURNS 
-    
+
+        RETURNS
+
         An object of type **Response**, containing all the details of the
         operation and results (if any)
         """
-        
+
     trip_dict = trip
     trip = models.Trip.objects.get(id=trip_dict['id'])
     driver = utils.get_xmlrpc_user(kwargs)
@@ -362,9 +362,8 @@ def finish_trip(trip, ** kwargs):
         participation.save()
     trip.active = False
     trip.save()
-        
+
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_DELETED,
                            "boolean", True)
     return resp.to_xmlrpc()
-        

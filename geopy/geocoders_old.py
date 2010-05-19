@@ -47,7 +47,7 @@ class Geocoder(object):
 class WebGeocoder(Geocoder):
     """A Geocoder subclass with utility methods helpful for handling results
     given by web-based geocoders."""
-    
+
     @classmethod
     def _get_encoding(cls, page, contents=None):
         """Get the last encoding (charset) listed in the header of ``page``."""
@@ -158,13 +158,13 @@ class SemanticMediaWiki(MediaWiki):
         may be passed as a string.
         For example: attributes=['geographical coordinate']
                  or: attributes='geographical coordinate'
-        
+
         ``relations`` is a sequence of semantic relation names that will be
         followed, depth-first in order, until a geocoded page is found. A
         single relation name may be passed as a string.
         For example: relations=['Located in']
                  or: relations='Located in'
-        
+
         ``prefer_semantic`` indicates whether or not the contents of the
         semantic attributes (given by ``attributes``) should be preferred
         over the GIS extension's coordinates if both exist. This defaults to
@@ -187,7 +187,7 @@ class SemanticMediaWiki(MediaWiki):
             self.relations = [relations]
         else:
             self.relations = relations
-        
+
         self.prefer_semantic = prefer_semantic
 
     def transform_semantic(self, string):
@@ -207,17 +207,17 @@ class SemanticMediaWiki(MediaWiki):
             rdf_url = self.parse_rdf_link(soup)
             print "Fetching %s..." % rdf_url
             page = urlopen(rdf_url)
-            
+
             things, thing = self.parse_rdf(page)
             name = self.get_label(thing)
-            
+
             attributes = self.get_attributes(thing)
             for attribute, value in attributes:
                 point = Point.from_string(value)
-		latitude, longitude = point.latitude, point.longitude
+                latitude, longitude = point.latitude, point.longitude
                 if None not in (latitude, longitude):
                     break
-            
+
             if None in (latitude, longitude):
                 relations = self.get_relations(thing)
                 for relation, resource in relations:
@@ -259,7 +259,7 @@ class SemanticMediaWiki(MediaWiki):
     def get_attributes(self, thing, attributes=None):
         if attributes is None:
             attributes = self.attributes
-        
+
         for attribute in attributes:
             attribute = self.transform_semantic(attribute)
             for node in thing.getElementsByTagName('attribute:' + attribute):
@@ -279,7 +279,7 @@ class SemanticMediaWiki(MediaWiki):
 
 class Google(WebGeocoder):
     """Geocoder using the Google Maps API."""
-    
+
     def __init__(self, api_key=None, domain='maps.google.com',
                  resource='maps/geo', format_string='%s', output_format='kml'):
         """Initialize a customized Google geocoder with location-specific
@@ -300,7 +300,7 @@ class Google(WebGeocoder):
         ``format_string`` is a string containing '%s' where the string to
         geocode should be interpolated before querying the geocoder.
         For example: '%s, Mountain View, CA'. The default is just '%s'.
-        
+
         ``output_format`` can be 'json', 'xml', 'kml', 'csv', or 'js' and will
         control the output format of Google's response. The default is 'kml'
         since it is supported by both the 'maps' and 'maps/geo' resources. The
@@ -332,11 +332,11 @@ class Google(WebGeocoder):
         return self.geocode_url(url, exactly_one)
 
     def reverse(self, coord, exactly_one=True):
-	(lat,lng) = coord
-	params = {'q': self.format_string % lat+','+self.format_string % lng,
-		  'output': self.output_format.lower()
-		  }
-	if self.resource.rstrip('/').endswith('geo'):
+        (lat,lng) = coord
+        params = {'q': self.format_string % lat+','+self.format_string % lng,
+                  'output': self.output_format.lower()
+                  }
+        if self.resource.rstrip('/').endswith('geo'):
             # An API key is only required for the HTTP geocoder.
             params['key'] = self.api_key
 
@@ -346,11 +346,11 @@ class Google(WebGeocoder):
     def geocode_url(self, url, exactly_one=True, reverse=False):
         print "Fetching %s..." % url
         page = urlopen(url)
-        
+
         dispatch = getattr(self, 'parse_' + self.output_format)
         return dispatch(page, exactly_one, reverse)
 
-    
+
     def parse_xml(self, page, exactly_one=True, reverse=False):
         """Parse a location name, latitude, and longitude from an XML response.
         """
@@ -362,11 +362,11 @@ class Google(WebGeocoder):
             places = []
         else:
             places = doc.getElementsByTagName('Placemark')
-	
-	if (exactly_one and len(places) != 1) and (not reverse):
-	    raise ValueError("Didn't find exactly one placemark! " \
-			     "(Found %d.)" % len(places))
-	
+
+        if (exactly_one and len(places) != 1) and (not reverse):
+            raise ValueError("Didn't find exactly one placemark! " \
+                             "(Found %d.)" % len(places))
+
         def parse_place(place):
             location = self._get_first_text(place, ['address', 'name']) or None
             points = place.getElementsByTagName('Point')
@@ -379,7 +379,7 @@ class Google(WebGeocoder):
                 _, (latitude, longitude) = self.geocode(location)
             return util.RichResult((location, (latitude, longitude)), location=location,
                     latitude=latitude, longitude=longitude)
-        
+
         if exactly_one:
             return parse_place(places[0])
         else:
@@ -396,7 +396,7 @@ class Google(WebGeocoder):
             page = self._decode_page(page)
         json = simplejson.loads(page)
         places = json.get('Placemark', [])
-	
+
         if (exactly_one and len(places) != 1) and (not reverse):
             raise ValueError("Didn't find exactly one placemark! " \
                              "(Found %d.)" % len(places))
@@ -412,7 +412,7 @@ class Google(WebGeocoder):
             return util.RichResult((location, (latitude, longitude)),
                     location=location, latitude=latitude, longitude=longitude,
                     locality=locality, administrative=administrative)
-        
+
         if exactly_one:
             return parse_place(places[0])
         else:
@@ -432,7 +432,7 @@ class Google(WebGeocoder):
         LOCATION = r"[\s,]laddr:\s*'(?P<location>.*?)(?<!\\)',"
         ADDRESS = r"(?P<address>.*?)(?:(?: \(.*?@)|$)"
         MARKER = '.*?'.join([LATITUDE, LONGITUDE, LOCATION])
-        MARKERS = r"{markers: (?P<markers>\[.*?\]),\s*polylines:"            
+        MARKERS = r"{markers: (?P<markers>\[.*?\]),\s*polylines:"
 
         def parse_marker(marker):
             latitude, longitude, location = marker
@@ -449,7 +449,7 @@ class Google(WebGeocoder):
             if (len(markers) != 1) and (not reverse):
                 raise ValueError("Didn't find exactly one marker! " \
                                  "(Found %d.)" % len(markers))
-            
+
             marker = markers[0]
             return parse_marker(marker)
         else:
@@ -458,7 +458,7 @@ class Google(WebGeocoder):
 
 class Yahoo(WebGeocoder):
     """Geocoder using the Yahoo! Maps API.
-    
+
     Note: The Terms of Use dictate that the stand-alone geocoder may only be
     used for displaying Yahoo! Maps or points on Yahoo! Maps. Lame.
 
@@ -490,11 +490,11 @@ class Yahoo(WebGeocoder):
                   }
         url = self.url % urlencode(params)
         return self.geocode_url(url, exactly_one)
-    
+
     def geocode_url(self, url, exactly_one=True):
         print "Fetching %s..." % url
         page = urlopen(url)
-        
+
         parse = getattr(self, 'parse_' + self.output_format)
         return parse(page, exactly_one)
 
@@ -505,7 +505,7 @@ class Yahoo(WebGeocoder):
             page = self._decode_page(page)
         doc = xml.dom.minidom.parseString(page)
         results = doc.getElementsByTagName('Result')
-        
+
         if exactly_one and len(results) != 1:
             raise ValueError("Didn't find exactly one result! " \
                              "(Found %d.)" % len(results))
@@ -531,7 +531,7 @@ class Yahoo(WebGeocoder):
                     country=country, city_state=city_state, place=place,
                     location=location, latitude=latitude, longitude=longitude,
                     locality=locality, administrative=administrative)
-    
+
         if exactly_one:
             return parse_result(results[0])
         else:
@@ -544,21 +544,21 @@ class GeocoderDotUS(WebGeocoder):
     otherwise you must register and pay per call. This class supports both free
     and commercial API usage.
     """
-    
+
     def __init__(self, username=None, password=None, format_string='%s',
                  protocol='xmlrpc'):
         """Initialize a customized geocoder.us geocoder with location-specific
         address information and login information (for commercial usage).
-        
+
         if ``username`` and ``password`` are given, they will be used to send
         account information to the geocoder.us API. If ``username`` is given
         and ``password`` is none, the ``getpass` module will be used to
         prompt for the password.
-        
+
         ``format_string`` is a string containing '%s' where the string to
         geocode should be interpolated before querying the geocoder.
         For example: '%s, Mountain View, CA'. The default is just '%s'.
-        
+
         ``protocol`` currently supports values of 'xmlrpc' and 'rest'.
         """
         if username and password is None:
@@ -576,7 +576,7 @@ class GeocoderDotUS(WebGeocoder):
         username = self.username
         password = self.__password
         protocol = self.protocol.lower()
-        
+
         if username and password:
             auth = "%s:%s@" % (username, password)
             resource = "member/service/%s/" % protocol
@@ -596,7 +596,7 @@ class GeocoderDotUS(WebGeocoder):
     def geocode_xmlrpc(self, string, exactly_one=True):
         proxy = xmlrpclib.ServerProxy(self.url)
         results = proxy.geocode(self.format_string % string)
-        
+
         if exactly_one and len(results) != 1:
             raise ValueError("Didn't find exactly one result! " \
                              "(Found %d.)" % len(results))
@@ -616,7 +616,7 @@ class GeocoderDotUS(WebGeocoder):
             return util.RichResult((location, (latitude, longitude)),
                     address=address, city_state=city_state, place=place,
                     location=location, latitude=latitude, longitude=longitude)
-        
+
         if exactly_one:
             return parse_result(results[0])
         else:
@@ -635,11 +635,11 @@ class GeocoderDotUS(WebGeocoder):
             page = self._decode_page(page)
         doc = xml.dom.minidom.parseString(page)
         points = doc.getElementsByTagName('geo:Point')
-        
+
         if exactly_one and len(points) != 1:
             raise ValueError("Didn't find exactly one point! " \
                              "(Found %d.)" % len(points))
-        
+
         def parse_point(point):
             strip = ", \n"
             location = self._get_first_text(point, 'dc:description', strip)
@@ -650,7 +650,7 @@ class GeocoderDotUS(WebGeocoder):
             longitude = longitude and float(longitude)
             return util.RichResult((location, (latitude, longitude)),
                     location=location, latitude=latitude, longitude=longitude)
-            
+
         if exactly_one:
             return parse_point(points[0])
         else:
@@ -660,7 +660,7 @@ class GeocoderDotUS(WebGeocoder):
 class VirtualEarth(WebGeocoder):
     """Geocoder using Microsoft's Windows Live Local web service, powered by
     Virtual Earth.
-    
+
     WARNING: This does not use a published API and can easily break if
     Microsoft changes their JavaScript.
     """
@@ -710,7 +710,7 @@ class VirtualEarth(WebGeocoder):
                 location, (latitude, longitude) = array[0], array[5:7]
             else:
                 location, latitude, longitude = array[:3]
-                
+
             return util.RichResult((location, (latitude, longitude)),
                     location=location, latitude=latitude, longitude=longitude)
 
@@ -724,35 +724,35 @@ class GeoNames(WebGeocoder):
     def __init__(self, format_string='%s', output_format='xml'):
         self.format_string = format_string
         self.output_format = output_format
-    
+
     @property
     def url(self):
         domain = "ws.geonames.org"
         output_format = self.output_format.lower()
         append_formats = {'json': 'JSON'}
-	resource = "postalCodeSearch" + append_formats.get(output_format, '')
+        resource = "postalCodeSearch" + append_formats.get(output_format, '')
         return "http://%(domain)s/%(resource)s?%%s" % locals()
-    
+
     @property
     def reverse_url(self):
-	domain = "ws.geonames.org"
+        domain = "ws.geonames.org"
         output_format = self.output_format.lower()
         append_formats = {'json': 'JSON'}
-	resource = "findNearestAddress" + append_formats.get(output_format, '')
-	return "http://%(domain)s/%(resource)s?%%s" % locals()
-    
+        resource = "findNearestAddress" + append_formats.get(output_format, '')
+        return "http://%(domain)s/%(resource)s?%%s" % locals()
+
     def geocode(self, string, exactly_one=True):
         params = {'placename': string}
         url = self.url % urlencode(params)
         return self.geocode_url(url, exactly_one)
-    
+
     def reverse(self, point, exactly_one=True):
-	(lat,lng) = point
-	params = {'lat':self.format_string % lat,
-		  'lng':self.format_string % lng}
-	url = self.reverse_url % urlencode(params)
-	return self.geocode_url(url, exactly_one, reverse=True)
-    
+        (lat,lng) = point
+        params = {'lat':self.format_string % lat,
+                  'lng':self.format_string % lng}
+        url = self.reverse_url % urlencode(params)
+        return self.geocode_url(url, exactly_one, reverse=True)
+
     def geocode_url(self, url, exactly_one=True, reverse=False):
         page = urlopen(url)
         dispatch = getattr(self, 'parse_' + self.output_format)
@@ -762,30 +762,30 @@ class GeoNames(WebGeocoder):
         if not isinstance(page, basestring):
             page = self._decode_page(page)
         json = simplejson.loads(page)
-	if reverse:
-	    codes = [json.get('address', [])]
-	else:
-	    codes = json.get('postalCodes', [])
-        
+        if reverse:
+            codes = [json.get('address', [])]
+        else:
+            codes = json.get('postalCodes', [])
+
         if exactly_one and len(codes) != 1:
             raise ValueError("Didn't find exactly one code! " \
                              "(Found %d.)" % len(codes))
-        
+
         def parse_code(code,reverse):
-	    if reverse:
-		address = self._join_filter(" ", [code.get("streetNumber"),
-						  code.get("street")])
-		place = self._join_filter(", ", [address,code.get("placename"),
-						 code.get("countryCode")])
-		location = self._join_filter(" ", [place,
-						   code.get('postalcode')]) or None
-	    else:
-		place = self._join_filter(", ", [code.get('placeName'),
-						 code.get('countryCode')])
-		location = self._join_filter(" ", [place,
-						   code.get('postalCode')]) or None
-	    latitude = code.get('lat')
-	    longitude = code.get('lng')
+            if reverse:
+                address = self._join_filter(" ", [code.get("streetNumber"),
+                                                  code.get("street")])
+                place = self._join_filter(", ", [address,code.get("placename"),
+                                                 code.get("countryCode")])
+                location = self._join_filter(" ", [place,
+                                                   code.get('postalcode')]) or None
+            else:
+                place = self._join_filter(", ", [code.get('placeName'),
+                                                 code.get('countryCode')])
+                location = self._join_filter(" ", [place,
+                                                   code.get('postalCode')]) or None
+            latitude = code.get('lat')
+            longitude = code.get('lng')
             latitude = latitude and float(latitude)
             longitude = longitude and float(longitude)
             return util.RichResult((location, (latitude, longitude)),
@@ -801,38 +801,38 @@ class GeoNames(WebGeocoder):
         if not isinstance(page, basestring):
             page = self._decode_page(page)
         doc = xml.dom.minidom.parseString(page)
-	if reverse:
-	    codes = doc.getElementsByTagName('address')
-	else:
-	    codes = doc.getElementsByTagName('code')
+        if reverse:
+            codes = doc.getElementsByTagName('address')
+        else:
+            codes = doc.getElementsByTagName('code')
         if exactly_one and len(codes) != 1:
             raise ValueError("Didn't find exactly one code! " \
                              "(Found %d.)" % len(codes))
 
         def parse_code(code,reverse):
-	    if reverse:
-		street_number = self._get_first_text(code, 'streetNumber')
-		street = self._get_first_text(code, 'street')
-		place_name = self._get_first_text(code, 'placename')
-		country_code = self._get_first_text(code, 'countryCode')
-		postal_code = self._get_first_text(code, 'postalcode')
-		address = self._join_filter(" ", [street_number, street])
-		place = self._join_filter(", ", [address, place_name, country_code])
-	    else:
-		place_name = self._get_first_text(code, 'name')
-		country_code = self._get_first_text(code, 'countryCode')
-		postal_code = self._get_first_text(code, 'postalcode')
-		place = self._join_filter(", ", [place_name, country_code])
-	    location = self._join_filter(" ", [place, postal_code]) or None
-	    latitude = self._get_first_text(code, 'lat') or None
-	    longitude = self._get_first_text(code, 'lng') or None
-	    latitude = latitude and float(latitude)
-	    longitude = longitude and float(longitude)
+            if reverse:
+                street_number = self._get_first_text(code, 'streetNumber')
+                street = self._get_first_text(code, 'street')
+                place_name = self._get_first_text(code, 'placename')
+                country_code = self._get_first_text(code, 'countryCode')
+                postal_code = self._get_first_text(code, 'postalcode')
+                address = self._join_filter(" ", [street_number, street])
+                place = self._join_filter(", ", [address, place_name, country_code])
+            else:
+                place_name = self._get_first_text(code, 'name')
+                country_code = self._get_first_text(code, 'countryCode')
+                postal_code = self._get_first_text(code, 'postalcode')
+                place = self._join_filter(", ", [place_name, country_code])
+            location = self._join_filter(" ", [place, postal_code]) or None
+            latitude = self._get_first_text(code, 'lat') or None
+            longitude = self._get_first_text(code, 'lng') or None
+            latitude = latitude and float(latitude)
+            longitude = longitude and float(longitude)
             return util.RichResult((location, (latitude, longitude)),
                     location=location, latitude=latitude, longitude=longitude,
                     place=place, postal_code=postal_code,
                     country_code=country_code, place_name=place_name)
-        
+
         if exactly_one:
             return parse_code(codes[0],reverse)
         else:

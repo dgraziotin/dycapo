@@ -31,13 +31,13 @@ import common_classes_and_methods
 import random
 from threading import Thread
 import time
-import settings 
+import settings
 class RiderTest(Thread):
     client = ''
     fixed_destination = None
     username = ""
     position = ''
-    
+
     def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password,domain)
@@ -46,7 +46,7 @@ class RiderTest(Thread):
         self.position = common_classes_and_methods.Location()
         self.position.georss_point="33.3 66.6"
         self.position.leaves = common_classes_and_methods.now()
-    
+
     def search_ride(self):
         source = common_classes_and_methods.Location()
         destination = common_classes_and_methods.Location()
@@ -69,12 +69,12 @@ class RiderTest(Thread):
         print "*" * 80
         print self.username + ": SEARCHING FOR A RIDE from " + source.georss_point + " to " + destination.georss_point
         print "*" * 80
-        
+
         response = self.client.dycapo.search_trip(source.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def request_ride(self,trip):
         print "*" * 80
         print self.username + ": REQUESTING A RIDE..."
@@ -86,8 +86,8 @@ class RiderTest(Thread):
             print self.username + ": ERROR: you are already participating on this trip!"
         print "*" * 80
         return common_classes_and_methods.extract_response(response)
-  
-    
+
+
     def update_position(self,georss_point=None):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
@@ -101,7 +101,7 @@ class RiderTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def get_position(self):
         print "#" * 80
         print self.username + ": GETTING POSITION..."
@@ -112,7 +112,7 @@ class RiderTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         trip = self.search_ride()
@@ -121,7 +121,7 @@ class RiderTest(Thread):
         found = False
         self.update_position()
         while not found:
-            if attempts==0: 
+            if attempts==0:
                 print "*" * 80
                 print self.username + ": RIDE NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
                 print "*" * 80
@@ -130,19 +130,18 @@ class RiderTest(Thread):
             self.update_position()
             trip = self.search_ride()
             attempts = attempts - 1
-            if trip: 
+            if trip:
                 self.request_ride(trip)
                 found=True
-    
+
     def get_user(self):
         response = self.client.dycapo.get_user()
         print response
-        
+
     def run(self):
         self.start_test()
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     for i in range(0,1):
         rider = RiderTest(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065")
         rider.start()
-    

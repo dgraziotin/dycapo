@@ -55,7 +55,7 @@ class Person(authmodels.User):
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
     locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True) # MUST
-    
+
     def get_recent_locations(self, max_results=10):
         """
         Returns the last n locations of a Person. If the person is participating
@@ -69,7 +69,7 @@ class Person(authmodels.User):
             recent_locations = list(self.locations.all().order_by('-id')[:max_results])
         recent_locations.reverse()
         return recent_locations
-    
+
     def is_participating(self):
         """
         Returns true if the Person is actively participating in a Trip
@@ -97,18 +97,18 @@ class Person(authmodels.User):
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
         return participations[0].trip
-        
+
     class Meta:
         permissions = (
                        ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
                        )
-        
+
     # Use UserManager to get the create_user method, etc.
     objects = authmodels.UserManager()
-    
+
     def __unicode__(self):
         return self.username
-    
+
     def to_xmlrpc(self):
         """
         Returns a Python dict that contains just the attributes we want to expose
@@ -118,6 +118,6 @@ class Person(authmodels.User):
             'username': self.username
         }
         return person_dict
-    
+
     class Meta:
         app_label = 'server'

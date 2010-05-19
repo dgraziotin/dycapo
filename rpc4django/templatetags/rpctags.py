@@ -19,19 +19,19 @@ register = template.Library()
 
 def resttext(text):
     '''
-    Returns the passed text in 
+    Returns the passed text in
     `reST <http://docutils.sourceforge.net/rst.html>`_ format
     or text if resttext fails to import docutils or fails for any other reason
     '''
-    
+
     overrides = {
         'inital_header_level' : 3,
         'report_level': 5,   # 0 reports everything, 5 reports nothing
     }
-    
+
     if RESTRICT_REST:
         return text
-    
+
     try:
         from docutils.core import publish_parts
         parts = publish_parts(source=text, writer_name='html', \
@@ -43,6 +43,6 @@ def resttext(text):
         # see BUGS.txt
         logging.fatal(repr(ex1))
         return text
-    
+
 resttext.is_safe = True
 register.filter('resttext', resttext)

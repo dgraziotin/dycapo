@@ -23,7 +23,7 @@ def pairwise(seq):
 
 def join_filter(sep, seq, pred=bool):
     return sep.join([unicode(i) for i in seq if pred(i)])
- 
+
 def get_encoding(page, contents=None):
     plist = page.headers.getplist()
     if plist:
@@ -44,7 +44,7 @@ def decode_page(page):
 
 def get_first_text(node, tag_names, strip=None):
     if isinstance(tag_names, basestring):
-            tag_names = [tag_names]
+        tag_names = [tag_names]
     if node:
         while tag_names:
             nodes = node.getElementsByTagName(tag_names.pop(0))
@@ -60,7 +60,7 @@ def join_filter(sep, seq, pred=bool):
 def unescape(text):
     """
     Removes HTML or XML character references and entities from a text string.
-    
+
     """
     def fixup(m):
         text = m.group(0)

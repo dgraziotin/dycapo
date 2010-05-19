@@ -93,10 +93,10 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    
+
     # Must be enabled for RPC4Django authenticated method calls
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    
+
     # Required for RPC4Django authenticated method calls
     # Also requires Django 1.1+
     'django.contrib.auth.middleware.RemoteUserMiddleware',

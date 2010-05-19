@@ -54,10 +54,10 @@ def get_xmlrpc_client(user, password, url):
 
 def georss_point_from_coords(latitude, longitude):
     return str(latitude) + " " + str(longitude)
-    
+
 def coords_from_georss_point(georss_point):
     georss_point_splitted = georss_point.split()
     return [float(coord) for coord in georss_point_splitted]
-    
+
 def extract_response(response):
     return response['value']

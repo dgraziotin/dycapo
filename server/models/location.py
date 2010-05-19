@@ -69,7 +69,7 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255, blank=True)
     days = models.CharField(max_length=255, choices=RECURS_CHOICES, blank=True)
     leaves = models.DateTimeField(blank=True, null=True)
-    
+
     def distance(self, location):
         """
         Returns the distance in KMs from this location to a given location
@@ -78,7 +78,7 @@ class Location(models.Model):
         location_point = geopy.point.Point(location.georss_point)
         distance = geopy.distance.distance(current_point, location_point)
         return distance.kilometers
-    
+
     def address_to_point(self):
         """
         Given Geolocation information, it retrieves GeoRSS.
@@ -101,7 +101,7 @@ class Location(models.Model):
             raise ValueError("Could not retrieve Address information with the given GeoRSS point")
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude
-        
+
     def point_to_address(self):
         """
         Given GeoRSS point, it retrieves GeoLocation information
@@ -119,15 +119,15 @@ class Location(models.Model):
             self.street = full_address[0] + ',' + full_address[1]
             self.postcode = int(full_address[2].split(" ")[1])
             full_town = full_address[2].split(" ")[2:]
-            self.town = " ".join(full_town) 
+            self.town = " ".join(full_town)
         except:
             self.town = ""
             self.street = ""
-            self.postcode = 0       
+            self.postcode = 0
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude
-            
-    
+
+
     def save(self, * args, ** kwargs):
         """
         Ensures integrity
@@ -139,24 +139,24 @@ class Location(models.Model):
         if (    (not self.street or not self.town or not self.postcode)
                 and not self.georss_point):
             raise django.db.IntegrityError('Give either address details or georss_point')
-        
+
         if not self.georss_point:
             """
             At this point we have Address details as string but not GeoRSS point.
             """
             self.address_to_point()
-            super(Location, self).save(*args, ** kwargs) 
+            super(Location, self).save(*args, ** kwargs)
         else:
             """
             At this point we have a GeoRSS point but not Address details
             """
             self.point_to_address()
             super(Location, self).save(*args, ** kwargs)
-        
-   
+
+
     def __unicode__(self):
         return self.georss_point
-    
+
     def to_xmlrpc(self):
         """
         Returns a Python dict that contains just the attributes
@@ -167,6 +167,6 @@ class Location(models.Model):
         del location_dict['georss_point_longitude']
         del location_dict['id']
         return location_dict
-    
+
     class Meta:
         app_label = 'server'

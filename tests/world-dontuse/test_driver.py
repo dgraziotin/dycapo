@@ -37,13 +37,13 @@ class DriverTest(Thread):
     If the object is instantiated with fixed_destination!=None, then it must be a georss_point, like
     "1.0,3.0"
     """
-    
+
     client = ''
     clean_responses = True
     fixed_destination = None
     username = ''
     position = ''
-    
+
     def __init__(self,username,password,domain,fixed_destination,clean_responses):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password, domain)
@@ -53,7 +53,7 @@ class DriverTest(Thread):
         self.position = common_classes_and_methods.Location()
         self.position.georss_point='45.96304996635425, 11.106381118297577'#"46.462822799999998, 11.3343092"
         self.position.leaves = common_classes_and_methods.now()
-        
+
     def insert_trip(self):
         source = common_classes_and_methods.Location()
         destination = common_classes_and_methods.Location()
@@ -77,7 +77,7 @@ class DriverTest(Thread):
         destination.label="office"
         destination.point="dest"
         destination.leaves = common_classes_and_methods.nowplusminutes(120)
-        
+
         mode.capacity = 3
         mode.vacancy = 3
         mode.color = 'blue'
@@ -87,10 +87,10 @@ class DriverTest(Thread):
         mode.model = 'fiesta'
         #mode.year = 2003
         mode.kind = 'auto'
-        
+
         prefs.age = '18-40'
         prefs.nonsmoking = False
-        
+
         trip.content = 'description of the trip'
         trip.expires = common_classes_and_methods.nowplusdays(3)
         print "initializing random Trip from " + source.georss_point + " to " + destination.georss_point
@@ -101,7 +101,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def start_trip(self,trip):
         print "#" * 80
         print self.username + ": STARTING TRIP..."
@@ -110,7 +110,7 @@ class DriverTest(Thread):
         print response
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def check_ride_requests(self,trip):
         print "#" * 80
         print self.username + ": SEARCHING FOR RIDERS..."
@@ -119,7 +119,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-        
+
     def accept_ride_request(self,trip,person):
         print "#" * 80
         print self.username + ": ACCEPTING A RIDE REQUEST..."
@@ -128,7 +128,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def update_position(self):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
@@ -137,7 +137,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def update_position(self,georss_point=None):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
@@ -151,7 +151,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def get_position(self):
         print "#" * 80
         print self.username + ": GETTING POSITION..."
@@ -162,7 +162,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def persons_near(self):
         print "#" * 80
         print self.username + ": PERSONS NEAR..."
@@ -171,7 +171,7 @@ class DriverTest(Thread):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def delete_trip(self,trip):
         print "#" * 80
         print "DELETING TRIP..."
@@ -179,7 +179,7 @@ class DriverTest(Thread):
         response = self.client.dycapo.delete_trip(trip)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
-    
+
     def start_test(self):
         common_classes_and_methods.wait_random_seconds()
         self.update_position()
@@ -191,12 +191,12 @@ class DriverTest(Thread):
         attempts_orig = 8
         found = False
         while not found:
-            
+
             self.update_position()
-            
+
             self.get_position()
-            
-            if attempts==0: 
+
+            if attempts==0:
                 print "#" * 80
                 print "RIDE REQUEST NOT FOUND IN " +str(attempts_orig)+ " ATTEMPTS. ABORTING"
                 print "#" * 80
@@ -212,11 +212,11 @@ class DriverTest(Thread):
         if self.clean_responses:
             self.delete_trip(trip)
         """
-                
+
     def run(self):
         self.start_test()
-        
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     for i in range(0,1):
         driverthread = DriverTest(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065",settings.CLEAN_DATABASE_AFTER_TESTS)
         driverthread.client._ServerProxy__verbose = settings.XMLRPC_CLIENT_VERBOSE

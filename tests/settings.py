@@ -28,6 +28,3 @@ DRIVER_PASSWORD = 'password'
 
 RIDER_USERNAME = 'rider1'
 RIDER_PASSWORD = 'password'
-
-
-

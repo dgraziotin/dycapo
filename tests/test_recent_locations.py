@@ -23,7 +23,7 @@ import settings
 import response_codes
 
 class TestRecentLocations():
-    
+
     def setup_class(self):
         self.rider = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.rider.position_lat = 46.494957
@@ -32,7 +32,7 @@ class TestRecentLocations():
 
     def setup_method(self,method):
         self.rider.position = classes.Location(georss_point=self.rider_position)
-        
+
     def test_position(self):
         for i in range (0,10):
             self.rider.position_lon += 0.000030

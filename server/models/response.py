@@ -35,9 +35,9 @@ class Response(object):
         self.message = message
         self.type = type
         self.value = value
-        
+
     def to_xmlrpc(self):
         return self.__dict__
-    
+
     class Meta:
         app_label = 'server'

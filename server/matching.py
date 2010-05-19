@@ -44,11 +44,11 @@ def get_trips_destination_near_location(location):
                                                                  locations__georss_point_latitude__range=(lat_min, lat_max),
                                                                  locations__georss_point_longitude__range=(lon_min, lon_max)
                                                                  )
-    
+
     for trip in trips_destination_near_location:
         if trip.has_vacancy() == False:
             trips_destination_near_location = trips_destination_near_location.exclude(id=trip.id)
-    
+
     return trips_destination_near_location
 
 def exclude_trips_driver_closest_to_destination(trips, rider):
@@ -61,10 +61,10 @@ def exclude_trips_driver_closest_to_destination(trips, rider):
         destination = trip.get_destination()
         driver_distance_from_destination = driver.position.distance(destination)
         rider_distance_from_destination = rider.position.distance(destination)
-        
+
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)
-            
+
     return trips
 
 def exclude_trips_driver_not_approaching_rider(trips, rider):
@@ -78,7 +78,7 @@ def exclude_trips_driver_not_approaching_rider(trips, rider):
         driver = trip.author
         if get_proximity_factor(trip.author, rider.position) < -2:
             trips = trips.exclude(id=trip.id)
-            
+
     return trips
 
 
@@ -97,7 +97,7 @@ def get_proximity_factor(person, position):
     proximity_factor = location_proximity_factor(
                                                  recent_locations_distance_from_position)
     return proximity_factor
-    
+
 def location_proximity_factor(distances):
     """
     Given a list of distances, it computes the approaching factor which
@@ -118,9 +118,8 @@ def location_distance_factor(distance1, distance2):
     Given two distances, returns 1 if the first distance is greater than
     the second one.
     Returns -1 if the first distance is less than the second one.
-    Returns 0 if they are equal. 
+    Returns 0 if they are equal.
     """
     if distance1 > distance2: return 1
     if distance1 < distance2: return -1
     return 0
-

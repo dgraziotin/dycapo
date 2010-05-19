@@ -37,7 +37,7 @@ class TestRider():
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
         self.rider.position = classes.Location(georss_point=self.rider_position)
         self.rider.destination = classes.Location(georss_point=self.rider_destination,point='dest')
-        
+
     def test_position(self):
         old_position = self.rider.position
         new_position = classes.Location(georss_point='46.000 11.000')
@@ -49,11 +49,11 @@ class TestRider():
         response = self.rider.get_position()
         assert response['value']['georss_point'] == old_position.georss_point
         assert response['value']['georss_point'] != new_position.georss_point
-   
+
     def test_search_trip(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE
-        
+
     def test_request_ride(self,trip=None):
         if not trip:
             if not hasattr(self,"trip"):
@@ -61,7 +61,7 @@ class TestRider():
             trip = self.trip
         response = self.rider.request_ride(trip)
         assert response['code'] == response_codes.ERROR
-    
+
     def test_start_ride(self,trip=None):
         if not trip:
             if not hasattr(self,"trip"):
@@ -69,7 +69,7 @@ class TestRider():
             trip = self.trip
         response = self.rider.start_ride(trip)
         assert response['code'] == response_codes.ERROR
-    
+
     def test_finish_ride(self,trip=None):
         if not trip:
             if not hasattr(self,"trip"):
@@ -77,4 +77,3 @@ class TestRider():
             trip = self.trip
         response = self.rider.finish_ride(trip)
         assert response['code'] == response_codes.ERROR
-    

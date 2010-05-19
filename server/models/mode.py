@@ -45,13 +45,13 @@ class Mode(models.Model):
     lic = models.CharField(max_length=255, blank=True)
     cost = models.FloatField(blank=True, null=True, default=0)
     person = models.ForeignKey('Person', blank=True, null=True)
-    
+
     def save(self, * args, ** kwargs):
         if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model:
             raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
         super(Mode, self).save(*args, **kwargs)
- 
-        
+
+
     def to_xmlrpc(self):
         """
         Returns a Python dict that contains just the attributes we want to expose
@@ -60,6 +60,6 @@ class Mode(models.Model):
         mode_dict = copy.deepcopy(self.__dict__)
         del mode_dict['id']
         return mode_dict
-    
+
     class Meta:
         app_label = 'server'

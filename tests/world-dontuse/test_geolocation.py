@@ -7,7 +7,7 @@ import settings
 delta_lat = 0.00286
 delta_lon = 0.00054
 
-original_lat = 46.06693 
+original_lat = 46.06693
 original_lon = 11.15065
 
 if __name__=="__main__":
@@ -19,6 +19,3 @@ if __name__=="__main__":
     rider = RiderTest("luca",settings.RIDER_PASSWORD,settings.DYCAPO_URL,"46.06693 11.15065")
     #rider.client._ServerProxy__verbose = True
     rider.search_ride()
-    
-    
-   

@@ -31,7 +31,7 @@ import participation
 
 class Trip(models.Model):
     """
-    Represents a Trip. 
+    Represents a Trip.
     See `OpenTrip_Core#Entry_Elements <http://opentrip.info/wiki/OpenTrip_Core#Entry_Elements>`_ for more info.
     atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
     in case of an export of a Trip in OpenTrip Feed format.
@@ -46,20 +46,20 @@ class Trip(models.Model):
     mode = models.ForeignKey(modulemode.Mode, blank=False, null=True)
     prefs = models.ForeignKey(moduleprefs.Prefs, null=True)
     participation = models.ManyToManyField('Person', through='Participation', related_name='participation')
-    
+
     def __repr__(self):
         return str(self.id)
-    
+
     def __unicode__(self):
         return str(self.id)
-    
+
     def get_destination(self):
         """
         Returns the location representing the destination of the Trip
         """
         destination = self.locations.filter(point='dest')[0]
         return destination
-    
+
     def update_vacancy(self):
         """
         Checks how many seats are still available in car and updates the attribute consistently
@@ -67,7 +67,7 @@ class Trip(models.Model):
         participations_for_trip = self.get_participations().exclude(role='driver').filter(started=True).filter(finished=False)
         self.mode.vacancy = self.mode.capacity - len(participations_for_trip)
         self.mode.save()
-        
+
     def has_vacancy(self):
         """
         Returns True if there are emtpy seats available
@@ -76,8 +76,8 @@ class Trip(models.Model):
         if self.mode.vacancy > 0:
             return True
         return False
-        
-    
+
+
     def save(self, * args, ** kwargs):
         """
         Ensures integrity.
@@ -85,7 +85,7 @@ class Trip(models.Model):
         if not self.expires or not self.mode or not self.prefs or not self.author:
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, ** kwargs) # Call the "real" save() method.
-    
+
     def get_participations(self):
         """
         Returns all the Participations of the Trip
@@ -93,7 +93,7 @@ class Trip(models.Model):
         participations = moduleparticipation.Participation.objects.filter(trip=self.id)
         return participations
 
-    
+
     def to_xmlrpc(self):
         """
         Returns a Python dict that contains just the attributes we want to expose
@@ -112,6 +112,6 @@ class Trip(models.Model):
             'author': self.author.to_xmlrpc(),
         }
         return trip_dict
-    
+
     class Meta:
         app_label = 'server'

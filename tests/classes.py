@@ -42,12 +42,12 @@ class Mode():
         self.vacancy = vacancy
         self.cost = cost
         self.model = model
-    
+
 class Prefs():
     def __init__(self,age='18-30',nonsmoking=False):
         self.age = age
         self.nonsmoking = nonsmoking
-    
+
 class Response(object):
     """
     This is an envelope that standardizes the response of Dycapo. This is an OpenTrip Dynamic proposal.
@@ -57,7 +57,7 @@ class Response(object):
         self.message = message
         self.type = type
         self.value = value
-        
+
 class Person():
     def __init__(self,username,password,domain,position=Location(),destination=Location(),clean_responses=True):
         self.clean_responses = clean_responses
@@ -66,7 +66,7 @@ class Person():
         self.username = username
         self.client = utils.get_xmlrpc_client(username,password, domain)
         self.trip = None
-    
+
     def update_position(self,location=None):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
@@ -77,7 +77,7 @@ class Person():
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
-    
+
     def get_position(self,username=None):
         print "#" * 80
         print self.username + ": GETTING POSITION..."
@@ -88,7 +88,7 @@ class Person():
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
-    
+
     def finish_trip(self,trip=None):
         print "#" * 80
         print "DELETING TRIP..."
@@ -116,7 +116,7 @@ class Driver(Person):
         print "#" * 80
         self.trip = utils.extract_response(response)
         return response
-        
+
     def start_trip(self,trip=None):
         print "#" * 80
         print self.username + ": STARTING TRIP..."
@@ -127,7 +127,7 @@ class Driver(Person):
         print response
         print "#" * 80
         return response
-    
+
     def check_ride_requests(self,trip=None):
         print "#" * 80
         print self.username + ": SEARCHING FOR RIDERS..."
@@ -138,7 +138,7 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
-    
+
     def accept_ride_request(self,person):
         print "#" * 80
         print self.username + ": ACCEPTING A RIDE REQUEST..."
@@ -147,7 +147,7 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
-    
+
 class Rider(Person):
     def search_ride(self,position=None,destination=None):
         if not position:
@@ -161,7 +161,7 @@ class Rider(Person):
         print "Dycapo Response: \n" + str(response)
         print "*" * 80
         return response
-    
+
     def request_ride(self,trip):
         print "*" * 80
         print self.username + ": REQUESTING A RIDE..."
@@ -169,7 +169,7 @@ class Rider(Person):
         response = self.client.dycapo.request_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
-    
+
     def start_ride(self,trip):
         print "*" * 80
         print self.username + ": STARTING A RIDE..."
@@ -177,7 +177,7 @@ class Rider(Person):
         response = self.client.dycapo.start_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
-    
+
     def finish_ride(self,trip):
         print "*" * 80
         print self.username + ": FINISHING A RIDE..."
@@ -185,5 +185,3 @@ class Rider(Person):
         response = self.client.dycapo.finish_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
-  
-

@@ -55,9 +55,9 @@ class Participation(models.Model):
     finished_position = models.ForeignKey(location.Location, related_name="finished_position", blank=True, null=True)
     locations = models.ManyToManyField(location.Location, related_name="participaion_locations")
 
-    
+
     def __unicode__(self):
         return str(self.person) + " -> " + str(self.trip)
-        
+
     class Meta:
         app_label = 'server'

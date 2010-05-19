@@ -10,7 +10,7 @@ from geopy import util
 class VirtualEarth(Geocoder):
     """Geocoder using Microsoft's Windows Live Local web service, powered by
     Virtual Earth.
-    
+
     WARNING: This does not use a published API and can easily break if
     Microsoft changes their JavaScript.
     """
@@ -22,7 +22,7 @@ class VirtualEarth(Geocoder):
     def __init__(self, domain='local.live.com', format_string='%s'):
         self.domain = domain
         self.format_string = format_string
-    
+
     @property
     def url(self):
         domain = self.domain
@@ -60,7 +60,7 @@ class VirtualEarth(Geocoder):
                 location, (latitude, longitude) = array[0], array[5:7]
             else:
                 location, latitude, longitude = array[:3]
-                
+
             return (location, (latitude, longitude))
 
         if exactly_one:

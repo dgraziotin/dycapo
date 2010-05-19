@@ -45,20 +45,20 @@ def nowplusminutes(num_minutes):
     return nowplus.isoformat(' ')
 
 def get_client(user, password, url):
-        protocol = url.split(':')[0]
-        host_and_path = url.split(':')[1][2:]
-        url = protocol +"://" + user + ":" + password + "@" + host_and_path
-        client = ServerProxy(url)
-        return client
-        
+    protocol = url.split(':')[0]
+    host_and_path = url.split(':')[1][2:]
+    url = protocol +"://" + user + ":" + password + "@" + host_and_path
+    client = ServerProxy(url)
+    return client
+
 def wait_random_seconds():
     wait = random.randrange(1,20)
     print "Waiting " + str(wait) + " seconds"
     sleep(wait)
-    
+
 def extract_response(response):
     return response['value']
-    
+
 class Location():
     town = 'Trento'
     point = ''
@@ -77,8 +77,8 @@ class Location():
     intersection = 'Via Sommarive'
     recurs = 'weekly'
     def __init__(self):
-        #self.town = ''#'Trento'
-        #self.georss_radius = 500
+    #self.town = ''#'Trento'
+    #self.georss_radius = 500
         self.point = 'orig'
         self.georss_point = ''
         #self.country = '' #'IT'
@@ -110,15 +110,15 @@ class Mode():
     cost = 0
     #year = 0
     model = ''
-    
+
 class Prefs():
     age = '18-30'
     nonsmoking = False
-    
+
 class Person():
     username = ''
 
-    
+
 class Response(object):
     """
     This is an envelope that standardizes the response of Dycapo. This is an OpenTrip Dynamic proposal.
@@ -132,4 +132,3 @@ class Response(object):
         self.message = message
         self.type = type
         self.value = value
-
