@@ -114,13 +114,15 @@ class TestSimpleMatching():
             assert response['code'] == response_codes.POSITIVE
     
     def test_check_ride_requests_after_request(self):
-        response = self.driver.check_ride_requests()
-        assert response['code'] == response_codes.POSITIVE
-        self.driver.ride_request = response['value']
+        for rider in self.riders:
+            response = self.driver.check_ride_requests()
+            assert response['code'] == response_codes.POSITIVE
+            self.driver.ride_request = response['value']
         
     def test_accept_ride_request(self):
-        response = self.driver.accept_ride_request(self.driver.ride_request)
-        assert response['code'] == response_codes.POSITIVE
+        for rider in self.driver.ride_request:
+            response = self.driver.accept_ride_request(rider)
+            assert response['code'] == response_codes.POSITIVE
     
     def test_start_ride(self):
         for rider in self.riders:
@@ -132,13 +134,13 @@ class TestSimpleMatching():
     def test_search_trip_no_vacany(self):
         response = self.rider5.search_ride(self.rider5.position,self.rider5.destination)
         assert response['code'] == response_codes.NEGATIVE
-        
+
     def test_search_trip_vacany(self):
         response = self.rider4.finish_ride(self.rider4.trip)
         assert response['code'] == response_codes.POSITIVE
+        
         response = self.rider5.search_ride(self.rider5.position,self.rider5.destination)
         assert response['code'] == response_codes.POSITIVE
-        
     
     def test_finish_ride(self):
         for rider in self.riders:

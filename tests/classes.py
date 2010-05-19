@@ -33,7 +33,7 @@ class Trip():
 
 
 class Mode():
-    def __init__(self,kind='auto',capacity=4,lic='',color='',make='Ford',vacancy=3,cost=0,model='Fiesta'):
+    def __init__(self,kind='auto',capacity=4,lic='',color='',make='Ford',vacancy=4,cost=0,model='Fiesta'):
         self.kind = kind
         self.capacity = capacity
         self.lic = lic

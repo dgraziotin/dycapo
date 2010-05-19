@@ -44,27 +44,13 @@ class Mode(models.Model):
     color = models.CharField(max_length=255, blank=True)
     lic = models.CharField(max_length=255, blank=True)
     cost = models.FloatField(blank=True, null=True, default=0)
+    person = models.ForeignKey('Person', blank=True, null=True)
     
-    """
-    For using this method we must at least assign Mode objects to a Person.
     def save(self, * args, ** kwargs):
-        if not self.kind or not self.capacity or not self.vacancy or not self.make or not self.model:
+        if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model:
             raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
-        try:
-            retrieven_mode = Mode.objects.get(kind=self.kind,
-                                              capacity=self.capacity,
-                                              vacancy=self.vacancy,
-                                              make=self.make,
-                                              model=self.model,
-                                              year=self.year,
-                                              color=self.color,
-                                              lic=self.lic)
-        except Mode.DoesNotExist:
-            super(Mode, self).save(force_insert=True)
-            return
-        self.id = retrieven_mode.id
-        super(Mode, self).save(force_update=True)
-    """    
+        super(Mode, self).save(*args, **kwargs)
+ 
         
     def to_xmlrpc(self):
         """

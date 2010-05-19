@@ -174,20 +174,25 @@ def start_ride(trip, **kwargs):
     trip_dict = trip
     try:
         trip = models.Trip.objects.get(id=trip_dict['id'])
-    except KeyError:
+    except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.ERROR,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
         
     rider = utils.get_xmlrpc_user(kwargs)
-   
-    participation = trip.get_participations().filter(person=rider)[0]
-    participation.started = True
-    participation.started_timestamp = datetime.datetime.now()
-    participation.started_position = rider.position
-    participation.save()
-    trip.update_vacancy()
+    try:
+        participation = trip.get_participations().filter(person=rider)[0]
+        participation.started = True
+        participation.started_timestamp = datetime.datetime.now()
+        participation.started_position = rider.position
+        participation.save()
+        trip.update_vacancy()
+    except Exception, e:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.TRIP_NOT_FOUND,
+                               "string", [str(e)])
+        return resp.to_xmlrpc()
     resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_STARTED,
                                "boolean", True)

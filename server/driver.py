@@ -75,7 +75,18 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         
     mode = models.Mode()
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
-    
+    mode.person = driver
+    try:
+        retrieven_mode = models.Mode.objects.get(person=driver,
+                                                 make=mode.make,
+                                                 model=mode.model,
+                                                 capacity=mode.capacity,
+                                                 kind=mode.kind)
+        retrieven_mode.vacancy = mode.vacancy
+        mode = retrieven_mode
+        
+    except models.Mode.DoesNotExist:
+        pass
         
     preferences = models.Prefs()
     preferences = utils.populate_object_from_dictionary(preferences,
@@ -137,7 +148,7 @@ def start_trip(trip, ** kwargs):
     
         An object of type **Response**, containing all the details
         of the operation and results (if any)
-        """
+    """
         
     trip_dict = trip
     try:
@@ -200,7 +211,7 @@ def check_ride_requests(trip, ** kwargs):
     
         An object of type **Response**, containing all the details of the
         operation and results (if any)
-        """
+    """
         
     trip_dict = trip
 
@@ -219,27 +230,25 @@ def check_ride_requests(trip, ** kwargs):
             
     driver = utils.get_xmlrpc_user(kwargs)
 
-    participations_for_trip = models.Participation.objects.filter(
-                                                                  trip=trip).exclude(person=driver)
+    participations_for_trip = (models.Participation.objects.filter(trip=trip)
+                               .exclude(person=driver)
+                               .filter(started=False)
+                               .filter(finished=False)
+                               .filter(requested=True)
+                               )
 
-    if len(participations_for_trip) == 0:
+    if (len(participations_for_trip) == 0):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.RIDE_REQUESTS_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
     else:
-        for participation in participations_for_trip:
-            if participation.requested:
-                resp = models.Response(response_codes.POSITIVE,
-                                       response_codes.RIDE_REQUESTS_FOUND,
-                                       "Person",
-                                       participation.person.to_xmlrpc())
-                return resp.to_xmlrpc()
-                            
-    resp = models.Response(response_codes.NEGATIVE,
-                           response_codes.RIDE_REQUESTS_NOT_FOUND,
-                           "boolean", False)
-    return resp.to_xmlrpc()
+        participations = [participation.person.to_xmlrpc()
+                          for participation in participations_for_trip]
+        resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_REQUESTS_FOUND,
+                               "boolean", participations)
+        return resp.to_xmlrpc()
 
 
 @rpc4django.rpcmethod(name='dycapo.accept_ride_request',

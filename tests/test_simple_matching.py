@@ -96,9 +96,9 @@ class TestSimpleMatching():
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.POSITIVE
         self.driver.ride_request = response['value']
-        
+    
     def test_accept_ride_request(self):
-        response = self.driver.accept_ride_request(self.driver.ride_request)
+        response = self.driver.accept_ride_request(self.driver.ride_request[0])
         assert response['code'] == response_codes.POSITIVE
     
     def test_start_ride(self):
@@ -113,5 +113,4 @@ class TestSimpleMatching():
         response = self.rider.finish_ride(self.rider.trip)
         assert response['code'] == response_codes.POSITIVE
     
-   
     
