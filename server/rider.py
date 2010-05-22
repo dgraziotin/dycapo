@@ -62,7 +62,7 @@ def search_trip(source, destination, ** kwargs):
 
     trips_common_destination = matching.get_trips_destination_near_location(
                                                                             destination)
-    
+
     if not trips_common_destination:
         return models.Response(response_codes.NEGATIVE,
                                response_codes.RIDES_NOT_FOUND,

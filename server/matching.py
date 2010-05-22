@@ -30,11 +30,11 @@ def get_trips_destination_near_location(location):
     We query the database for all active Trips with a destination that is inside
     this box, and return the QuerySet
     """
-    
+
     box_around_location = location.get_box_around()
     lat_max = max((box_around_location[0].georss_point_latitude,box_around_location[1].georss_point_latitude))
     lat_min = min((box_around_location[3].georss_point_latitude,box_around_location[2].georss_point_latitude))
-    
+
     lon_max = max((box_around_location[1].georss_point_longitude,box_around_location[2].georss_point_longitude))
     lon_min = min((box_around_location[0].georss_point_longitude,box_around_location[3].georss_point_longitude))
 
@@ -44,16 +44,16 @@ def get_trips_destination_near_location(location):
                                                                  locations__georss_point_latitude__range=(lat_min, lat_max),
                                                                  locations__georss_point_longitude__range=(lon_min, lon_max),
                                                                  )
-    
 
-    
+
+
     for trip in trips_destination_near_location:
         if trip.has_vacancy() == False:
             trips_destination_near_location = trips_destination_near_location.exclude(id=trip.id)
-    
+
     return trips_destination_near_location
-    
-    
+
+
 
 def exclude_trips_driver_closest_to_destination(trips, rider):
     """

@@ -72,7 +72,7 @@ class TestSimpleMatching():
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.POSITIVE
         self.rider.trip = response['value'][0]
-    
+
     def test_search_trip_driver_closest_to_destination(self):
         driver_position = '46.500730 11.345070'
         self.driver.position = classes.Location(georss_point=driver_position,point='posi')
@@ -111,4 +111,3 @@ class TestSimpleMatching():
             return
         response = self.rider.finish_ride(self.rider.trip)
         assert response['code'] == response_codes.POSITIVE
-    

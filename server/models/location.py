@@ -79,7 +79,7 @@ class Location(models.Model):
         location_point = geopy.point.Point(location.georss_point)
         distance = geopy.distance.distance(current_point, location_point)
         return distance.kilometers
-    
+
     def get_location_from_geopy_point(self, point):
         location = Location()
         location.georss_point = str(point.latitude) + " " + str(point.longitude)
@@ -87,11 +87,11 @@ class Location(models.Model):
         location.leaves = datetime.datetime.now()
         location.point_to_address()
         return location
-    
+
     def get_box_around(self, diagonal_meters=None):
         if not diagonal_meters:
             diagonal_meters = self.offset
-        
+
         diagonal_kmeters = diagonal_meters / 1000.0
         destination = geopy.distance.GreatCircleDistance().destination
         box_around = [self.get_location_from_geopy_point(
@@ -103,7 +103,7 @@ class Location(models.Model):
                       self.get_location_from_geopy_point(
                       destination(self.georss_point,315,diagonal_kmeters))]
         return box_around
-    
+
     def complete_fields(self):
         """
         This method looks for missing fields and tries to complete them also by
@@ -121,8 +121,8 @@ class Location(models.Model):
             At this point we have a GeoRSS point but not Address details
             """
             self.point_to_address()
-        
-        
+
+
     def address_to_point(self):
         """
         Given Geolocation information, it retrieves GeoRSS.
