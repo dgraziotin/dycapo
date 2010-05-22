@@ -22,7 +22,7 @@ import copy
 import settings
 import response_codes
 
-class TestSimpleMatching():
+class TestMultipleMatching():
     def setup_class(self):
         self.driver = classes.Driver(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL)
 

@@ -1,94 +1,68 @@
 RELEASE NOTES
 ***************
 
-2010-05-11  Daniel Graziotin  <daniel DOT graziotin AT acm DOT com>
+2010-05-22  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
-Dycapo v0.3.0 is the third prototype version on which we are building our APIs.
+Dycapo v0.4.0 is the fourth prototype version on which we are building our APIs.
 
-Dycapo v0.3.0 incorporates and shows:
+Dycapo v0.4.0 incorporates and shows:
 * Adoption of Dycapo Protocol [http://dycapo.org/Protocol]
 * The introduction of API [http://dycapo.org/Server/API]
 * Integration of Dycapo models with Django models
 * Authentication system
+* A a Geo-location based search Algorithm
+* Geo-location methods for Persons
 * Insertion of a trip by a driver
 * Start of a trip by a driver
 * Search of a trip by a rider
-* A first prototype of a Geo-location based search Algorithm
-* Geo-location methods for Persons
 * Send a ride request to a driver
 * Let the driver accept the ride request
+* Let the rider inform the system that the driver picked him/she
+* Let the rider inform the system that the he/she arrived to destination
 * Let the driver finish a Trip
-* A complete rewritten testing framework
+* A full set of tests
 
-CHANGES SINCE v0.2.0
+CHANGES SINCE v0.3.0
 ***************
-General:
-* Dycapo Protocol fully adopted 
-* Code cleaner and refactored
-
-server/utils.py
-* Code cleaner, matching functions refactored in another file
-
-server/driver.py
-* Added finish_trip method
-
-server/rider.py
-* search_trip re-written, using a new algorithm with functions located in
-server/matching.py
-
-server/matching.py
-* This new module holds all the matching functions of the search_trip()
-geo-located algorithm
-* get_trips_destination_near_location(location) returns all the active Trips
-with a destination *around* a given Location
-* exclude_trips_driver_closest_to_destination(trips, rider) excludes from a
-QuerySet of Trips all the Trips in which the driver is closer to the rider
-to the destination
-* exclude_trips_driver_not_approaching_rider(trips, rider) excludes from a
-QuerySet of Trips all the Trips in which the driver is getting away from
-the rider. This method uses the recent locations of the Driver and some
-maths functions written by myself
-* get_proximity_factor(person, position) given a person and a location, it
-determines if the person is approaching it or getting away from it, by
-retrieving some recent locations of the person and computing their distance
-from the location. The set of ordered distances is then given
-to location_proximity_factor that retrives the factor
-* location_proximity_factor(distances) given a list of distances, it computes
-the approaching factor which is a natural number in (-inf , +inf)
-If factor > 0, the numbers in list tend to decrease
-If factor == 0, the numbers in list tend to stay around the same value
-If factor < 0, the numbers in list tend to increase.
-* location_distance_factor(distance1, distance2) given two distances,
-returns 1 if the first distance is greater than the second one.
-Returns -1 if the first distance is less than the second one.
-Returns 0 if they are equal. 
-
-server/models.py
-* this file does not exist anymore, models are now in server/models folder
-
-server/models/participation.py
-* added locations field, to hold all the locations of each Person during a Trip
-
-server/models/location.py
-* added distance(location) method, that returns the distance in KMs from the
-current location to a given one
-
-server/models/trip.py
-* added get_destination() method, that returns the Location representing the
-destination of the Trip
-* added get_participations() method, returns all the Participations of the Trip
-
-server/models/person.py
-* added get_recent_locations(max_results) method, returning the
-last *max_results* Locations of the Person
-* added is_participating() method, that returns True if the Person is
-Participating to a Trip
-* added get_active_participation() method, that returns the active Participation
-of the Person, if any
-* added get_participating_trip() that returns the Trip in which the Person
-is participating, if any
 
 tests/
-* Completely rewritten testing framework, using py.test [http://pytest.org]
-* There are currently 26 XML-RPC tests, covering driver functions, rider
-functions, simple matching and complex matchings
+* All new XML-RPC methods covered
+
+tests/test_multiple_matching.py
+* methods to check the geolocation based algorithm of Dycapo
+
+server/utils.py
+* Bugs fixed
+
+server/rider.py
+* Added start_ride(trip) method, that informs the system that a Ride has
+been started
+* Added finish_ride(trip) method, that informs the system that a Ride
+has been finished
+
+server/models/prefs.py
+* Overridden save() method that checks for duplicates in the Database and
+saves space
+
+server/models/mode.py
+* Added a reference to Person for checking for duplicates in the Database and
+saving space
+
+server/models/location.py
+* Added factory method get_location_from_geopy_point(point) that given a Geopy
+Point, it returns the corresponding Dycapo Location object
+* Added get_box_around(diagonal_meters) method that given a diagonal, it returns
+a GeoRSS box around the location
+* Added complete_fields() method that acts as a wrapper to the methods for
+completing missing attributes of a Location, using geocoding
+
+server/matching.py
+* Enhanced get_trips_destination_near_location(destination) that now uses
+Location.get_box_around() to compute a dynamic delta of latitude and longitude
+* Enhanced get_trips_destination_near_location(destination) that also looks for
+trips with empty seats
+
+server/driver.py
+* Enhanced add_trip() method that now re-uses Mode objects if already present
+in the Database instead of creating a new one each time
+* Fixed bugs in check_ride_requests(trip) method 

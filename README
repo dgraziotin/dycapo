@@ -27,8 +27,7 @@ Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
 
 STATUS
 ***************
-Dycapo is on its initial development phase. We are currently releasing working
-prototypes for building our APIs and Protocol.
+We are currently releasing working prototypes for building our APIs and Protocol.
 We adopted SemVer - Semantic Versioning [http://semver.org]
 for our release numbering system.
 Therefore, v1.0.0 will be considered stable, with fixed API. 
@@ -46,10 +45,14 @@ APIs are located at http://dycapo.org/Dycapo-API.html
 
 TESTING
 ***************
-We provide 3 registered users to test Dycapo functionalities:
+We provide 8 registered users to test Dycapo functionalities:
 - admin 
 - driver1
 - rider1
+- rob
+- dio
+- ozzy
+- angela
 
 All of them with password set to "password".
 
@@ -59,10 +62,14 @@ To run all tests, simply run run_tests.py
 
 ACKNOWLEDGEMENT
 ***************
+Thanks to the whole the SoNet group that supported me with hints and fun during
+my internship
+A big Thank You! To my colleague Riccardo Buttarelli that is writing an Android
+Client for Dycapo and also reporting bugs and suggestions for the Protocol
+Many thanks to David Fischer, author of RPC4DJANGO, that developed it while I was
+developing Dycapo and has always been willing to give hints and add functionalities
+by also following my deadlines.
+Thank you Dan Kirshner for your dynamicridesharing.org project and all the force
+you put in something in which you believe!
 - Add pylint
 - Add CloneDigger
-- Add SoNet group
-- Add Riccardo Buttarelli
-- Add David Fischer
-- Add Community
-- Add Dan Kirshner
