@@ -56,12 +56,13 @@ def search_trip(source, destination, ** kwargs):
     destination = models.Location()
     destination = utils.populate_object_from_dictionary(destination,
                                                         dict_destination)
-    destination.point_to_address()
+    destination.complete_fields()
+
     rider = utils.get_xmlrpc_user(kwargs)
 
     trips_common_destination = matching.get_trips_destination_near_location(
                                                                             destination)
-
+    
     if not trips_common_destination:
         return models.Response(response_codes.NEGATIVE,
                                response_codes.RIDES_NOT_FOUND,
@@ -86,7 +87,6 @@ def search_trip(source, destination, ** kwargs):
     return models.Response(response_codes.POSITIVE,
                            response_codes.RIDES_FOUND,
                            "Trip", [trip.to_xmlrpc() for trip in trips]).to_xmlrpc()
-
 
 @rpc4django.rpcmethod(name='dycapo.request_ride',
                       signature=['Response', 'Trip'],

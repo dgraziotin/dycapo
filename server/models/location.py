@@ -24,6 +24,7 @@ import geopy.distance
 import geopy.point
 import settings
 import copy
+import datetime
 
 WAYPOINT_CHOICES = (
     (u'orig', u'Origin'),
@@ -78,7 +79,50 @@ class Location(models.Model):
         location_point = geopy.point.Point(location.georss_point)
         distance = geopy.distance.distance(current_point, location_point)
         return distance.kilometers
-
+    
+    def get_location_from_geopy_point(self, point):
+        location = Location()
+        location.georss_point = str(point.latitude) + " " + str(point.longitude)
+        location.point = 'posi'
+        location.leaves = datetime.datetime.now()
+        location.point_to_address()
+        return location
+    
+    def get_box_around(self, diagonal_meters=None):
+        if not diagonal_meters:
+            diagonal_meters = self.offset
+        
+        diagonal_kmeters = diagonal_meters / 1000.0
+        destination = geopy.distance.GreatCircleDistance().destination
+        box_around = [self.get_location_from_geopy_point(
+                            destination(self.georss_point,40,diagonal_kmeters)),
+                      self.get_location_from_geopy_point(
+                            destination(self.georss_point,135,diagonal_kmeters)),
+                      self.get_location_from_geopy_point(
+                        destination(self.georss_point,225,diagonal_kmeters)),
+                      self.get_location_from_geopy_point(
+                      destination(self.georss_point,315,diagonal_kmeters))]
+        return box_around
+    
+    def complete_fields(self):
+        """
+        This method looks for missing fields and tries to complete them also by
+        calling methods using (reverse) geocoding methods
+        """
+        if not self.offset or self.offset < 149:
+            self.offset = 150
+        if not self.georss_point:
+            """
+            At this point we have Address details as string but not GeoRSS point.
+            """
+            self.address_to_point()
+        else:
+            """
+            At this point we have a GeoRSS point but not Address details
+            """
+            self.point_to_address()
+        
+        
     def address_to_point(self):
         """
         Given Geolocation information, it retrieves GeoRSS.
@@ -139,19 +183,8 @@ class Location(models.Model):
         if (    (not self.street or not self.town or not self.postcode)
                 and not self.georss_point):
             raise django.db.IntegrityError('Give either address details or georss_point')
-
-        if not self.georss_point:
-            """
-            At this point we have Address details as string but not GeoRSS point.
-            """
-            self.address_to_point()
-            super(Location, self).save(*args, ** kwargs)
-        else:
-            """
-            At this point we have a GeoRSS point but not Address details
-            """
-            self.point_to_address()
-            super(Location, self).save(*args, ** kwargs)
+        self.complete_fields()
+        super(Location, self).save(*args, ** kwargs)
 
 
     def __unicode__(self):
