@@ -35,7 +35,7 @@ def get_trips_destination_near_location(location):
     lat_max = max((box_around_location[0].georss_point_latitude,box_around_location[1].georss_point_latitude))
     lat_min = min((box_around_location[3].georss_point_latitude,box_around_location[2].georss_point_latitude))
     
-    lon_max = max((box_around_location[1].georss_point_longitude,box_around_location[3].georss_point_longitude))
+    lon_max = max((box_around_location[1].georss_point_longitude,box_around_location[2].georss_point_longitude))
     lon_min = min((box_around_location[0].georss_point_longitude,box_around_location[3].georss_point_longitude))
 
     trips_destination_near_location = models.Trip.objects.filter(
