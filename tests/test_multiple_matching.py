@@ -71,11 +71,19 @@ class TestMultipleMatching():
             assert response['value']['georss_point'] == rider.position.georss_point
             rider.position = response['value']
 
-
+    """
     def test_insert_trip(self):
         response = self.driver.insert_trip()
         assert response['value']['id'] > 0
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
+        self.driver.trip = response['value']
+    """
+    
+    def test_insert_trip_exp(self):
+        response = self.driver.insert_trip_exp()
+        assert response['value']['id'] > 0
+        assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
+        assert response['code']==response_codes.POSITIVE
         self.driver.trip = response['value']
 
     def test_search_trip_before_start(self):

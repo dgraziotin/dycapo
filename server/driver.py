@@ -127,6 +127,106 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
                            response_codes.TRIP_INSERTED, "Trip",
                            trip_stored.to_xmlrpc())
     return resp.to_xmlrpc()
+    
+    
+@rpc4django.rpcmethod(name='dycapo.add_trip_exp',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def add_trip_exp(trip, ** kwargs):
+
+    """ Inserts a new Trip in Dycapo System. It supports a source, a
+        destination and the trip mode. See the models for more information.
+
+        TODO
+
+        - verify user permissions
+        - multiple waypoints
+
+        PARAMETERS
+
+        - ``trip`` - a **Trip** object, representing the Trip that the Driver
+        
+        RETURNS
+
+        An object of type **Response**, containing all the details of the
+                operation and results (if any)
+    """
+
+    dict_trip = utils.clean_ids(trip)
+    dict_mode = utils.clean_ids(trip["content"]["mode"])
+    dict_prefs = utils.clean_ids(trip["content"]["prefs"])
+    locations = trip["content"]["locations"]
+
+    driver = utils.get_xmlrpc_user(kwargs)
+
+    source = models.Location()
+    dict_source = utils.get_location_from_array(locations,"orig")
+    source = utils.populate_object_from_dictionary(source, dict_source)
+
+
+    destination = models.Location()
+    dict_destination = utils.get_location_from_array(locations,"dest")
+    destination = utils.populate_object_from_dictionary(destination, dict_destination)
+
+    mode = models.Mode()
+    mode = utils.populate_object_from_dictionary(mode, dict_mode)
+    mode.person = driver
+
+    preferences = models.Prefs()
+    preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
+                                                        
+    try:
+        retrieven_mode = models.Mode.objects.get(person=driver,
+                                                 make=mode.make,
+                                                 model=mode.model,
+                                                 capacity=mode.capacity,
+                                                 kind=mode.kind)
+        retrieven_mode.vacancy = mode.vacancy
+        mode = retrieven_mode
+
+    except models.Mode.DoesNotExist:
+        pass
+
+    preferences = models.Prefs()
+    preferences = utils.populate_object_from_dictionary(preferences,
+                                                        dict_prefs)
+
+    try:
+        source.save()
+        destination.save()
+        mode.save()
+        preferences.save()
+    except Exception, e:
+        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
+                               False)
+        return resp.to_xmlrpc()
+        
+    trip = models.Trip()
+    trip = utils.populate_object_from_dictionary(trip, dict_trip)
+    trip.author = driver
+    trip.mode = mode
+    trip.prefs = preferences
+    try:
+        trip.save()
+    except Exception, e:
+        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
+                               False)
+        return resp.to_xmlrpc()
+
+    trip.locations.add(source)
+    trip.locations.add(destination)
+
+
+    participation = models.Participation()
+    participation.person = driver
+    participation.trip = trip
+    participation.role = 'driver'
+    participation.save()
+    trip_stored = models.Trip.objects.get(id=trip.id)
+    resp = models.Response(response_codes.POSITIVE,
+                           response_codes.TRIP_INSERTED, "Trip",
+                           trip_stored.to_xmlrpc())
+    return resp.to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.start_trip',
                       signature=['Response', 'Trip'],

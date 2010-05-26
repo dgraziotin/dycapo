@@ -53,15 +53,20 @@ class TestRider():
     def test_search_trip(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE
-
+    
     def test_request_ride(self,trip=None):
         if not trip:
             if not hasattr(self,"trip"):
                 self.trip = classes.Trip()
             trip = self.trip
+            trip.author = ""
+            trip.mode = ""
+            trip.prefs = ""
+            trip.mode = ""
+            trip.locations = []
         response = self.rider.request_ride(trip)
         assert response['code'] == response_codes.ERROR
-
+    """
     def test_start_ride(self,trip=None):
         if not trip:
             if not hasattr(self,"trip"):
@@ -77,3 +82,4 @@ class TestRider():
             trip = self.trip
         response = self.rider.finish_ride(trip)
         assert response['code'] == response_codes.ERROR
+    """

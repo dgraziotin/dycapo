@@ -26,10 +26,44 @@ class Location():
         self.label = label
         self.postcode = postcode
         self.leaves = leaves
+    def to_xmlrpc(self):
+        return self.__dict__
 
 class Trip():
     def __init__(self,expires=utils.now):
         self.expires = expires
+        self.prefs = None
+        self.mode = None
+        self.author = None
+        self.locations = None
+        
+    def to_xmlrpc(self):
+        if not self.mode:
+            mode = {}
+        else:
+            mode = self.mode.__dict__
+        if not self.author:
+            author = {}
+        else:
+            author = self.author.__dict__
+        if not self.prefs:
+            prefs = {}
+        else:
+            prefs = self.prefs.__dict__
+        if not self.locations:
+            locations = {}
+        else:
+            locations = [location.to_xmlrpc() for location in self.locations]
+            
+        return {
+            "expires" : self.expires,
+            "content" : {
+                "author" : author,
+                "prefs" : prefs,
+                "mode" : mode,
+                "locations": locations
+            }
+        }
 
 
 class Mode():
@@ -112,6 +146,32 @@ class Driver(Person):
         print self.username + ": SAVING TRIP..."
         print "#" * 80
         response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        self.trip = utils.extract_response(response)
+        return response
+    
+    def insert_trip_exp(self):
+        source = Location(georss_point=self.position.georss_point,point='orig')
+        destination = self.destination
+        mode = Mode()
+        prefs = Prefs()
+        trip = Trip()
+        trip.expires = utils.nowplusdays(3)
+        trip.mode = mode
+        trip.prefs = prefs
+        trip.locations = [source, destination]
+        class person():
+            pass
+        author = person()
+        author.username = self.username
+        trip.author = author
+        print "initializing Trip from " + self.position.georss_point + " to " + self.destination.georss_point
+        print "trip: " + str(trip.to_xmlrpc())
+        print "#" * 80
+        print self.username + ": SAVING TRIP EXP..."
+        print "#" * 80
+        response = self.client.dycapo.add_trip_exp(trip.to_xmlrpc())
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)
