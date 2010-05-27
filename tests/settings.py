@@ -28,3 +28,6 @@ DRIVER_PASSWORD = 'password'
 
 RIDER_USERNAME = 'rider1'
 RIDER_PASSWORD = 'password'
+
+REGISTRATION_USERNAME = 'register'
+REGISTRATION_PASSWORD = 'password'

@@ -46,7 +46,7 @@ class Person(authmodels.User):
     # username from Django
     # password from Django
     uri = models.CharField(max_length=200, blank=True)
-    phone = models.CharField(max_length=200, null=True)
+    phone = models.CharField(max_length=200, null=True, unique=True)
     position = models.ForeignKey(location.Location, blank=True, null=True)
     age = models.PositiveIntegerField(null=True, default=0)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=True)
@@ -101,6 +101,7 @@ class Person(authmodels.User):
     class Meta:
         permissions = (
                        ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
+                       ("can_register", "Can register to the System using XML-RPC"),
                        )
 
     # Use UserManager to get the create_user method, etc.

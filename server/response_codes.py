@@ -23,6 +23,8 @@ POSITIVE = 1
 NEGATIVE = 0
 ERROR = -1
 
+
+PROTOCOL_ERROR = "Please give all required parameters."
 TRIP_INSERTED = "Trip successfully inserted."
 TRIP_STARTED = "Trip successfully started."
 TRIP_STARTED = "Trip already started."
@@ -42,6 +44,10 @@ RIDE_STARTED = "Ride succesfully started."
 RIDE_IN_COURSE = "Rider is already participating"
 POSITION_UPDATED = "Current Position successfully updated"
 POSITION_FOUND = "Position found"
+PERSON_PROTOCOL_ERROR = "Please give all the required attribute"
 PERSON_NOT_FOUND = "Person(s) not found."
+PERSON_PASSWORD_CHANGED = "Password successfully changed"
+PERSON_REGISTERED = "Person succesfully registered."
+PERSON_ALREADY_REGISTERED = "Person already registered."
 PERSON_FOUND = "Person(s) found"
 LOCATION_NOT_FOUND = "Location not available"

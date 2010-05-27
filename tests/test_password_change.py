@@ -21,8 +21,9 @@ import utils
 import copy
 import settings
 import response_codes
+import xmlrpclib
 
-class TestRecentLocations():
+class TestPasswordChange():
 
     def setup_class(self):
         self.rider = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
@@ -31,11 +32,34 @@ class TestRecentLocations():
         self.rider_position = utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon)
 
     def setup_method(self,method):
-        self.rider.position = classes.Location(georss_point=self.rider_position)
+        pass
 
-    def test_position(self):
-        for i in range (0,10):
-            self.rider.position_lon += 0.000030
-            self.rider.position = classes.Location(georss_point=utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon),leaves=utils.nowplusminutes(0))
-            response = self.rider.update_position(location=self.rider.position)
-            assert response['code']==response_codes.POSITIVE
+    def test_password_change_successful(self):
+        person = {
+            "password" : "password1",
+        }
+        response = self.rider.client.dycapo.change_password(person)
+        print str(response)
+        assert response['code'] == response_codes.POSITIVE
+    def test_password_change_exception(self):
+        import py.test
+        py.test.raises(xmlrpclib.ProtocolError, "self.password_change_unsuccesful()")
+        
+    def password_change_unsuccesful(self):
+        
+        #Must raise a ProtocolError exception
+        
+        person = {
+            "password" : "password1",
+        }
+        response = self.rider.client.dycapo.change_password(person)
+
+    def test_password_change_successful_2(self):
+        person = {
+            "password" : "password",
+        }
+        self.rider.change_password("password1")
+        response = self.rider.client.dycapo.change_password(person)
+        assert response['code'] == response_codes.POSITIVE
+        self.rider.change_password("password")
+        

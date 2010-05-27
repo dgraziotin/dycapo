@@ -98,8 +98,25 @@ class Person():
         self.position = position
         self.destination = destination
         self.username = username
+        self.password = password
+        self.domain = domain
         self.client = utils.get_xmlrpc_client(username,password, domain)
         self.trip = None
+
+    def change_password(self,password):
+        self.password = password
+        self.client = utils.get_xmlrpc_client(self.username,self.password, self.domain)
+    
+    def register(self):
+        print "#" * 80
+        print self.username + ": REGISTERING TO THE SYSTEM..."
+        print "#" * 80
+        if not location:
+            location = self.position
+        response = self.client.dycapo.register()
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return response
 
     def update_position(self,location=None):
         print "#" * 80

@@ -21,7 +21,7 @@ import models
 import response_codes
 import rpc4django
 import utils
-
+import django.contrib.auth.models
 
 @rpc4django.rpcmethod(name='dycapo.update_position',
                       signature=['Response', 'Location'],
@@ -106,3 +106,90 @@ def get_position(person):
                                response_codes.POSITION_FOUND, 'Location',
                                person.position.to_xmlrpc())
         return resp.to_xmlrpc()
+
+@rpc4django.rpcmethod(name='dycapo.register',
+                      signature=['Response', 'Person'],
+                      permission='server.can_register')
+def register(person):
+    """
+    This method is for registering to the System
+
+    PARAMETERS
+
+    - ``person`` - a **Person** object, representing the Person we would like to
+        register to the system.
+
+    RETURNS
+
+    An object of type **Response**, containing all the details of the operation
+        and results (if any)
+    """
+    person_dict = person
+    try:
+        person = models.Person.objects.get(username=person_dict['username'])
+    except models.Person.DoesNotExist:
+        person = models.Person(**person)
+        person.set_password(person.password)
+        try:
+            person.save()
+            person.user_permissions.add(
+                django.contrib.auth.models.Permission.objects.get(
+                    codename='can_xmlrpc'))
+            resp = models.Response(response_codes.POSITIVE,
+                               response_codes.PERSON_REGISTERED, 'boolean',
+                               True)
+        except Exception, e:
+            resp = models.Response(response_codes.ERROR,
+                               str(e), 'boolean',
+                               False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
+                               False)
+        
+    resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
+                               False)
+    return resp.to_xmlrpc()
+
+@rpc4django.rpcmethod(name='dycapo.change_password',
+                      signature=['Response', 'Person'],
+                      permission='server.can_xmlrpc')
+def change_password(person, **kwargs):
+    """
+    This method is for changing the password of a user
+
+    PARAMETERS
+
+    - ``person`` - a **Person** object, representing the Person we would like to
+        register to the system.
+
+    RETURNS
+
+    An object of type **Response**, containing all the details of the operation
+        and results (if any)
+    """
+    person_dict = person
+    try:
+        person = utils.get_xmlrpc_user(kwargs)
+        person.set_password(person_dict['password'])
+        try:
+            person.save()
+            resp = models.Response(response_codes.POSITIVE,
+                               response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
+                               True)
+        except Exception, e:
+            resp = models.Response(response_codes.NEGATIVE,
+                               str(e), 'boolean',
+                               False)
+        return resp.to_xmlrpc()
+    except models.Person.DoesNotExist:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_NOT_FOUND, 'boolean',
+                               False)
+    except KeyError, e:
+        resp = models.Response(response_codes.ERROR,
+                               response_codes.PERSON_NOT_FOUND, 'boolean',
+                               False)
+    return resp.to_xmlrpc()
