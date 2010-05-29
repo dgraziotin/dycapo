@@ -78,7 +78,7 @@ class TestMultipleMatching():
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
         self.driver.trip = response['value']
     """
-    
+
     def test_insert_trip_exp(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0

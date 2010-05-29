@@ -59,15 +59,15 @@ class TestDriver():
         assert response['value']['id'] > 0
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
         self.driver.trip = response['value']
-    """   
+    """
     def test_insert_trip_exp(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
         assert response['code']==response_codes.POSITIVE
         self.driver.trip = response['value']
-        
-    
+
+
     def test_start_trip(self):
         response = self.driver.start_trip()
         assert response['code'] == response_codes.POSITIVE
@@ -79,4 +79,3 @@ class TestDriver():
     def test_accept_ride_request(self):
         response = self.driver.accept_ride_request({'username':'rider1'})
         assert response['code'] == response_codes.ERROR
-    

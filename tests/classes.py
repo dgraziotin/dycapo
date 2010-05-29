@@ -36,7 +36,7 @@ class Trip():
         self.mode = None
         self.author = None
         self.locations = None
-        
+
     def to_xmlrpc(self):
         if not self.mode:
             mode = {}
@@ -54,7 +54,7 @@ class Trip():
             locations = {}
         else:
             locations = [location.to_xmlrpc() for location in self.locations]
-            
+
         return {
             "expires" : self.expires,
             "content" : {
@@ -106,7 +106,7 @@ class Person():
     def change_password(self,password):
         self.password = password
         self.client = utils.get_xmlrpc_client(self.username,self.password, self.domain)
-    
+
     def register(self):
         print "#" * 80
         print self.username + ": REGISTERING TO THE SYSTEM..."
@@ -167,7 +167,7 @@ class Driver(Person):
         print "#" * 80
         self.trip = utils.extract_response(response)
         return response
-    
+
     def insert_trip_exp(self):
         source = Location(georss_point=self.position.georss_point,point='orig')
         destination = self.destination

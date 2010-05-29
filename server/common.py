@@ -138,6 +138,10 @@ def register(person):
             resp = models.Response(response_codes.POSITIVE,
                                response_codes.PERSON_REGISTERED, 'boolean',
                                True)
+        except IntegrityError, e:
+            resp = models.Response(response_codes.NEGATIVE,
+                               str(e), 'boolean',
+                               False)
         except Exception, e:
             resp = models.Response(response_codes.ERROR,
                                str(e), 'boolean',
@@ -147,7 +151,7 @@ def register(person):
         resp = models.Response(response_codes.ERROR,
                                response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)
-        
+
     resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)

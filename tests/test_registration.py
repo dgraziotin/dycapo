@@ -33,22 +33,24 @@ class TestRegistration():
     def setup_method(self,method):
         pass
 
-    def test_registration(self):
+    def test_registration_dummy(self):
         person = {
             "username" : "blahhhh",
             "password" : "password",
             "email" : "blah@blah.com",
-            "phone" : "12323123",
+            "phone" : "12345",
         }
         response = self.rider.client.dycapo.register(person)
         if response['code'] == response_codes.ERROR:
             print str(response)
         assert response['code'] != response_codes.ERROR
+
+    def test_registrations_real(self):
         person = {
             "username" : "driver1",
             "password" : "password",
             "email" : "driver@drivers.com",
-            "phone" : "1232332433",
+            "phone" : "123456",
         }
         response = self.rider.client.dycapo.register(person)
         if response['code'] == response_codes.ERROR:
@@ -58,7 +60,7 @@ class TestRegistration():
             "username" : "rider1",
             "password" : "password",
             "email" : "rider@riders.com",
-            "phone" : "1232332433",
+            "phone" : "1234567",
         }
 
         if response['code'] == response_codes.ERROR:
@@ -69,7 +71,7 @@ class TestRegistration():
             "username" : "dio",
             "password" : "password",
             "email" : "dio@ronniejamesdio.com",
-            "phone" : "1232333242343",
+            "phone" : "12345678",
         }
         if response['code'] == response_codes.ERROR:
             print str(response)
@@ -79,7 +81,7 @@ class TestRegistration():
             "username" : "rob",
             "password" : "password",
             "email" : "rob@judaspriest.com",
-            "phone" : "1232349033",
+            "phone" : "123456789",
         }
         if response['code'] == response_codes.ERROR:
             print str(response)
@@ -89,7 +91,7 @@ class TestRegistration():
             "username" : "ozzy",
             "password" : "password",
             "email" : "ozzy@acdcd.com",
-            "phone" : "12322341433",
+            "phone" : "1234567890",
         }
         if response['code'] == response_codes.ERROR:
             print str(response)
@@ -99,9 +101,19 @@ class TestRegistration():
             "username" : "angela",
             "password" : "password",
             "email" : "angela@archenemy.com",
-            "phone" : "1232332043",
+            "phone" : "12345678901",
         }
         if response['code'] == response_codes.ERROR:
             print str(response)
         assert response['code'] != response_codes.ERROR
         response = self.rider.client.dycapo.register(person)
+
+    def test_unvalid_registration(self):
+        person = {
+            "username" : "angela",
+            "password" : "password",
+            "email" : "angela@archenemy.com",
+            "phone" : "12345678901",
+        }
+        response = self.rider.client.dycapo.register(person)
+        assert response['code'] == response_codes.NEGATIVE

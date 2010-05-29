@@ -127,8 +127,8 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
                            response_codes.TRIP_INSERTED, "Trip",
                            trip_stored.to_xmlrpc())
     return resp.to_xmlrpc()
-    
-    
+
+
 @rpc4django.rpcmethod(name='dycapo.add_trip_exp',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
@@ -145,7 +145,7 @@ def add_trip_exp(trip, ** kwargs):
         PARAMETERS
 
         - ``trip`` - a **Trip** object, representing the Trip that the Driver
-        
+
         RETURNS
 
         An object of type **Response**, containing all the details of the
@@ -174,7 +174,7 @@ def add_trip_exp(trip, ** kwargs):
 
     preferences = models.Prefs()
     preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
-                                                        
+
     try:
         retrieven_mode = models.Mode.objects.get(person=driver,
                                                  make=mode.make,
@@ -200,7 +200,7 @@ def add_trip_exp(trip, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
                                False)
         return resp.to_xmlrpc()
-        
+
     trip = models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
     trip.author = driver

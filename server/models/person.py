@@ -98,12 +98,6 @@ class Person(authmodels.User):
         if len(participations) > 1: return None
         return participations[0].trip
 
-    class Meta:
-        permissions = (
-                       ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
-                       ("can_register", "Can register to the System using XML-RPC"),
-                       )
-
     # Use UserManager to get the create_user method, etc.
     objects = authmodels.UserManager()
 
@@ -122,3 +116,7 @@ class Person(authmodels.User):
 
     class Meta:
         app_label = 'server'
+        permissions = (
+               ("can_xmlrpc", "Can perform XML-RPC to Dycapo"),
+               ("can_register", "Can register to the System using XML-RPC"),
+               )

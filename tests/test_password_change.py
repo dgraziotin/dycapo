@@ -44,11 +44,11 @@ class TestPasswordChange():
     def test_password_change_exception(self):
         import py.test
         py.test.raises(xmlrpclib.ProtocolError, "self.password_change_unsuccesful()")
-        
+
     def password_change_unsuccesful(self):
-        
+
         #Must raise a ProtocolError exception
-        
+
         person = {
             "password" : "password1",
         }
@@ -62,4 +62,3 @@ class TestPasswordChange():
         response = self.rider.client.dycapo.change_password(person)
         assert response['code'] == response_codes.POSITIVE
         self.rider.change_password("password")
-        

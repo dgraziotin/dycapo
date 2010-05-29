@@ -130,5 +130,5 @@ INSTALLED_APPS = (
     'dycapo.geopy',
     'dycapo.rpc4django',
     'dycapo.server',
-    'dycapo.server.models',
+#    'dycapo.server.modeldir',
 )
