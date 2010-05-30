@@ -92,12 +92,12 @@ def get_position(person):
     try:
         person = models.Person.objects.get(username=person['username'])
     except models.Person.DoesNotExist:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
 
     if not person.position:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.LOCATION_NOT_FOUND,
                                'boolean', False)
         return resp.to_xmlrpc()
@@ -143,12 +143,12 @@ def register(person):
                                str(e), 'boolean',
                                False)
         except Exception, e:
-            resp = models.Response(response_codes.ERROR,
+            resp = models.Response(response_codes.NEGATIVE,
                                str(e), 'boolean',
                                False)
         return resp.to_xmlrpc()
     except KeyError:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)
 
@@ -193,7 +193,7 @@ def change_password(person, **kwargs):
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False)
     except KeyError, e:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False)
     return resp.to_xmlrpc()

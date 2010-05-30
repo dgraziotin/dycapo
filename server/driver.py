@@ -382,7 +382,7 @@ def accept_ride_request(trip, person, ** kwargs):
     try:
         trip = models.Trip.objects.get(id=trip_dict['id'])
     except models.Trip.DoesNotExist:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "Trip", trip_dict)
         return resp.to_xmlrpc()
@@ -390,12 +390,12 @@ def accept_ride_request(trip, person, ** kwargs):
     try:
         rider = models.Person.objects.get(username=person_dict['username'])
     except models.Person.DoesNotExist:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                "Person", person_dict)
         return resp.to_xmlrpc()
     except KeyError:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -404,7 +404,7 @@ def accept_ride_request(trip, person, ** kwargs):
         rider_participation = models.Participation.objects.get(trip=trip,
                                                                person=rider)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.ERROR,
+        resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()

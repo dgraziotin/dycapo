@@ -22,7 +22,7 @@ This module holds all the functions involved in the matching Algorithm of Dycapo
 """
 import models
 
-def get_trips_destination_near_location(location,rider):
+def search_ride(location,rider):
     """
     Returns all the Trips with a destination near a given location.
     Here we create a virtual box around the destination.
@@ -55,7 +55,7 @@ def get_trips_destination_near_location(location,rider):
 
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)
-            
+
         if get_proximity_factor(trip.author, rider.position) < -2:
             trips = trips.exclude(id=trip.id)
 
