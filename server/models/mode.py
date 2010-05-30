@@ -59,7 +59,7 @@ class Mode(models.Model):
         """
         mode_dict = copy.deepcopy(self.__dict__)
         del mode_dict['id']
-        del location_dict['_state']
+        del mode_dict['_state']
         return mode_dict
 
     class Meta:
