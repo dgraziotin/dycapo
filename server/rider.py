@@ -60,24 +60,7 @@ def search_trip(source, destination, ** kwargs):
 
     rider = utils.get_xmlrpc_user(kwargs)
 
-    trips_common_destination = matching.get_trips_destination_near_location(
-                                                                            destination)
-
-    if not trips_common_destination:
-        return models.Response(response_codes.NEGATIVE,
-                               response_codes.RIDES_NOT_FOUND,
-                               "boolean", False).to_xmlrpc()
-
-    trips_driver_farther_driver = matching.exclude_trips_driver_closest_to_destination(
-                                                                                       trips_common_destination, rider)
-
-    if not trips_driver_farther_driver:
-        return models.Response(response_codes.NEGATIVE,
-                               response_codes.RIDES_NOT_FOUND,
-                               "boolean", False).to_xmlrpc()
-
-    trips = matching.exclude_trips_driver_not_approaching_rider(
-                                                                trips_driver_farther_driver, rider)
+    trips = matching.get_trips_destination_near_location(destination,rider)
 
     if not trips:
         return models.Response(response_codes.NEGATIVE,
