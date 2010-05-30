@@ -173,16 +173,13 @@ def start_ride(trip, **kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-
-    rider = utils.get_xmlrpc_user(kwargs)
     
     try:
-        participation = trip.get_participations().filter(person=rider)[0]
+        participation = trip.get_participations().filter(person=rider).only('started','started_timestamp','started_position')[0]
         participation.started = True
         participation.started_timestamp = datetime.datetime.now()
-        participation.started_position = rider.position
+        participation.started_position_id = rider.position_id
         participation.save()
-        trip.update_vacancy()
     except Exception, e:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -220,7 +217,7 @@ def finish_ride(trip, **kwargs):
     rider = utils.get_xmlrpc_user(kwargs)
     
     try:
-        trip = models.Trip.objects.get(id=trip_dict['id'])
+        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
         
         if not is_already_participating:
@@ -233,15 +230,12 @@ def finish_ride(trip, **kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-
-    rider = utils.get_xmlrpc_user(kwargs)
-
-    participation = trip.get_participations().filter(person=rider)[0]
+        
+    participation = trip.get_participations().filter(person=rider).only('finished','finished_timestamp','finished_position')[0]
     participation.finished = True
     participation.finished_timestamp = datetime.datetime.now()
-    participation.finished_position = rider.position
+    participation.finished_position_id = rider.position_id
     participation.save()
-    trip.update_vacancy()
     resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_STARTED,
                                "boolean", True)
