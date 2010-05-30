@@ -43,15 +43,17 @@ def search_ride(location,rider):
         locations__point='dest',
         locations__georss_point_latitude__range=(lat_min, lat_max),
         locations__georss_point_longitude__range=(lon_min, lon_max),
-    )
-
+    ).only("id","author","locations")
+    
     for trip in trips:
+        
         if trip.has_vacancy() == False:
             trips = trips.exclude(id=trip.id)
-        driver = trip.author
+        
         destination = trip.get_destination()
-        driver_distance_from_destination = driver.position.distance(destination)
         rider_distance_from_destination = rider.position.distance(destination)
+
+        driver_distance_from_destination = trip.author.position.distance(destination)
 
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)

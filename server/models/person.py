@@ -64,9 +64,9 @@ class Person(authmodels.User):
         """
         if self.get_active_participation() and self.get_active_participation().role == 'driver':
             participation = self.get_active_participation()
-            recent_locations = list(participation.locations.all().order_by('-id')[:max_results])
+            recent_locations = list(participation.locations.filter().only("id","georss_point").order_by('-id')[:max_results])
         else:
-            recent_locations = list(self.locations.all().order_by('-id')[:max_results])
+            recent_locations = list(self.locations.filter().only("id","georss_point").order_by('-id')[:max_results])
         recent_locations.reverse()
         return recent_locations
 
@@ -74,9 +74,8 @@ class Person(authmodels.User):
         """
         Returns true if the Person is actively participating in a Trip
         """
-        participations = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
-        if not participations: return False
-        return True
+        is_participating = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True).exists()
+        return is_participating
 
     def get_active_participation(self):
         """
