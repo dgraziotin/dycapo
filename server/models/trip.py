@@ -64,9 +64,11 @@ class Trip(models.Model):
         """
         Checks how many seats are still available in car and updates the attribute consistently
         """
-        participations_for_trip = self.get_participations().exclude(role='driver').filter(started=True).filter(finished=False)
-        self.mode.vacancy = self.mode.capacity - len(participations_for_trip)
-        self.mode.save()
+        participations_for_trip = self.get_participations().exclude(role='driver').filter(started=True).filter(finished=False).count()
+        vacancy = self.mode.capacity - participations_for_trip
+        if self.mode.vacancy!=vacancy:
+            self.mode.vacancy=vacancy
+            self.mode.save()
 
     def has_vacancy(self):
         """
