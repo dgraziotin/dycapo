@@ -66,8 +66,7 @@ class Prefs(models.Model):
         """
         prefs_dict = copy.deepcopy(self.__dict__)
         del prefs_dict['id']
-        del prefs_dict['_state']
-	return prefs_dict
+        return prefs_dict
 
     class Meta:
         app_label = 'server'

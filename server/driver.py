@@ -404,7 +404,7 @@ def accept_ride_request(trip, person, ** kwargs):
         rider_participation = models.Participation.objects.get(trip=trip,
                                                                person=rider)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.ERROR,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()

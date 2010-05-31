@@ -24,16 +24,6 @@ See docs/http.conf on how to use it
 import os
 import sys
 sys.stdout = sys.stderr
-apache_configuration = os.path.dirname(__file__)
-
-project = os.path.dirname(apache_configuration)
-workspace = os.path.dirname(project)
-sys.path.insert(0,'/home/bodomlx/webapps/dycapo_test/lib/python2.5')
-sys.path.insert(0,'/home/bodomlx/webapps/dycapo_test/lib/python2.5/django')
-sys.path.insert(0, workspace)
-sys.path.insert(0,workspace+"/dycapo")
-
-
 sys.path.append('/home/bodom_lx/Projects/')
 sys.path.append('/home/bodom_lx/Projects/dycapo')
 
