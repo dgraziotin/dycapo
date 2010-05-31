@@ -22,14 +22,15 @@ import copy
 import settings
 import response_codes
 
-class TestRegistration():
+ALREADY_REGISTERED = 'Person already registered.'
 
+class TestRegistration():
+    
     def setup_class(self):
         self.rider = classes.Rider(settings.REGISTRATION_USERNAME,settings.REGISTRATION_PASSWORD,settings.DYCAPO_URL)
         self.rider.position_lat = 46.494957
         self.rider.position_lon = 11.340239
         self.rider_position = utils.georss_point_from_coords(self.rider.position_lat, self.rider.position_lon)
-
     def setup_method(self,method):
         pass
 
@@ -41,8 +42,8 @@ class TestRegistration():
             "phone" : "12345",
         }
         response = self.rider.client.dycapo.register(person)
-        if response['code'] == response_codes.ERROR:
-            print str(response)
+        if response['message'] == ALREADY_REGISTERED:
+            return
         assert response['code'] != response_codes.ERROR
 
     def test_registrations_real(self):
@@ -53,8 +54,9 @@ class TestRegistration():
             "phone" : "123456",
         }
         response = self.rider.client.dycapo.register(person)
-        if response['code'] == response_codes.ERROR:
-            print str(response)
+        if response['message'] == ALREADY_REGISTERED:
+            return
+        
         assert response['code'] != response_codes.ERROR
         person = {
             "username" : "rider1",

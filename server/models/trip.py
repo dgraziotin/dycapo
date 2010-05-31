@@ -57,7 +57,7 @@ class Trip(models.Model):
         """
         Returns the location representing the destination of the Trip
         """
-        destination = self.locations.filter(point='dest')[0]
+        destination = self.locations.filter(point='dest').only("id","georss_point")[0]
         return destination
 
     def update_vacancy(self):

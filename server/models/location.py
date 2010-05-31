@@ -81,6 +81,10 @@ class Location(models.Model):
         return distance.kilometers
 
     def get_location_from_geopy_point(self, point):
+        """
+        A Factory method. Given a Geopy Point object, it creates
+        and returns the corresponding Dycapo Location object.
+        """
         location = Location()
         location.georss_point = str(point.latitude) + " " + str(point.longitude)
         location.point = 'posi'
@@ -89,6 +93,14 @@ class Location(models.Model):
         return location
 
     def get_box_around(self, diagonal_meters=None):
+        """
+        Creates a GeoRSS box around the current Location, with diagonal given in
+        meters. The box is returned as a Python list, in this order:
+        0) top left corner
+        1) top right corner
+        2) bottom right corner
+        3) bottom left corner
+        """
         if not diagonal_meters:
             diagonal_meters = self.offset
 
@@ -116,7 +128,7 @@ class Location(models.Model):
             At this point we have Address details as string but not GeoRSS point.
             """
             self.address_to_point()
-        else:
+        elif not self.town or not self.street:
             """
             At this point we have a GeoRSS point but not Address details
             """

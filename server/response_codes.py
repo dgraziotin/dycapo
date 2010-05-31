@@ -21,7 +21,6 @@ This module contains response codes and messages
 """
 POSITIVE = 1
 NEGATIVE = 0
-ERROR = -1
 
 
 PROTOCOL_ERROR = "Please give all required parameters."
@@ -42,6 +41,7 @@ RIDES_FOUND = "Rides found."
 RIDE_REQUESTED = "Ride successfully requested."
 RIDE_STARTED = "Ride succesfully started."
 RIDE_IN_COURSE = "Rider is already participating"
+MUST_FIRST_REQUEST_RIDE = "You must first request a ride"
 POSITION_UPDATED = "Current Position successfully updated"
 POSITION_FOUND = "Position found"
 PERSON_PROTOCOL_ERROR = "Please give all the required attribute"

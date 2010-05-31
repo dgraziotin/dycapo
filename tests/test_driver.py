@@ -67,7 +67,6 @@ class TestDriver():
         assert response['code']==response_codes.POSITIVE
         self.driver.trip = response['value']
 
-
     def test_start_trip(self):
         response = self.driver.start_trip()
         assert response['code'] == response_codes.POSITIVE

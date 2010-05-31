@@ -22,7 +22,7 @@ This module holds all the functions involved in the matching Algorithm of Dycapo
 """
 import models
 
-def get_trips_destination_near_location(location):
+def search_ride(location,rider):
     """
     Returns all the Trips with a destination near a given location.
     Here we create a virtual box around the destination.
@@ -38,46 +38,26 @@ def get_trips_destination_near_location(location):
     lon_max = max((box_around_location[1].georss_point_longitude,box_around_location[2].georss_point_longitude))
     lon_min = min((box_around_location[0].georss_point_longitude,box_around_location[3].georss_point_longitude))
 
-    trips_destination_near_location = models.Trip.objects.filter(
-                                                                 active=True,
-                                                                 locations__point='dest',
-                                                                 locations__georss_point_latitude__range=(lat_min, lat_max),
-                                                                 locations__georss_point_longitude__range=(lon_min, lon_max),
-                                                                 )
-
-    for trip in trips_destination_near_location:
-        if trip.has_vacancy() == False:
-            trips_destination_near_location = trips_destination_near_location.exclude(id=trip.id)
-
-    return trips_destination_near_location
-
-
-
-def exclude_trips_driver_closest_to_destination(trips, rider):
-    """
-    Given a QuerySet of Trips, this function removes all the Trips for which the
-    driver is closer to the destination than the rider
-    """
+    trips = models.Trip.objects.filter(
+        active=True,
+        locations__point='dest',
+        locations__georss_point_latitude__range=(lat_min, lat_max),
+        locations__georss_point_longitude__range=(lon_min, lon_max),
+    ).only("id","author","locations")
+    
     for trip in trips:
-        driver = trip.author
+        
+        if trip.has_vacancy() == False:
+            trips = trips.exclude(id=trip.id)
+        
         destination = trip.get_destination()
-        driver_distance_from_destination = driver.position.distance(destination)
         rider_distance_from_destination = rider.position.distance(destination)
+
+        driver_distance_from_destination = trip.author.position.distance(destination)
 
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)
 
-    return trips
-
-def exclude_trips_driver_not_approaching_rider(trips, rider):
-    """
-    The most complicated part of the matching algorithm. Given a QuerySet of
-    Trips and a Person (the rider), it retrieves the
-    approaching factor (defined later)and removes the Trip from the QuerySet
-    if the factor is less than a decided number
-    """
-    for trip in trips:
-        driver = trip.author
         if get_proximity_factor(trip.author, rider.position) < -2:
             trips = trips.exclude(id=trip.id)
 

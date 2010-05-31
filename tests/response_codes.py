@@ -21,7 +21,7 @@ This module contains response codes and messages
 """
 POSITIVE = 1
 NEGATIVE = 0
-ERROR = -1
+ERROR = 0
 
 TRIP_INSERTED = "Trip successfully inserted."
 TRIP_STARTED = "Trip successfully started."
