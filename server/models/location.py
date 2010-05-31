@@ -199,7 +199,8 @@ class Location(models.Model):
         del location_dict['georss_point_latitude']
         del location_dict['georss_point_longitude']
         del location_dict['id']
-        return location_dict
+        del location_dict['_state']
+	return location_dict
 
     class Meta:
         app_label = 'server'
