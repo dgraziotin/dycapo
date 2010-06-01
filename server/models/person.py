@@ -81,7 +81,7 @@ class Person(authmodels.User):
         """
         Returns the currently Participation of the Person in a Trip.
         """
-        participations = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
+        participations = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True, requested_deleted=False)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None

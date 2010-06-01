@@ -95,6 +95,7 @@ def get_position(person, **kwargs):
 
     try:
         person = models.Person.objects.get(username=person['username'])
+        participation = person.get_active_participation()
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)

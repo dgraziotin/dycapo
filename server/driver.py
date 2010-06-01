@@ -311,6 +311,7 @@ def check_ride_requests(trip, ** kwargs):
                                .filter(started=False)
                                .filter(finished=False)
                                .filter(requested=True)
+                               .filter(requested_deleted=False)
                                ).only("person")
 
     if len(participations_for_trip) == 0:
