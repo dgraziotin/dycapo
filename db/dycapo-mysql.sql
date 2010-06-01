@@ -4,7 +4,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.1.44)
 # Database: dycapo
-# Generation Time: 2010-06-01 16:04:31 +0200
+# Generation Time: 2010-06-01 16:13:16 +0200
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -7110,6 +7110,60 @@ CREATE TABLE `server_mode` (
   `person_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `server_mode_21b911c5` (`person_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+
+# Dump of table server_participation
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `server_participation`;
+
+CREATE TABLE `server_participation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `person_id` int(11) NOT NULL,
+  `trip_id` int(11) NOT NULL,
+  `role` varchar(6) NOT NULL,
+  `requested` tinyint(1) NOT NULL,
+  `requested_timestamp` datetime DEFAULT NULL,
+  `requested_position_id` int(11) DEFAULT NULL,
+  `requested_deleted` tinyint(1) NOT NULL,
+  `requested_deleted_timestamp` datetime DEFAULT NULL,
+  `requested_deleted_position_id` int(11) DEFAULT NULL,
+  `accepted` tinyint(1) NOT NULL,
+  `accepted_timestamp` datetime DEFAULT NULL,
+  `accepted_position_id` int(11) DEFAULT NULL,
+  `started` tinyint(1) NOT NULL,
+  `started_timestamp` datetime DEFAULT NULL,
+  `started_position_id` int(11) DEFAULT NULL,
+  `finished` tinyint(1) NOT NULL,
+  `finished_timestamp` datetime DEFAULT NULL,
+  `finished_position_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `server_participation_21b911c5` (`person_id`),
+  KEY `server_participation_ab5488a7` (`trip_id`),
+  KEY `server_participation_6d876e44` (`requested_position_id`),
+  KEY `server_participation_2140776e` (`requested_deleted_position_id`),
+  KEY `server_participation_f0424aca` (`accepted_position_id`),
+  KEY `server_participation_624bc54d` (`started_position_id`),
+  KEY `server_participation_9edd96f9` (`finished_position_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+
+# Dump of table server_participation_locations
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `server_participation_locations`;
+
+CREATE TABLE `server_participation_locations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `participation_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `participation_id` (`participation_id`,`location_id`),
+  KEY `server_participation_locations_3c980c0e` (`participation_id`),
+  KEY `server_participation_locations_319d859` (`location_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
