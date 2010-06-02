@@ -1,0 +1,1145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+
+	
+		<title>RPC Method Summary</title>
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+		<meta name="generator" content="RPC4Django 0.1.7: 
+http://www.davidfischer.name/rpc4django">
+		<style type="text/css">
+		.rpcmethods {
+			border: 1px solid black;
+			border-collapse:collapse;
+			width: 100%;
+		}		
+		
+		.rpcmethods td {
+			vertical-align: top;
+			border: 1px solid black;
+			padding: 5px 5px 5px 5px;
+		}
+		
+		.rpcmethods td.header {
+			background-color: #487858;
+			color: white;
+			text-align: left;
+			font-size: 1.2em;
+			font-weight: bold;
+		}
+		
+		.rpcmethods td.left {
+			text-align: right;
+			width: 80px;
+			font-size: 0.8em;
+			font-family: monospace;
+		}
+		
+		.methodsig {
+			font-family: monospace;
+			margin-bottom: 10px;
+			font-weight: bold;
+		}
+		
+		.methodhelp {
+			font-size: 0.8em;
+		}
+		
+		a, a:visited {
+			color: #487858;
+		}
+		
+		a:active, a:hover {
+			color: red
+		}
+		</style>
+		<script type="text/javascript">
+			var xmlhttp;
+			try {
+				xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch(e1) {
+				try {
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch(e2) {
+					xmlhttp = (typeof(XMLHttpRequest) != undefined) ? new XMLHttpRequest() : false;
+				}
+			}
+			
+			function toggle_testarea(divid) {
+				mydiv = document.getElementById(divid);
+				if(mydiv.style.visibility == "hidden") {
+					mydiv.style.visibility = "visible";
+					mydiv.style.display = "block";
+				} else {
+					mydiv.style.visibility = "hidden";
+					mydiv.style.display = "none";
+				}
+			}
+			
+			function do_ajaxrpc(divid) {
+				url = "/RPC2";
+				
+				if(url.length == 0) {
+					alert("There's a problem getting the RPC url.");
+					return;
+				}
+			
+				if(xmlhttp) {
+					// get request data
+					mydiv = document.getElementById(divid);
+					data = mydiv.value;
+					
+					xmlhttp.open("POST", url, false);
+					xmlhttp.setRequestHeader("Content-Type", "application/json");
+					xmlhttp.send(data);
+					alert(xmlhttp.responseText);
+				} else {
+					alert("Browser does not support ajax");
+				}
+			}
+		</script>
+	</head><body>
+		<table class="rpcmethods">
+			<tbody><tr>
+				<td class="header" colspan="2">RPC Method Summary</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d1")'>dycapo.accept_ride_request</a>
+						
+							(
+							
+								Trip trip
+								, 
+							
+								Person person
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a driver to accept a ride request by a 
+rider.</p>
+<p>TODO</p>
+<p>-verify user permissions</p>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip in which</dt>
+<dd><p class="first last">the Driver is accepting a ride.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">person</tt> - a <strong>Person</strong>
+ object, representing the Rider that</dt>
+<dd><p class="first last">the Driver is accepting</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d1" style="visibility: hidden; display: none;">
+						<textarea id="t1" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.accept_ride_request",
+"params": [
+   "trip","person"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t1")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d2")'>dycapo.add_trip</a>
+						
+							(
+							
+								Trip trip
+								, 
+							
+								Mode mode
+								, 
+							
+								Prefs preferences
+								, 
+							
+								Location source
+								, 
+							
+								Location destination
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>DEPRECATED. Use add_trip_exp(Trip trip) instead.
+Inserts a new Trip in Dycapo System. It supports a source, a
+destination and the trip mode. See the models for more information.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+<li>multiple waypoints</li>
+</ul>
+<p>PARAMETERS
+- <tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Driver
+is willing to save
+- <tt class="docutils literal">mode</tt> - a <strong>Mode</strong> 
+object, representing the modalities of the Trip
+- <tt class="docutils literal">preferences</tt> - a <strong>Prefs</strong>
+ object, representing the Trip preferences
+- <tt class="docutils literal">source</tt> - a <strong>Location</strong>
+ object, representing where the Trip will</p>
+<blockquote>
+start.</blockquote>
+<ul class="simple">
+<li><tt class="docutils literal">destination</tt> - a <strong>Location</strong>
+ object, representing where the Trip</li>
+</ul>
+<p>will end.</p>
+<p>RETURNS
+An object of type <strong>Response</strong>, containing all the details 
+of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d2" style="visibility: hidden; display: none;">
+						<textarea id="t2" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.add_trip",
+"params": [
+   "trip","mode","preferences","source","destination"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t2")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d3")'>dycapo.add_trip_exp</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Inserts a new Trip in Dycapo System. It supports a source, a
+destination and the trip mode. See the models for more information.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+<li>multiple waypoints</li>
+</ul>
+<p>PARAMETERS</p>
+<ul class="simple">
+<li><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Driver</li>
+</ul>
+<p>RETURNS
+An object of type <strong>Response</strong>, containing all the details 
+of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d3" style="visibility: hidden; display: none;">
+						<textarea id="t3" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.add_trip_exp",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t3")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d4")'>dycapo.cancel_requested_ride</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a rider to cancel a Ride previously 
+requested</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+<li>check if the trip is not expired</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Rider</dt>
+<dd><p class="first last">would like to join.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d4" style="visibility: hidden; display: none;">
+						<textarea id="t4" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.cancel_requested_ride",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t4")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d5")'>dycapo.change_password</a>
+						
+							(
+							
+								Person person
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for changing the password of a user</p>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">person</tt> - a <strong>Person</strong>
+ object, representing the Person we would like to</dt>
+<dd><p class="first last">register to the system.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<dl class="docutils">
+<dt>An object of type <strong>Response</strong>, containing all the 
+details of the operation</dt>
+<dd>and results (if any)</dd>
+</dl>
+
+					</div>
+					
+					<div id="d5" style="visibility: hidden; display: none;">
+						<textarea id="t5" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.change_password",
+"params": [
+   "person"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t5")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d6")'>dycapo.check_requested_ride</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a rider to check the status of
+a requested a Ride in a Trip.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+<li>check if the trip is not expired</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Rider</dt>
+<dd><p class="first last">would like to join.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d6" style="visibility: hidden; display: none;">
+						<textarea id="t6" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.check_requested_ride",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t6")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d7")'>dycapo.check_ride_requests</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a driver to see if there are ride requests
+for his Trip</p>
+<p>TODO</p>
+<p>-verify user permissions</p>
+<p>PARAMETERS</p>
+<ul class="simple">
+<li><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the</li>
+</ul>
+<p>Driver is checking</p>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d7" style="visibility: hidden; display: none;">
+						<textarea id="t7" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.check_ride_requests",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t7")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d8")'>dycapo.finish_ride</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a rider to finish a Ride. It must be called 
+from the
+client when the Rider exits the car.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Rider</dt>
+<dd><p class="first last">would like to join.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d8" style="visibility: hidden; display: none;">
+						<textarea id="t8" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.finish_ride",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t8")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d9")'>dycapo.finish_trip</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a driver to close a Trip.</p>
+<p>TODO</p>
+<p>-verify user permissions</p>
+<p>PARAMETERS</p>
+<ul class="simple">
+<li><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the driver</li>
+</ul>
+<p>is closing</p>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d9" style="visibility: hidden; display: none;">
+						<textarea id="t9" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.finish_trip",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t9")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d10")'>dycapo.get_position</a>
+						
+							(
+							
+								Person person
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for getting the actual position of a Person.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">person</tt> - a <strong>Person</strong>
+ object, representing the Person we would like to</dt>
+<dd><p class="first last">know the position.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<dl class="docutils">
+<dt>An object of type <strong>Response</strong>, containing all the 
+details of the operation</dt>
+<dd>and results (if any)</dd>
+</dl>
+
+					</div>
+					
+					<div id="d10" style="visibility: hidden; display: none;">
+						<textarea id="t10" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.get_position",
+"params": [
+   "person"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t10")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d11")'>dycapo.refuse_ride_request</a>
+						
+							(
+							
+								Trip trip
+								, 
+							
+								Person person
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a driver to refuse a ride request by a 
+rider.</p>
+<p>TODO</p>
+<p>-verify user permissions</p>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip in which</dt>
+<dd><p class="first last">the Driver is refusing a ride.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">person</tt> - a <strong>Person</strong>
+ object, representing the Rider that</dt>
+<dd><p class="first last">the Driver is refusing</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d11" style="visibility: hidden; display: none;">
+						<textarea id="t11" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.refuse_ride_request",
+"params": [
+   "trip","person"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t11")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d12")'>dycapo.register</a>
+						
+							(
+							
+								Person person
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for registering to the System</p>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">person</tt> - a <strong>Person</strong>
+ object, representing the Person we would like to</dt>
+<dd><p class="first last">register to the system.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<dl class="docutils">
+<dt>An object of type <strong>Response</strong>, containing all the 
+details of the operation</dt>
+<dd>and results (if any)</dd>
+</dl>
+
+					</div>
+					
+					<div id="d12" style="visibility: hidden; display: none;">
+						<textarea id="t12" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.register",
+"params": [
+   "person"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t12")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d13")'>dycapo.request_ride</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a rider to request a Ride in a Trip.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+<li>check if the trip is not expired</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Rider</dt>
+<dd><p class="first last">would like to join.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d13" style="visibility: hidden; display: none;">
+						<textarea id="t13" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.request_ride",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t13")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d14")'>dycapo.search_trip</a>
+						
+							(
+							
+								Location source
+								, 
+							
+								Location destination
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is used by a rider to search a Trip,
+given its current position and the destination.</p>
+<p>TODO
+- verify user permissions</p>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">source</tt> - a <strong>Location</strong>
+ object, representing where</dt>
+<dd><p class="first last">the Rider is located</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">destination</tt> - a <strong>Location</strong>
+ object, representing where</dt>
+<dd><p class="first last">the Rider wants to go to</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of
+the operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d14" style="visibility: hidden; display: none;">
+						<textarea id="t14" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.search_trip",
+"params": [
+   "source","destination"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t14")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d15")'>dycapo.start_ride</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for a rider to start a Ride. It must be called 
+from the
+client when the Driver arrives to take the Rider.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Rider</dt>
+<dd><p class="first last">would like to join.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<p>An object of type <strong>Response</strong>, containing all the 
+details of the
+operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d15" style="visibility: hidden; display: none;">
+						<textarea id="t15" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.start_ride",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t15")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d16")'>dycapo.start_trip</a>
+						
+							(
+							
+								Trip trip
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Starts a Trip</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">trip</tt> - a <strong>Trip</strong> 
+object, representing the Trip that the Driver</dt>
+<dd><p class="first last">is starting</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS
+An object of type <strong>Response</strong>, containing all the details
+of the operation and results (if any)</p>
+
+					</div>
+					
+					<div id="d16" style="visibility: hidden; display: none;">
+						<textarea id="t16" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.start_trip",
+"params": [
+   "trip"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t16")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">Response</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d17")'>dycapo.update_position</a>
+						
+							(
+							
+								Location position
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>This method is for updating the actual position of a Person.</p>
+<p>TODO</p>
+<ul class="simple">
+<li>verify user permissions</li>
+</ul>
+<p>PARAMETERS</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">position</tt> - a <strong>Location</strong>
+ object, representing the current</dt>
+<dd><p class="first last">position of a Person.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>RETURNS</p>
+<dl class="docutils">
+<dt>An object of type <strong>Response</strong>, containing all the 
+details of the operation</dt>
+<dd>and results (if any)</dd>
+</dl>
+
+					</div>
+					
+					<div id="d17" style="visibility: hidden; display: none;">
+						<textarea id="t17" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "dycapo.update_position",
+"params": [
+   "position"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t17")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">struct</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d18")'>system.describe</a>
+						
+							(
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Returns a simple method description of the methods supported</p>
+
+					</div>
+					
+					<div id="d18" style="visibility: hidden; display: none;">
+						<textarea id="t18" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "system.describe",
+"params": [
+   
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t18")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">array</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d19")'>system.listMethods</a>
+						
+							(
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Returns a list of supported methods</p>
+
+					</div>
+					
+					<div id="d19" style="visibility: hidden; display: none;">
+						<textarea id="t19" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "system.listMethods",
+"params": [
+   
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t19")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">string</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d20")'>system.methodHelp</a>
+						
+							(
+							
+								string method_name
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Returns documentation for a specified method</p>
+
+					</div>
+					
+					<div id="d20" style="visibility: hidden; display: none;">
+						<textarea id="t20" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "system.methodHelp",
+"params": [
+   "method_name"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t20")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="left">array</td>
+				<td class="right">
+					<div class="methodsig">
+						
+							<a href='javascript:toggle_testarea("d21")'>system.methodSignature</a>
+						
+							(
+							
+								string method_name
+								
+							)
+					</div>
+					<div class="methodhelp">
+						<p>Returns the signature for a specified method</p>
+
+					</div>
+					
+					<div id="d21" style="visibility: hidden; display: none;">
+						<textarea id="t21" rows="8" cols="50">{
+"id": "djangorpc",
+"method": "system.methodSignature",
+"params": [
+   "method_name"
+]
+}</textarea><br>
+						<input value="Test Method" onclick='do_ajaxrpc("t21")' 
+type="button">
+					</div>
+					
+				</td>
+			</tr>
+			
+		</tbody></table>
+	</body></html>
