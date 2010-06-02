@@ -133,10 +133,10 @@ class Person():
         print "#" * 80
         print self.username + ": GETTING POSITION..."
         print "#" * 80
-        
+
         if not person:
             person = self
-            
+
         person = {'username':person.username}
         response = self.client.dycapo.get_position(person)
         print "Dycapo Response: \n" + str(response)
@@ -227,7 +227,7 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
-    
+
     def refuse_ride_request(self,person):
         print "#" * 80
         print self.username + ": ACCEPTING A RIDE REQUEST..."
@@ -258,7 +258,7 @@ class Rider(Person):
         response = self.client.dycapo.request_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
-    
+
     def check_requested_ride(self,trip):
         print "*" * 80
         print self.username + ": CHECK REQUESTED RIDE..."
@@ -266,7 +266,7 @@ class Rider(Person):
         response = self.client.dycapo.check_requested_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
-    
+
     def cancel_requested_ride(self,trip):
         print "*" * 80
         print self.username + ": CANCELLING A RIDE REQUEST..."

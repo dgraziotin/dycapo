@@ -86,7 +86,7 @@ class Person(authmodels.User):
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
         return participations[0]
-        
+
     def get_requested_participation(self):
         """
         Returns the currently Participation of the Person in a Trip.

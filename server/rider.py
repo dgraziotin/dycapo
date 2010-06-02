@@ -39,20 +39,20 @@ def search_trip(source, destination, ** kwargs):
 
     TODO
     - verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``source`` - a **Location** object, representing where
         the Rider is located
     - ``destination`` - a **Location** object, representing where
         the Rider wants to go to
 
     RETURNS
-    
+
     An object of type **Response**, containing all the details of
     the operation and results (if any)
     """
-    
+
     dict_destination = destination
     destination = models.Location()
     destination = utils.populate_object_from_dictionary(destination,
@@ -94,19 +94,19 @@ def request_ride(trip, ** kwargs):
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
-    
+
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
-        
+
         if is_already_participating:
             resp = models.Response(response_codes.NEGATIVE,
                     response_codes.RIDE_IN_COURSE, "boolean", False)
             return resp.to_xmlrpc()
-            
+
     except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -133,7 +133,7 @@ def request_ride(trip, ** kwargs):
                                str(e),
                                "boolean", False)
     return resp.to_xmlrpc()
-    
+
 @rpc4django.rpcmethod(name='dycapo.check_requested_ride',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
@@ -159,17 +159,17 @@ def check_requested_ride(trip, ** kwargs):
     """
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation','author').get()
         rider_participation = models.Participation.objects.get(trip=trip, person=rider)
-        
+
     except (KeyError,models.Trip.DoesNotExist,models.Participation.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-        
+
     if rider_participation.accepted:
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUEST_ACCEPTED,
@@ -179,7 +179,7 @@ def check_requested_ride(trip, ** kwargs):
                                response_codes.RIDE_REQUEST_NOT_YET_ACCEPTED,
                                "boolean", False)
     return resp.to_xmlrpc()
-    
+
 @rpc4django.rpcmethod(name='dycapo.cancel_requested_ride',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
@@ -202,14 +202,14 @@ def cancel_requested_ride(trip, ** kwargs):
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
-    
+
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
-        rider_participation = models.Participation.objects.filter(trip=trip, person=rider).get()            
-            
+        rider_participation = models.Participation.objects.filter(trip=trip, person=rider).get()
+
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -243,29 +243,29 @@ def start_ride(trip, **kwargs):
     """
     This method is for a rider to start a Ride. It must be called from the
     client when the Driver arrives to take the Rider.
-    
+
     TODO
-    
+
     - verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the Rider
         would like to join.
-        
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
-    
+
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
-        
+
         if not is_already_participating:
             resp = models.Response(response_codes.NEGATIVE,
                     response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
@@ -275,7 +275,7 @@ def start_ride(trip, **kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-    
+
     try:
         participation = trip.get_participations().filter(person=rider).only('started','started_timestamp','started_position')[0]
         participation.started = True
@@ -299,40 +299,40 @@ def finish_ride(trip, **kwargs):
     """
     This method is for a rider to finish a Ride. It must be called from the
     client when the Rider exits the car.
-    
+
     TODO
-    
+
     - verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the Rider
         would like to join.
-        
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
-    
+
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
-        
+
         if not is_already_participating:
             resp = models.Response(response_codes.NEGATIVE,
                     response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
             return resp.to_xmlrpc()
-            
+
     except (KeyError,models.Trips.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-        
+
     participation = trip.get_participations().filter(person=rider).only('finished','finished_timestamp','finished_position')[0]
     participation.finished = True
     participation.finished_timestamp = datetime.datetime.now()

@@ -44,12 +44,12 @@ def search_ride(location,rider):
         locations__georss_point_latitude__range=(lat_min, lat_max),
         locations__georss_point_longitude__range=(lon_min, lon_max),
     ).only("id","author","locations")
-    
+
     for trip in trips:
-        
+
         if trip.has_vacancy() == False:
             trips = trips.exclude(id=trip.id)
-        
+
         destination = trip.get_destination()
         rider_distance_from_destination = rider.position.distance(destination)
 

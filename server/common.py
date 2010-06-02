@@ -30,10 +30,6 @@ def update_position(position, ** kwargs):
     """
     This method is for updating the actual position of a Person.
 
-    TODO
-
-    - verify user permissions
-
     PARAMETERS
 
     - ``position`` - a **Location** object, representing the current
@@ -90,32 +86,32 @@ def get_position(person, **kwargs):
     An object of type **Response**, containing all the details of the operation
         and results (if any)
     """
-    
-    driver = utils.get_xmlrpc_user(kwargs)
+
+    user = utils.get_xmlrpc_user(kwargs)
 
     try:
         person = models.Person.objects.get(username=person['username'])
-        
-        if person.id == driver.id:
+
+        if person.id == user.id:
             resp = models.Response(response_codes.POSITIVE,
                                response_codes.POSITION_FOUND, 'Location',
                                person.position.to_xmlrpc())
             return resp.to_xmlrpc()
-            
+
         person_participation = person.get_requested_participation()
-        driver_participation = driver.get_active_participation()
+        user_participation = user.get_active_participation()
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
-        
+
     if not person_participation:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
         return resp.to_xmlrpc()
-        
-    if person_participation.trip_id != driver_participation.trip_id:
+
+    if person_participation.trip_id != user_participation.trip_id:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
@@ -208,11 +204,11 @@ def change_password(person, **kwargs):
     person_dict = person
     person = utils.get_xmlrpc_user(kwargs)
     try:
-            person.set_password(person_dict['password'])
-            person.save()
-            resp = models.Response(response_codes.POSITIVE,
-                               response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
-                               True)
+        person.set_password(person_dict['password'])
+        person.save()
+        resp = models.Response(response_codes.POSITIVE,
+                           response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
+                           True)
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',

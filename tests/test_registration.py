@@ -25,7 +25,7 @@ import response_codes
 ALREADY_REGISTERED = 'Person already registered.'
 
 class TestRegistration():
-    
+
     def setup_class(self):
         self.rider = classes.Rider(settings.REGISTRATION_USERNAME,settings.REGISTRATION_PASSWORD,settings.DYCAPO_URL)
         self.rider.position_lat = 46.494957
@@ -56,7 +56,7 @@ class TestRegistration():
         response = self.rider.client.dycapo.register(person)
         if response['message'] == ALREADY_REGISTERED:
             return
-        
+
         assert response['code'] != response_codes.ERROR
         person = {
             "username" : "rider1",

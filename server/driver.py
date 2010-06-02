@@ -34,9 +34,9 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
     DEPRECATED. Use add_trip_exp(Trip trip) instead.
     Inserts a new Trip in Dycapo System. It supports a source, a
     destination and the trip mode. See the models for more information.
-    
+
     TODO
-    
+
     - verify user permissions
     - multiple waypoints
 
@@ -49,7 +49,7 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         start.
     - ``destination`` - a **Location** object, representing where the Trip
     will end.
-    
+
     RETURNS
     An object of type **Response**, containing all the details of the
     operation and results (if any)
@@ -136,14 +136,14 @@ def add_trip_exp(trip, ** kwargs):
     destination and the trip mode. See the models for more information.
 
     TODO
-    
+
     - verify user permissions
     - multiple waypoints
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the Driver
-    
+
     RETURNS
     An object of type **Response**, containing all the details of the
     operation and results (if any)
@@ -209,11 +209,11 @@ def add_trip_exp(trip, ** kwargs):
     participation.trip = trip
     participation.role = 'driver'
     participation.save()
-    
+
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_INSERTED, "Trip",
                            trip.to_xmlrpc())
-    
+
     return resp.to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.start_trip',
@@ -222,16 +222,16 @@ def add_trip_exp(trip, ** kwargs):
 def start_trip(trip, ** kwargs):
     """
     Starts a Trip
-    
+
     TODO
 
     - verify user permissions
 
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the Driver
         is starting
-        
+
     RETURNS
     An object of type **Response**, containing all the details
     of the operation and results (if any)
@@ -278,18 +278,18 @@ def check_ride_requests(trip, ** kwargs):
     """
     This method is for a driver to see if there are ride requests
     for his Trip
-    
+
     TODO
-    
+
     -verify user permissions
 
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the
     Driver is checking
 
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
@@ -303,7 +303,7 @@ def check_ride_requests(trip, ** kwargs):
                                response_codes.TRIP_NOT_FOUND,
                                "Trip", trip_dict)
         return resp.to_xmlrpc()
-  
+
     driver = utils.get_xmlrpc_user(kwargs)
 
     participations_for_trip = (models.Participation.objects.filter(trip=trip.id)
@@ -334,20 +334,20 @@ def check_ride_requests(trip, ** kwargs):
 def accept_ride_request(trip, person, ** kwargs):
     """
     This method is for a driver to accept a ride request by a rider.
-    
+
     TODO
-    
+
     -verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip in which
         the Driver is accepting a ride.
     - ``person`` - a **Person** object, representing the Rider that
         the Driver is accepting
-        
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
@@ -370,7 +370,7 @@ def accept_ride_request(trip, person, ** kwargs):
                                response_codes.PERSON_NOT_FOUND,
                                "Person", person_dict)
         return resp.to_xmlrpc()
-        
+
     try:
         rider_participation = models.Participation.objects.filter(trip=trip.id,
                                                                person=rider.id).get()
@@ -405,20 +405,20 @@ def accept_ride_request(trip, person, ** kwargs):
 def refuse_ride_request(trip, person, ** kwargs):
     """
     This method is for a driver to refuse a ride request by a rider.
-    
+
     TODO
-    
+
     -verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip in which
         the Driver is refusing a ride.
     - ``person`` - a **Person** object, representing the Rider that
         the Driver is refusing
-        
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
@@ -441,7 +441,7 @@ def refuse_ride_request(trip, person, ** kwargs):
                                response_codes.PERSON_NOT_FOUND,
                                "Person", person_dict)
         return resp.to_xmlrpc()
-        
+
     try:
         rider_participation = models.Participation.objects.filter(trip=trip.id,
                                                                person=rider.id).get()
@@ -451,7 +451,7 @@ def refuse_ride_request(trip, person, ** kwargs):
                            "boolean", False)
         return resp.to_xmlrpc()
 
-        
+
     rider_participation.refused = True
     rider_participation.refused_timestamp = datetime.datetime.now()
     try:
@@ -474,18 +474,18 @@ def refuse_ride_request(trip, person, ** kwargs):
 def finish_trip(trip, ** kwargs):
     """
     This method is for a driver to close a Trip.
-    
+
     TODO
-    
+
     -verify user permissions
-    
+
     PARAMETERS
-    
+
     - ``trip`` - a **Trip** object, representing the Trip that the driver
     is closing
-    
+
     RETURNS
-    
+
     An object of type **Response**, containing all the details of the
     operation and results (if any)
     """
