@@ -32,6 +32,7 @@ class TestMultipleMatching():
         self.rider4 = classes.Rider("ozzy",settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.rider5 = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.riders = [self.rider1, self.rider2, self.rider3, self.rider4]
+        self.rider6 = classes.Rider("bruce",settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.driver_position = '46.490200 11.342294'
         self.driver_destination = '46.500740 11.345073'
         self.rider_position = '46.494957  11.340239'
@@ -46,6 +47,8 @@ class TestMultipleMatching():
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
         self.rider5.position = classes.Location(georss_point=self.rider_position)
         self.rider5.destination = classes.Location(georss_point=self.rider_destination,point='dest')
+        self.rider6.position = classes.Location(georss_point=self.rider_position)
+        self.rider6.destination = classes.Location(georss_point=self.rider_destination,point='dest')
 
         for rider in self.riders:
             rider.position = classes.Location(georss_point=self.rider_position)
@@ -63,6 +66,12 @@ class TestMultipleMatching():
         response = self.rider5.get_position()
         assert response['value']['georss_point'] == self.rider5.position.georss_point
         self.rider5.position = response['value']
+        
+        response = self.rider6.update_position(location=self.rider6.position)
+        assert response['code'] == response_codes.POSITIVE
+        response = self.rider6.get_position()
+        assert response['value']['georss_point'] == self.rider6.position.georss_point
+        self.rider6.position = response['value']
 
         for rider in self.riders:
             response = rider.update_position(location=rider.position)
@@ -115,6 +124,11 @@ class TestMultipleMatching():
     def test_check_ride_requests_before_request(self):
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.NEGATIVE
+        
+    def test_get_position_before_request(self):
+        for rider in self.riders:
+            response = self.driver.get_position(person=rider)
+            assert response['code'] == response_codes.NEGATIVE
 
     def test_request_ride(self):
         for rider in self.riders:
@@ -130,6 +144,11 @@ class TestMultipleMatching():
     def test_accept_ride_request(self):
         for rider in self.driver.ride_request:
             response = self.driver.accept_ride_request(rider)
+            assert response['code'] == response_codes.POSITIVE
+    
+    def test_get_position_after_request(self):
+        for rider in self.riders:
+            response = self.driver.get_position(person=rider)
             assert response['code'] == response_codes.POSITIVE
 
     def test_start_ride(self):
@@ -149,6 +168,46 @@ class TestMultipleMatching():
 
         response = self.rider5.search_ride(self.rider5.position,self.rider5.destination)
         assert response['code'] == response_codes.POSITIVE
+        
+        self.rider5.trip = response['value'][0]
+        
+    def test_request_ride_rider5(self):
+        response = self.rider5.request_ride(trip=self.rider5.trip)
+        assert response['code'] == response_codes.POSITIVE
+    
+    def test_check_ride_request_rider5(self):
+        response = self.driver.check_ride_requests()
+        assert response['code'] == response_codes.POSITIVE
+        assert response['value'][0]['username'] == self.rider5.username
+        self.driver.ride_request = response['value']
+        
+    def test_cancel_requested_ride(self):
+        response = self.rider5.cancel_requested_ride(trip=self.rider5.trip)
+        assert response['code'] == response_codes.POSITIVE
+        
+    def test_check_cancelled_ride_request_rider5(self):
+        response = self.driver.check_ride_requests()
+        assert response['code'] == response_codes.NEGATIVE
+        
+    def test_get_position_cancelled_ride_request(self):
+        response = self.driver.get_position(self.rider5)
+        assert response['code'] == response_codes.NEGATIVE
+        
+    
+    def test_search_trip_rider6(self):
+        response = self.rider6.search_ride(self.rider6.position,self.rider6.destination)
+        assert response['code'] == response_codes.POSITIVE
+        self.rider6.trip = response['value'][0]
+    
+    def test_request_ride_rider6(self):
+        response = self.rider6.request_ride(trip=self.rider6.trip)
+        assert response['code'] == response_codes.POSITIVE
+    
+    def test_check_ride_request_rider6(self):
+        response = self.driver.check_ride_requests()
+        assert response['code'] == response_codes.POSITIVE
+        assert response['value'][0]['username'] == self.rider6.username
+        self.driver.ride_request = response['value']
 
     def test_finish_ride(self):
         for rider in self.riders:
@@ -156,3 +215,8 @@ class TestMultipleMatching():
                 break
             response = rider.finish_ride(rider.trip)
             assert response['code'] == response_codes.POSITIVE
+            
+    def test_get_position_after_ride_finished(self):
+        for rider in self.riders:
+            response = self.driver.get_position(person=rider)
+            assert response['code'] == response_codes.NEGATIVE

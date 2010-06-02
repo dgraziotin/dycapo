@@ -399,6 +399,74 @@ def accept_ride_request(trip, person, ** kwargs):
     return resp.to_xmlrpc()
 
 
+@rpc4django.rpcmethod(name='dycapo.refuse_ride_request',
+                      signature=['Response', 'Trip', 'Person'],
+                      permission='server.can_xmlrpc')
+def refuse_ride_request(trip, person, ** kwargs):
+    """
+    This method is for a driver to refuse a ride request by a rider.
+    
+    TODO
+    
+    -verify user permissions
+    
+    PARAMETERS
+    
+    - ``trip`` - a **Trip** object, representing the Trip in which
+        the Driver is refusing a ride.
+    - ``person`` - a **Person** object, representing the Rider that
+        the Driver is refusing
+        
+    RETURNS
+    
+    An object of type **Response**, containing all the details of the
+    operation and results (if any)
+    """
+
+    trip_dict = trip
+    person_dict = person
+
+    try:
+        trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
+    except (KeyError, models.Trip.DoesNotExist):
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.TRIP_NOT_FOUND,
+                               "Trip", trip_dict)
+        return resp.to_xmlrpc()
+
+    try:
+        rider = models.Person.objects.filter(username=person_dict['username']).only("id","position").get()
+    except (KeyError, models.Person.DoesNotExist):
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_NOT_FOUND,
+                               "Person", person_dict)
+        return resp.to_xmlrpc()
+        
+    try:
+        rider_participation = models.Participation.objects.filter(trip=trip.id,
+                                                               person=rider.id).get()
+    except models.Participation.DoesNotExist:
+        resp = models.Response(response_codes.NEGATIVE,
+                           response_codes.PERSON_NOT_FOUND,
+                           "boolean", False)
+        return resp.to_xmlrpc()
+
+        
+    rider_participation.refused = True
+    rider_participation.refused_timestamp = datetime.datetime.now()
+    try:
+        rider_participation.refused_position_id = rider.position_id
+    except models.Location.DoesNotExist:
+        rider_participation.accepted_position = None
+
+    rider_participation.save()
+    resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_REQUEST_REFUSED,
+                               "boolean", True)
+    return resp.to_xmlrpc()
+
+
+
 
 @rpc4django.rpcmethod(name='dycapo.finish_trip',
                       signature=['Response', 'Trip'],

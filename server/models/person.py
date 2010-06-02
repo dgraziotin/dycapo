@@ -86,6 +86,16 @@ class Person(authmodels.User):
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
         return participations[0]
+        
+    def get_requested_participation(self):
+        """
+        Returns the currently Participation of the Person in a Trip.
+        """
+        participations = participation.Participation.objects.filter(requested=True, started=False, finished=False, person=self, trip__active=True, requested_deleted=False)
+        if not participations: return None
+        # TODO: we should purge here in case of multiple Participations returned
+        if len(participations) > 1: return None
+        return participations[0]
 
     def get_participating_trip(self):
         """
@@ -103,7 +113,7 @@ class Person(authmodels.User):
     def __unicode__(self):
         return self.username
 
-    def to_xmlrpc(self):
+    def to_xmlrpc(self,position=False):
         """
         Returns a Python dict that contains just the attributes we want to expose
         in out XML-RPC methods
@@ -111,6 +121,8 @@ class Person(authmodels.User):
         person_dict = {
             'username': self.username
         }
+        if position:
+            person_dict['position'] = self.position.to_xmlrpc()
         return person_dict
 
     class Meta:

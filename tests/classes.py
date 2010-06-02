@@ -129,12 +129,15 @@ class Person():
         print "#" * 80
         return response
 
-    def get_position(self,username=None):
+    def get_position(self,person=None):
         print "#" * 80
         print self.username + ": GETTING POSITION..."
         print "#" * 80
-        if not username: username = self.username
-        person = {'username':username}
+        
+        if not person:
+            person = self
+            
+        person = {'username':person.username}
         response = self.client.dycapo.get_position(person)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
@@ -224,6 +227,15 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
+    
+    def refuse_ride_request(self,person):
+        print "#" * 80
+        print self.username + ": ACCEPTING A RIDE REQUEST..."
+        print "#" * 80
+        response = self.client.dycapo.refuse_ride_request(self.trip,person)
+        print "Dycapo Response: \n" + str(response)
+        print "#" * 80
+        return response
 
 class Rider(Person):
     def search_ride(self,position=None,destination=None):
@@ -244,6 +256,22 @@ class Rider(Person):
         print self.username + ": REQUESTING A RIDE..."
         print "*" * 80
         response = self.client.dycapo.request_ride(trip)
+        print "Dycapo Response: \n" + str(response)
+        return response
+    
+    def check_requested_ride(self,trip):
+        print "*" * 80
+        print self.username + ": CHECK REQUESTED RIDE..."
+        print "*" * 80
+        response = self.client.dycapo.check_requested_ride(trip)
+        print "Dycapo Response: \n" + str(response)
+        return response
+    
+    def cancel_requested_ride(self,trip):
+        print "*" * 80
+        print self.username + ": CANCELLING A RIDE REQUEST..."
+        print "*" * 80
+        response = self.client.dycapo.cancel_requested_ride(trip)
         print "Dycapo Response: \n" + str(response)
         return response
 

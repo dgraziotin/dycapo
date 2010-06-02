@@ -95,11 +95,37 @@ def get_position(person, **kwargs):
 
     try:
         person = models.Person.objects.get(username=person['username'])
-        participation = person.get_active_participation()
+        
+        if person.id == driver.id:
+            resp = models.Response(response_codes.POSITIVE,
+                               response_codes.POSITION_FOUND, 'Location',
+                               person.position.to_xmlrpc())
+            return resp.to_xmlrpc()
+            
+        person_participation = person.get_requested_participation()
+        driver_participation = driver.get_active_participation()
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
+        
+    if not person_participation:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_NOT_FOUND,
+                               'boolean', False)
+        return resp.to_xmlrpc()
+        
+    if person_participation.trip_id != driver_participation.trip_id:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_NOT_FOUND,
+                               'boolean', False)
+        return resp.to_xmlrpc()
+    else:
+        if person_participation.requested_deleted:
+            resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_DELETED_REQUESTED_RIDE,
+                               'boolean', False)
+            return resp.to_xmlrpc()
 
     if not person.position:
         resp = models.Response(response_codes.NEGATIVE,

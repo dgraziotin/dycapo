@@ -21,6 +21,6 @@ This file must import all the XML-RPC methods
 that we also want to expose to the public.
 """
 from driver import add_trip, start_trip, check_ride_requests, add_trip_exp
-from driver import accept_ride_request, finish_trip
-from rider import search_trip, request_ride, start_ride, finish_ride
+from driver import accept_ride_request, refuse_ride_request, finish_trip
+from rider import search_trip, request_ride, check_requested_ride, cancel_requested_ride, start_ride, finish_ride
 from common import update_position, get_position, register, change_password

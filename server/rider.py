@@ -133,6 +133,108 @@ def request_ride(trip, ** kwargs):
                                str(e),
                                "boolean", False)
     return resp.to_xmlrpc()
+    
+@rpc4django.rpcmethod(name='dycapo.check_requested_ride',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def check_requested_ride(trip, ** kwargs):
+    """
+    This method is for a rider to check the status of
+    a requested a Ride in a Trip.
+
+    TODO
+
+    - verify user permissions
+    - check if the trip is not expired
+
+    PARAMETERS
+
+    - ``trip`` - a **Trip** object, representing the Trip that the Rider
+        would like to join.
+
+    RETURNS
+
+    An object of type **Response**, containing all the details of the
+    operation and results (if any)
+    """
+    trip_dict = trip
+    rider = utils.get_xmlrpc_user(kwargs)
+    
+    try:
+        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation','author').get()
+        rider_participation = models.Participation.objects.get(trip=trip, person=rider)
+        
+    except (KeyError,models.Trip.DoesNotExist,models.Participation.DoesNotExist):
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+        
+    if rider_participation.accepted:
+        resp = models.Response(response_codes.POSITIVE,
+                               response_codes.RIDE_REQUEST_ACCEPTED,
+                               "Person", trip.author.position.to_xmlrpc())
+    else:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDE_REQUEST_NOT_YET_ACCEPTED,
+                               "boolean", False)
+    return resp.to_xmlrpc()
+    
+@rpc4django.rpcmethod(name='dycapo.cancel_requested_ride',
+                      signature=['Response', 'Trip'],
+                      permission='server.can_xmlrpc')
+def cancel_requested_ride(trip, ** kwargs):
+    """
+    This method is for a rider to cancel a Ride previously requested
+
+    TODO
+
+    - verify user permissions
+    - check if the trip is not expired
+
+    PARAMETERS
+
+    - ``trip`` - a **Trip** object, representing the Trip that the Rider
+        would like to join.
+
+    RETURNS
+
+    An object of type **Response**, containing all the details of the
+    operation and results (if any)
+    """
+    
+    trip_dict = trip
+    rider = utils.get_xmlrpc_user(kwargs)
+    
+    try:
+        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
+        rider_participation = models.Participation.objects.filter(trip=trip, person=rider).get()            
+            
+    except (KeyError, models.Trip.DoesNotExist):
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except models.Participation.DoesNotExist:
+        resp = models.Response(response_codes.NEGATIVE,
+                    response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
+        return resp.to_xmlrpc()
+
+    rider_participation.requested_deleted = True
+    rider_participation.requested_deleted_timestamp = datetime.datetime.now()
+
+    if rider.position:
+        rider_participation.requested_deleted_position_id = rider.position_id
+    try:
+        rider_participation.save()
+        resp = models.Response(response_codes.POSITIVE,
+                               response_codes.PERSON_DELETED_REQUESTED_RIDE,
+                               "boolean", True)
+    except django.db.IntegrityError, e:
+        resp = models.Response(response_codes.NEGATIVE,
+                               str(e),
+                               "boolean", False)
+    return resp.to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.start_ride',
                       signature=['Response', 'Trip'],
