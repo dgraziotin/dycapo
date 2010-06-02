@@ -20,7 +20,7 @@ This file is part of Dycapo.
 This file contains useful configurations for the tests. Adjust them here.
 """
 
-DYCAPO_URL = 'http://test.dycapo.org'
+DYCAPO_URL = 'http://127.0.0.1'
 FINISH_TRIP_AFTER_TESTS = True
 
 DRIVER_USERNAME = 'driver1'

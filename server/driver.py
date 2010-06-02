@@ -491,8 +491,9 @@ def finish_trip(trip, ** kwargs):
     """
 
     trip_dict = trip
-    trip = models.Trip.objects.filter(id=trip_dict['id']).only("id","active").get()
+    trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
     driver = utils.get_xmlrpc_user(kwargs)
+    
     if driver.is_participating():
         participation = driver.get_active_participation()
         participation.finished = True

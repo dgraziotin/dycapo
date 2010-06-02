@@ -60,6 +60,13 @@ def search_trip(source, destination, ** kwargs):
     destination.complete_fields()
 
     rider = utils.get_xmlrpc_user(kwargs)
+    
+    rider_active_participation = rider.get_active_participation()
+    if rider_active_participation:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDE_IN_COURSE,
+                               "Trip", rider_active_participation.trip.to_xmlrpc())
+        return resp.to_xmlrpc()
 
     trips = matching.search_ride(destination,rider)
 
@@ -97,16 +104,16 @@ def request_ride(trip, ** kwargs):
 
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
-
+    rider_active_participation = rider.get_active_participation()
+    
+    if rider_active_participation:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDE_IN_COURSE,
+                               "Trip", rider_active_participation.trip.to_xmlrpc())
+        return resp.to_xmlrpc()
+        
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
-        is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
-
-        if is_already_participating:
-            resp = models.Response(response_codes.NEGATIVE,
-                    response_codes.RIDE_IN_COURSE, "boolean", False)
-            return resp.to_xmlrpc()
-
     except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -160,16 +167,27 @@ def check_requested_ride(trip, ** kwargs):
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
 
+    rider_active_participation = rider.get_active_participation()
+    if rider_active_participation:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.RIDE_IN_COURSE,
+                               "Trip", rider_active_participation.trip.to_xmlrpc())
+        return resp.to_xmlrpc()
+    
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation','author').get()
-        rider_participation = models.Participation.objects.get(trip=trip, person=rider)
-
-    except (KeyError,models.Trip.DoesNotExist,models.Participation.DoesNotExist):
+        rider_participation = models.Participation.objects.filter(trip=trip.id, person=rider.id).get()
+    except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-
+        
+    except models.Participation.DoesNotExist:
+        resp = models.Response(response_codes.NEGATIVE,
+                               response_codes.PERSON_NOT_FOUND,
+                               "boolean", False)
     if rider_participation.accepted:
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUEST_ACCEPTED,
@@ -206,10 +224,11 @@ def cancel_requested_ride(trip, ** kwargs):
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
 
+
     try:
         trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
-        rider_participation = models.Participation.objects.filter(trip=trip, person=rider).get()
-
+        rider_participation = models.Participation.objects.filter(trip=trip.id,
+                                                               person=rider.id).get()
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,

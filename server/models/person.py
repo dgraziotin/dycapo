@@ -74,7 +74,7 @@ class Person(authmodels.User):
         """
         Returns true if the Person is actively participating in a Trip
         """
-        is_participating = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True).exists()
+        is_participating = participation.Participation.objects.filter(started=True, finished=False, refused=False, person=self, trip__active=True).exists()
         return is_participating
 
     def get_active_participation(self):
