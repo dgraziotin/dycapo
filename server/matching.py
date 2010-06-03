@@ -32,11 +32,15 @@ def search_ride(location,rider):
     """
 
     box_around_location = location.get_box_around()
-    lat_max = max((box_around_location[0].georss_point_latitude,box_around_location[1].georss_point_latitude))
-    lat_min = min((box_around_location[3].georss_point_latitude,box_around_location[2].georss_point_latitude))
+    lat_max = max((box_around_location[0].georss_point_latitude, 
+                   box_around_location[1].georss_point_latitude))
+    lat_min = min((box_around_location[3].georss_point_latitude, 
+                   box_around_location[2].georss_point_latitude))
 
-    lon_max = max((box_around_location[1].georss_point_longitude,box_around_location[2].georss_point_longitude))
-    lon_min = min((box_around_location[0].georss_point_longitude,box_around_location[3].georss_point_longitude))
+    lon_max = max((box_around_location[1].georss_point_longitude,
+                   box_around_location[2].georss_point_longitude))
+    lon_min = min((box_around_location[0].georss_point_longitude,
+                   box_around_location[3].georss_point_longitude))
 
     trips = models.Trip.objects.filter(
         active=True,
@@ -47,13 +51,14 @@ def search_ride(location,rider):
 
     for trip in trips:
 
-        if trip.has_vacancy() == False:
+        if not trip.has_vacancy():
             trips = trips.exclude(id=trip.id)
 
         destination = trip.get_destination()
         rider_distance_from_destination = rider.position.distance(destination)
 
-        driver_distance_from_destination = trip.author.position.distance(destination)
+        driver_distance_from_destination = trip.author.position.distance(
+            destination)
 
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)
@@ -72,12 +77,11 @@ def get_proximity_factor(person, position):
     given to location_proximity_factor that retrives the factor
     """
     recent_locations = person.get_recent_locations(10)
-    recent_locations_distance_from_position = []
-    for location in recent_locations:
-        recent_locations_distance_from_position.append(
-                                                       location.distance(position))
+    recent_locations_distance_from_position = [location.distance(position)
+                                               for location in recent_locations
+                                               ]
     proximity_factor = location_proximity_factor(
-                                                 recent_locations_distance_from_position)
+                            recent_locations_distance_from_position)
     return proximity_factor
 
 def location_proximity_factor(distances):
@@ -89,19 +93,17 @@ def location_proximity_factor(distances):
     If factor < 0, the numbers in list tend to increase.
     """
     factor = 0
-    for i in range(0, len(distances)):
-        if i == len(distances) - 1:
-            break
-        factor += location_distance_factor(distances[i], distances[i + 1])
+    for i in range(0, len(distances)-1):
+        factor += cmp(distances[i], distances[i + 1])
     return factor
 
-def location_distance_factor(distance1, distance2):
-    """
-    Given two distances, returns 1 if the first distance is greater than
-    the second one.
-    Returns -1 if the first distance is less than the second one.
-    Returns 0 if they are equal.
-    """
-    if distance1 > distance2: return 1
-    if distance1 < distance2: return -1
-    return 0
+#def location_distance_factor(distance1, distance2):
+    #"""
+    #Given two distances, returns 1 if the first distance is greater than
+    #the second one.
+    #Returns -1 if the first distance is less than the second one.
+    #Returns 0 if they are equal.
+    #"""
+    #if distance1 > distance2: return 1
+    #if distance1 < distance2: return -1
+    #return 0

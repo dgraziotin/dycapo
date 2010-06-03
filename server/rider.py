@@ -121,12 +121,12 @@ def request_ride(trip, ** kwargs):
         return resp.to_xmlrpc()
 
 
-    participation = models.Participation()
-    participation.trip_id = trip.id
-    participation.person_id = rider.id
-    participation.role = 'rider'
-    participation.requested = True
-    participation.requested_timestamp = datetime.datetime.now()
+    participation = models.Participation(trip_id = trip.id,
+                                         person_id = rider.id,
+                                         role = 'rider',
+                                         requested = True,
+                                         requested_timestamp = 
+                                         datetime.datetime.now())
 
     if rider.position:
         participation.requested_position_id = rider.position_id
@@ -176,8 +176,10 @@ def check_requested_ride(trip, ** kwargs):
     
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation','author').get()
-        rider_participation = models.Participation.objects.filter(trip=trip.id, person=rider.id).get()
+        trip = models.Trip.objects.only('id','participation','author').get(
+            id=trip_dict['id'])
+        rider_participation = models.Participation.objects.get(trip=trip.id,
+                                                               person=rider.id)
     except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -226,9 +228,10 @@ def cancel_requested_ride(trip, ** kwargs):
 
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
-        rider_participation = models.Participation.objects.filter(trip=trip.id,
-                                                               person=rider.id).get()
+        trip = models.Trip.objects.only('id','participation').get(
+            id=trip_dict['id'])
+        rider_participation = models.Participation.objects.get(trip=trip.id,
+                                                               person=rider.id)
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -282,7 +285,8 @@ def start_ride(trip, **kwargs):
     rider = utils.get_xmlrpc_user(kwargs)
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
+        trip = models.Trip.objects.only('id','participation').get(
+            id=trip_dict['id'])
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
 
         if not is_already_participating:
@@ -296,7 +300,10 @@ def start_ride(trip, **kwargs):
         return resp.to_xmlrpc()
 
     try:
-        participation = trip.get_participations().filter(person=rider).only('started','started_timestamp','started_position')[0]
+        participation = trip.get_participations().only('started',
+                                                       'started_timestamp',
+                                                       'started_position') \
+                      .get(person=rider)
         participation.started = True
         participation.started_timestamp = datetime.datetime.now()
         participation.started_position_id = rider.position_id
@@ -338,7 +345,8 @@ def finish_ride(trip, **kwargs):
     rider = utils.get_xmlrpc_user(kwargs)
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
+        trip = models.Trip.objects.only('id','participation').get(
+            id=trip_dict['id'])
         is_already_participating = models.Participation.objects.filter(trip=trip, person=rider).exists()
 
         if not is_already_participating:
@@ -352,7 +360,10 @@ def finish_ride(trip, **kwargs):
                                "boolean", False)
         return resp.to_xmlrpc()
 
-    participation = trip.get_participations().filter(person=rider).only('finished','finished_timestamp','finished_position')[0]
+    participation = trip.get_participations().only('finished',
+                                                   'finished_timestamp',
+                                                   'finished_position') \
+                  .get(person=rider)
     participation.finished = True
     participation.finished_timestamp = datetime.datetime.now()
     participation.finished_position_id = rider.position_id

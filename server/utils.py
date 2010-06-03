@@ -60,8 +60,10 @@ def clean_ids(dictionary):
     Removes attributes with key 'id' from dictionaries. Suitable for XML-RPC
     returns
     """
-    if 'id' in dictionary.keys():
+    try:
         del dictionary['id']
+    except KeyError:
+        pass
     return dictionary
 
 def populate_object_from_dictionary(obj, dictionary):
@@ -69,8 +71,7 @@ def populate_object_from_dictionary(obj, dictionary):
     Given an object and a dictionary, it updates all the object's
     attributes with name matching a key of the dictionary
     """
-    for key in dictionary:
-        obj.__dict__[key] = dictionary[key]
+    obj.__dict__.update(dictionary)
     return obj
 
 def synchronize_objects(old_obj, new_obj):
@@ -96,7 +97,6 @@ def get_xmlrpc_user(kwargs):
         return models.Person.objects.get(
                                          username=kwargs['request'].META['REMOTE_USER']
                                          )
-    except models.Person.DoesNotExist:
+    except (models.Person.DoesNotExist, KeyError):
         return None
-    except KeyError:
-        return None
+
