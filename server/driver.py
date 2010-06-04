@@ -63,16 +63,11 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
 
     driver = utils.get_xmlrpc_user(kwargs)
 
-    source = models.Location()
-    source = utils.populate_object_from_dictionary(source, dict_source)
+    source = models.Location(**dict_source)
 
+    destination = models.Location(**dict_destination)
 
-    destination = models.Location()
-    destination = utils.populate_object_from_dictionary(destination,
-                                                        dict_destination)
-
-    mode = models.Mode()
-    mode = utils.populate_object_from_dictionary(mode, dict_mode)
+    mode = models.Mode(**dict_mode)
     mode.person = driver
     try:
         retrieven_mode = models.Mode.objects.get(person=driver,
@@ -86,9 +81,7 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
     except models.Mode.DoesNotExist:
         pass
 
-    preferences = models.Prefs()
-    preferences = utils.populate_object_from_dictionary(preferences,
-                                                        dict_prefs)
+    preferences = models.Prefs(**dict_prefs)
 
     try:
         source.save()
@@ -99,11 +92,10 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
                                False)
         return resp.to_xmlrpc()
-    trip = models.Trip()
-    trip = utils.populate_object_from_dictionary(trip, dict_trip)
-    trip.author = driver
-    trip.mode = mode
-    trip.prefs = preferences
+
+    trip = models.Trip(author=driver, mode=mode, prefs=preferences,
+                       **dict_trip)
+
     try:
         trip.save()
     except Exception, e:
@@ -115,10 +107,8 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
     trip.locations.add(destination)
 
 
-    participation = models.Participation()
-    participation.person = driver
-    participation.trip = trip
-    participation.role = 'driver'
+    participation = models.Participation(person=driver, trip=trip,
+                                         role='driver')
     participation.save()
     trip_stored = models.Trip.objects.get(id=trip.id)
     resp = models.Response(response_codes.POSITIVE,
@@ -156,20 +146,15 @@ def add_trip_exp(trip, ** kwargs):
 
     driver = utils.get_xmlrpc_user(kwargs)
 
-    source = models.Location()
     dict_source = utils.get_location_from_array(array_locations,"orig")
-    source = utils.populate_object_from_dictionary(source, dict_source)
+    source = models.Location(**dict_source)
 
-
-    destination = models.Location()
     dict_destination = utils.get_location_from_array(array_locations,"dest")
-    destination = utils.populate_object_from_dictionary(destination, dict_destination)
+    destination = models.Location(**dict_destination)
 
-    mode = models.Mode()
-    mode = utils.populate_object_from_dictionary(mode, dict_mode)
+    mode = models.Mode(**dict_mode)
     vacancy = dict_mode['vacancy']
-    preferences = models.Prefs()
-    preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
+    preferences = models.Prefs(**dict_prefs)
 
     mode, created = models.Mode.objects.get_or_create(person=driver,
                                                  make=mode.make,
@@ -188,11 +173,8 @@ def add_trip_exp(trip, ** kwargs):
                                False)
         return resp.to_xmlrpc()
 
-    trip = models.Trip()
-    trip = utils.populate_object_from_dictionary(trip, dict_trip)
-    trip.author = driver
-    trip.mode = mode
-    trip.prefs = preferences
+    trip = models.Trip(author=driver, mode=mode, prefs=preferences, 
+                       **dict_trip)
     try:
         trip.save()
     except Exception, e:
@@ -203,11 +185,8 @@ def add_trip_exp(trip, ** kwargs):
     trip.locations.add(source)
     trip.locations.add(destination)
 
-
-    participation = models.Participation()
-    participation.person = driver
-    participation.trip = trip
-    participation.role = 'driver'
+    participation = models.Participation(person=driver, trip=trip,
+                                         role='driver')
     participation.save()
 
     resp = models.Response(response_codes.POSITIVE,
@@ -239,7 +218,7 @@ def start_trip(trip, ** kwargs):
 
     trip_dict = trip
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only("id","active").get()
+        trip = models.Trip.objects.only("id","active").get(id=trip_dict['id'])
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -297,7 +276,7 @@ def check_ride_requests(trip, ** kwargs):
     trip_dict = trip
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
+        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
     except (KeyError,models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -314,7 +293,7 @@ def check_ride_requests(trip, ** kwargs):
                                .filter(requested_deleted=False)
                                ).only("person")
 
-    if len(participations_for_trip) == 0:
+    if not len(participations_for_trip):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.RIDE_REQUESTS_NOT_FOUND,
                                "boolean", False)
@@ -356,7 +335,7 @@ def accept_ride_request(trip, person, ** kwargs):
     person_dict = person
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
+        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -364,7 +343,8 @@ def accept_ride_request(trip, person, ** kwargs):
         return resp.to_xmlrpc()
 
     try:
-        rider = models.Person.objects.filter(username=person_dict['username']).only("id","position").get()
+        rider = models.Person.objects.only("id","position").get(
+            username=person_dict['username'])
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
@@ -372,8 +352,8 @@ def accept_ride_request(trip, person, ** kwargs):
         return resp.to_xmlrpc()
 
     try:
-        rider_participation = models.Participation.objects.filter(trip=trip.id,
-                                                               person=rider.id).get()
+        rider_participation = models.Participation.objects.get(trip=trip.id,
+                                                               person=rider.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
@@ -427,7 +407,7 @@ def refuse_ride_request(trip, person, ** kwargs):
     person_dict = person
 
     try:
-        trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
+        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -435,7 +415,8 @@ def refuse_ride_request(trip, person, ** kwargs):
         return resp.to_xmlrpc()
 
     try:
-        rider = models.Person.objects.filter(username=person_dict['username']).only("id","position").get()
+        rider = models.Person.objects.only("id","position").get(
+            username=person_dict['username'])
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
@@ -443,8 +424,8 @@ def refuse_ride_request(trip, person, ** kwargs):
         return resp.to_xmlrpc()
 
     try:
-        rider_participation = models.Participation.objects.filter(trip=trip.id,
-                                                               person=rider.id).get()
+        rider_participation = models.Participation.objects.get(trip=trip.id,
+                                                               person=rider.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(response_codes.NEGATIVE,
                            response_codes.PERSON_NOT_FOUND,
@@ -491,7 +472,7 @@ def finish_trip(trip, ** kwargs):
     """
 
     trip_dict = trip
-    trip = models.Trip.objects.filter(id=trip_dict['id']).only("id").get()
+    trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
     driver = utils.get_xmlrpc_user(kwargs)
     
     if driver.is_participating():
