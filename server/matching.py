@@ -92,10 +92,9 @@ def location_proximity_factor(distances):
     If factor == 0, the numbers in list tend to stay around the same value
     If factor < 0, the numbers in list tend to increase.
     """
-    factor = 0
-    for i in range(0, len(distances)-1):
-        factor += cmp(distances[i], distances[i + 1])
-    return factor
+    return sum([cmp(distances[i], distances[i + 1])
+                 for i in xrange(len(distances)-1)])
+
 
 #def location_distance_factor(distance1, distance2):
     #"""
