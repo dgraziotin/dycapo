@@ -63,11 +63,16 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
 
     driver = utils.get_xmlrpc_user(kwargs)
 
-    source = models.Location(**dict_source)
+    source = models.Location()
+    source = utils.populate_object_from_dictionary(source, dict_source)
 
-    destination = models.Location(**dict_destination)
 
-    mode = models.Mode(**dict_mode)
+    destination = models.Location()
+    destination = utils.populate_object_from_dictionary(destination,
+                                                        dict_destination)
+
+    mode = models.Mode()
+    mode = utils.populate_object_from_dictionary(mode, dict_mode)
     mode.person = driver
     try:
         retrieven_mode = models.Mode.objects.get(person=driver,
@@ -81,7 +86,9 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
     except models.Mode.DoesNotExist:
         pass
 
-    preferences = models.Prefs(**dict_prefs)
+    preferences = models.Prefs()
+    preferences = utils.populate_object_from_dictionary(preferences,
+                                                        dict_prefs)
 
     try:
         source.save()
@@ -93,8 +100,12 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
                                False)
         return resp.to_xmlrpc()
 
-    trip = models.Trip(author=driver, mode=mode, prefs=preferences,
-                       **dict_trip)
+    trip = models.Trip()
+    trip = utils.populate_object_from_dictionary(trip, dict_trip)
+    trip.author = driver
+    trip.mode = mode
+    trip.prefs = preferences
+
 
     try:
         trip.save()
@@ -146,15 +157,20 @@ def add_trip_exp(trip, ** kwargs):
 
     driver = utils.get_xmlrpc_user(kwargs)
 
+    source = models.Location()
     dict_source = utils.get_location_from_array(array_locations,"orig")
-    source = models.Location(**dict_source)
+    source = utils.populate_object_from_dictionary(source, dict_source)
 
+
+    destination = models.Location()
     dict_destination = utils.get_location_from_array(array_locations,"dest")
-    destination = models.Location(**dict_destination)
+    destination = utils.populate_object_from_dictionary(destination, dict_destination)
 
-    mode = models.Mode(**dict_mode)
+    mode = models.Mode()
+    mode = utils.populate_object_from_dictionary(mode, dict_mode)
     vacancy = dict_mode['vacancy']
-    preferences = models.Prefs(**dict_prefs)
+    preferences = models.Prefs()
+    preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
 
     mode, created = models.Mode.objects.get_or_create(person=driver,
                                                  make=mode.make,
@@ -173,8 +189,12 @@ def add_trip_exp(trip, ** kwargs):
                                False)
         return resp.to_xmlrpc()
 
-    trip = models.Trip(author=driver, mode=mode, prefs=preferences, 
-                       **dict_trip)
+    trip = models.Trip()
+    trip = utils.populate_object_from_dictionary(trip, dict_trip)
+    trip.author = driver
+    trip.mode = mode
+    trip.prefs = preferences
+
     try:
         trip.save()
     except Exception, e:

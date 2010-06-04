@@ -25,6 +25,7 @@ import time
 
 import datetime
 import models
+import copy
 
 def now():
     """
