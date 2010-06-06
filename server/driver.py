@@ -133,21 +133,66 @@ def add_trip(trip, mode, preferences, source, destination, ** kwargs):
                       permission='server.can_xmlrpc')
 def add_trip_exp(trip, ** kwargs):
     """
-    Inserts a new Trip in Dycapo System. It supports a source, a
-    destination and the trip mode. See the models for more information.
+    Description
+    ===========
+    
+    Inserts a new Trip in Dycapo System. This method does **not** start the
+    Trip. use ``start_trip(Trip trip)`` for this scope.
 
-    TODO
+    Permissions
+    ===========
+    
+        * ``user.can_xmlrpc()`` - active by default for all registered users
 
-    - verify user permissions
-    - multiple waypoints
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is saving in Dycapo
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    
+    +------------------+-------------------------+-----------------------------+
+    | Parameter        | Description             | Type                        |
+    +==================+=========================+=============================+
+    | trip_            | expires                 | dateTime.iso8601            |
+    +------------------+-------------------------+-----------------------------+
+    |                  | author                  | struct (Person_)            |
+    +------------------+-------------------------+-----------------------------+
+    |                  | expires                 | dateTime.iso8601            |
+    +------------------+-------------------------+-----------------------------+
+    |                  | content                 | struct (Many_)              |
+    +------------------+-------------------------+-----------------------------+
+    |                  | *content.mode*          | struct (Mode_)              |
+    +------------------+-------------------------+-----------------------------+
+    |                  | *content.prefs*         | struct (Prefs_)             |
+    +------------------+-------------------------+-----------------------------+
+    |                  | *content.locations*     | array (Location_)           |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip that the Driver
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    |Response.value  |   Details                                               |
+    +================+=========================================================+
+    | False          | Something was wrong, look at Response.message           | 
+    |                | for details                                             |
+    +----------------+---------------------------------------------------------+
+    | trip_          | The operation was successful. The returned Trip is the  | 
+    |                | one inserted including the id (Trip.id) to be used for  |
+    |                | next operations                                         |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Person: http://www.dycapo.org/Protocol#Person
+    .. _Many: http://www.dycapo.org/Protocol#Trip
+    .. _Mode: http://www.dycapo.org/Protocol#Mode
+    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Location: http://www.dycapo.org/Protocol#Location
 
-    RETURNS
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
     """
 
     dict_trip = utils.clean_ids(trip)
