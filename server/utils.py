@@ -25,7 +25,6 @@ import time
 
 import datetime
 import models
-import copy
 
 def now():
     """
@@ -85,10 +84,13 @@ def synchronize_objects(old_obj, new_obj):
     return old_obj
 
 def get_location_from_array(locations, point="dest"):
-    for location in locations:
-        if location["point"] == point:
-            return location
-    return none
+    ## python 2.5
+    try:
+        return next(location for location in locations if location["point"] == point)
+    except StopIteration:
+        return None
+    ## python 2.6
+    # return next((location for location in locations if location["point"] == point), None)
 
 def get_xmlrpc_user(kwargs):
     """
