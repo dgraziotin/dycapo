@@ -139,10 +139,10 @@ def add_trip_exp(trip, ** kwargs):
     Inserts a new Trip in Dycapo System. This method does **not** start the
     Trip. use ``start_trip(Trip trip)`` for this scope.
 
-    Permissions
-    ===========
-    
-        * ``user.can_xmlrpc()`` - active by default for all registered users
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
     Parameters
     ==========

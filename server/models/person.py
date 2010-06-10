@@ -54,7 +54,7 @@ class Person(authmodels.User):
     blind = models.BooleanField(default=False)
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
-    locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True) # MUST
+    locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True, db_index=True) # MUST
 
     def get_recent_locations(self, max_results=10):
         """

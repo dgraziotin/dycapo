@@ -49,13 +49,13 @@ class Location(models.Model):
     label = models.CharField(max_length=255, blank=True)
     street = models.CharField(max_length=255, blank=True)
     point = models.CharField(max_length=50, choices=WAYPOINT_CHOICES,
-                             blank=True)
+                             blank=True, db_index=True)
     country = models.CharField(max_length=2, blank=True)
     region = models.CharField(max_length=255, blank=True)
     town = models.CharField(max_length=255, blank=True)
     postcode = models.PositiveIntegerField(blank=True, null=True, default=0)
     subregion = models.CharField(max_length=255, blank=True)
-    georss_point = models.CharField(max_length=255, blank=True)
+    georss_point = models.CharField(max_length=255, blank=True, db_index=True)
     """
     georss_pont_latitude and georss_point_longitude
     should be just used internally

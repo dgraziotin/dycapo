@@ -1,68 +1,77 @@
 RELEASE NOTES
 ***************
 
-2010-05-22  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
+2010-06-10  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
-Dycapo v0.4.0 is the fourth prototype version on which we are building our APIs.
+Dycapo v0.5.0 is the fifth prototype version on which we are building our APIs.
 
-Dycapo v0.4.0 incorporates and shows:
+Dycapo v0.5.0 incorporates and shows:
 * Adoption of Dycapo Protocol [http://dycapo.org/Protocol]
 * The introduction of API [http://dycapo.org/Server/API]
 * Integration of Dycapo models with Django models
 * Authentication system
+* Registration System
+* Password change system
 * A a Geo-location based search Algorithm
 * Geo-location methods for Persons
 * Insertion of a trip by a driver
 * Start of a trip by a driver
-* Search of a trip by a rider
+* Search of a trip by a passenger
 * Send a ride request to a driver
 * Let the driver accept the ride request
-* Let the rider inform the system that the driver picked him/she
-* Let the rider inform the system that the he/she arrived to destination
+* Inform the passenger about the status of his/her request
+* Inform the 
+* Let the passenger inform the system that the driver picked him/she
+* Let the passenger inform the system that the he/she arrived to destination
 * Let the driver finish a Trip
 * A full set of tests
 
-CHANGES SINCE v0.3.0
+CHANGES SINCE v0.4.0
 ***************
 
-tests/
-* All new XML-RPC methods covered
+General:
+* Dycapo now requires Django 1.2.x in order to function properly, as I am using
+some of the new query features of Django
+* Every xml-rpc function has been optimized in terms of query and Python code
+(thanks to Davide "vad" Setti for helping in this)
+* Added lots of safety and privacy checks for all methods. Lots of.
+* Refactoring of all code, using also a dedicated branch. Many refactoring
+  and optimization done.
+* Added Django 1.2.x compatibility for all models' to_xmlrpc() methods
+* Added some indexex on attributes
+* Added a new permission for user to be used for registrations.
 
-tests/test_multiple_matching.py
-* methods to check the geolocation based algorithm of Dycapo
+server/response_codes.py
+* Deleted ERROR, now using just POSITIVE and NEGATIVE as responses, for
+  simplicity
+* Added many other response messages
 
-server/utils.py
-* Bugs fixed
-
-server/rider.py
-* Added start_ride(trip) method, that informs the system that a Ride has
-been started
-* Added finish_ride(trip) method, that informs the system that a Ride
-has been finished
-
-server/models/prefs.py
-* Overridden save() method that checks for duplicates in the Database and
-saves space
-
-server/models/mode.py
-* Added a reference to Person for checking for duplicates in the Database and
-saving space
-
-server/models/location.py
-* Added factory method get_location_from_geopy_point(point) that given a Geopy
-Point, it returns the corresponding Dycapo Location object
-* Added get_box_around(diagonal_meters) method that given a diagonal, it returns
-a GeoRSS box around the location
-* Added complete_fields() method that acts as a wrapper to the methods for
-completing missing attributes of a Location, using geocoding
+server/models/participation.py
+* Added attributes holding information on the deletion of a ride request
+* Added attributes holding information on the refusal of a ride request
 
 server/matching.py
-* Enhanced get_trips_destination_near_location(destination) that now uses
-Location.get_box_around() to compute a dynamic delta of latitude and longitude
-* Enhanced get_trips_destination_near_location(destination) that also looks for
-trips with empty seats
+* The matching algorithm now uses a single function with a single for loop
+instead of three for loops.
 
 server/driver.py
-* Enhanced add_trip() method that now re-uses Mode objects if already present
-in the Database instead of creating a new one each time
-* Fixed bugs in check_ride_requests(trip) method 
+* add_trip() is now deprecated
+* Added add_trip_exp(Trip trip) that should become add_trip() replacement
+* Tests make use of this new function
+* Added refuse_ride_request(trip, person), for refusing a passenger ride request
+* Added relative tests
+
+server/common.py
+* get_position(person) now performs privacy checks (ie: to know the position
+  of a person, the requesting person must be in an active participation with
+  him/she)
+
+tests/test_registration.py
+* New test suite, tests the registration methods
+
+tests/test_password_change.py
+* New test suite, tests the possibility to change password method
+
+tests/test_multiple_matching.py
+* Added another passenger to check the new introduced methods
+

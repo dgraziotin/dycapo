@@ -39,8 +39,8 @@ class Trip(models.Model):
     """
     published = models.DateTimeField(auto_now_add=True, blank=False, null=True)
     updated = models.DateTimeField(auto_now=True, blank=False, null=True)
-    expires = models.DateTimeField(blank=False, null=True)
-    active = models.BooleanField(default=False)
+    expires = models.DateTimeField(blank=False, null=True, db_index=True)
+    active = models.BooleanField(default=False, db_index=True)
     author = models.ForeignKey('Person', related_name='author', blank=False, null=True)
     locations = models.ManyToManyField(location.Location, blank=False)
     mode = models.ForeignKey(modulemode.Mode, blank=False, null=True)
