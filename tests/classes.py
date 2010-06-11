@@ -191,7 +191,7 @@ class Driver(Person):
         print "#" * 80
         print self.username + ": SAVING TRIP EXP..."
         print "#" * 80
-        response = self.client.dycapo.add_trip_exp(trip.to_xmlrpc())
+        response = self.client.dycapo.add_trip(trip.to_xmlrpc())
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)

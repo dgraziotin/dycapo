@@ -26,112 +26,9 @@ import rpc4django
 import utils
 
 @rpc4django.rpcmethod(name='dycapo.add_trip',
-                      signature=['Response', 'Trip', 'Mode', 'Prefs',
-                      'Location', 'Location'],
-                      permission='server.can_xmlrpc')
-def add_trip(trip, mode, preferences, source, destination, ** kwargs):
-    """
-    DEPRECATED. Use add_trip_exp(Trip trip) instead.
-    Inserts a new Trip in Dycapo System. It supports a source, a
-    destination and the trip mode. See the models for more information.
-
-    TODO
-
-    - verify user permissions
-    - multiple waypoints
-
-    PARAMETERS
-    - ``trip`` - a **Trip** object, representing the Trip that the Driver
-    is willing to save
-    - ``mode`` - a **Mode** object, representing the modalities of the Trip
-    - ``preferences`` - a **Prefs** object, representing the Trip preferences
-    - ``source`` - a **Location** object, representing where the Trip will
-        start.
-    - ``destination`` - a **Location** object, representing where the Trip
-    will end.
-
-    RETURNS
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
-    """
-
-    dict_trip = utils.clean_ids(trip)
-    dict_mode = utils.clean_ids(mode)
-    dict_prefs = utils.clean_ids(preferences)
-    dict_source = utils.clean_ids(source)
-    dict_destination = utils.clean_ids(destination)
-
-    driver = utils.get_xmlrpc_user(kwargs)
-
-    source = models.Location()
-    source = utils.populate_object_from_dictionary(source, dict_source)
-
-
-    destination = models.Location()
-    destination = utils.populate_object_from_dictionary(destination,
-                                                        dict_destination)
-
-    mode = models.Mode()
-    mode = utils.populate_object_from_dictionary(mode, dict_mode)
-    mode.person = driver
-    try:
-        retrieven_mode = models.Mode.objects.get(person=driver,
-                                                 make=mode.make,
-                                                 model=mode.model,
-                                                 capacity=mode.capacity,
-                                                 kind=mode.kind)
-        retrieven_mode.vacancy = mode.vacancy
-        mode = retrieven_mode
-
-    except models.Mode.DoesNotExist:
-        pass
-
-    preferences = models.Prefs()
-    preferences = utils.populate_object_from_dictionary(preferences,
-                                                        dict_prefs)
-
-    try:
-        source.save()
-        destination.save()
-        mode.save()
-        preferences.save()
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
-                               False)
-        return resp.to_xmlrpc()
-
-    trip = models.Trip()
-    trip = utils.populate_object_from_dictionary(trip, dict_trip)
-    trip.author = driver
-    trip.mode = mode
-    trip.prefs = preferences
-
-
-    try:
-        trip.save()
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
-                               False)
-        return resp.to_xmlrpc()
-
-    trip.locations.add(source)
-    trip.locations.add(destination)
-
-
-    participation = models.Participation(person=driver, trip=trip,
-                                         role='driver')
-    participation.save()
-    trip_stored = models.Trip.objects.get(id=trip.id)
-    resp = models.Response(response_codes.POSITIVE,
-                           response_codes.TRIP_INSERTED, "Trip",
-                           trip_stored.to_xmlrpc())
-    return resp.to_xmlrpc()
-
-
-@rpc4django.rpcmethod(name='dycapo.add_trip_exp',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def add_trip_exp(trip, ** kwargs):
+def add_trip(trip, ** kwargs):
     """
     Description
     ===========
@@ -154,11 +51,10 @@ def add_trip_exp(trip, ** kwargs):
     Required Parameters Details
     ---------------------------
     
-    
     +------------------+-------------------------+-----------------------------+
-    | Parameter        | Description             | Type                        |
+    | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
-    | trip_            | expires                 | dateTime.iso8601            |
+    | trip_            | published               | dateTime.iso8601            |
     +------------------+-------------------------+-----------------------------+
     |                  | author                  | struct (Person_)            |
     +------------------+-------------------------+-----------------------------+
@@ -166,11 +62,11 @@ def add_trip_exp(trip, ** kwargs):
     +------------------+-------------------------+-----------------------------+
     |                  | content                 | struct (Many_)              |
     +------------------+-------------------------+-----------------------------+
-    |                  | *content.mode*          | struct (Mode_)              |
+    | trip_.content    | mode                    | struct (Mode_)              |
     +------------------+-------------------------+-----------------------------+
-    |                  | *content.prefs*         | struct (Prefs_)             |
+    |                  | prefs                   | struct (Prefs_)             |
     +------------------+-------------------------+-----------------------------+
-    |                  | *content.locations*     | array (Location_)           |
+    |                  | locations               | array (Location_)           |
     +------------------+-------------------------+-----------------------------+
 
     Response Possible Return Values
@@ -184,7 +80,8 @@ def add_trip_exp(trip, ** kwargs):
     +----------------+---------------------------------------------------------+
     | trip_          | The operation was successful. The returned Trip is the  | 
     |                | one inserted including the id (Trip.id) to be used for  |
-    |                | next operations                                         |
+    |                | next operations and Trip.locations have more details    |
+    |                | then those submitted as input                           |
     +----------------+---------------------------------------------------------+
     
     .. _Person: http://www.dycapo.org/Protocol#Person
@@ -368,7 +265,7 @@ def check_ride_requests(trip, ** kwargs):
                           for participation in participations_for_trip]
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUESTS_FOUND,
-                               "boolean", participations)
+                               "Person[]", participations)
         return resp.to_xmlrpc()
 
 
@@ -404,7 +301,7 @@ def accept_ride_request(trip, person, ** kwargs):
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
-                               "Trip", trip_dict)
+                               "boolean", False)
         return resp.to_xmlrpc()
 
     try:
@@ -413,7 +310,7 @@ def accept_ride_request(trip, person, ** kwargs):
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
-                               "Person", person_dict)
+                               "boolean", False)
         return resp.to_xmlrpc()
 
     try:
@@ -476,7 +373,7 @@ def refuse_ride_request(trip, person, ** kwargs):
     except (KeyError, models.Trip.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
-                               "Trip", trip_dict)
+                               "boolean", False)
         return resp.to_xmlrpc()
 
     try:
@@ -485,7 +382,7 @@ def refuse_ride_request(trip, person, ** kwargs):
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
-                               "Person", person_dict)
+                               "boolean", False)
         return resp.to_xmlrpc()
 
     try:
@@ -536,8 +433,15 @@ def finish_trip(trip, ** kwargs):
     operation and results (if any)
     """
 
+    
     trip_dict = trip
-    trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
+    try:
+        trip = models.Trip.objects.get(id=trip_dict['id'])
+    except (KeyError, models.Trip.DoesNotExist):
+        resp = models.Response(response_codes.NEGATIVE,
+                           response_codes.TRIP_NOT_FOUND,
+                           "boolean", False)
+        return resp.to_xmlrpc()
     driver = utils.get_xmlrpc_user(kwargs)
     
     if driver.is_participating():
@@ -552,3 +456,5 @@ def finish_trip(trip, ** kwargs):
                            response_codes.TRIP_DELETED,
                            "boolean", True)
     return resp.to_xmlrpc()
+
+

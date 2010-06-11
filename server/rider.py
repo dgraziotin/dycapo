@@ -311,7 +311,7 @@ def start_ride(trip, **kwargs):
     except Exception, e:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
-                               "string", [str(e)])
+                               "boolean", False)
         return resp.to_xmlrpc()
     resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_STARTED,
