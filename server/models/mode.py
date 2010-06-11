@@ -43,7 +43,7 @@ class Mode(models.Model):
     year = models.PositiveIntegerField(blank=True, null=True, default=0)
     color = models.CharField(max_length=255, blank=True)
     lic = models.CharField(max_length=255, blank=True)
-    cost = models.FloatField(blank=True, null=True, default=0)
+    cost = models.FloatField(blank=True, null=True, default=0.00)
     person = models.ForeignKey('Person', blank=True, null=True)
 
     def save(self, * args, ** kwargs):

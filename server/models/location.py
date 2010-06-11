@@ -22,6 +22,7 @@ This file is part of Dycapo.
 import django.db.models as models
 import geopy.distance
 import geopy.point
+import geopy.geocoders
 import settings
 import copy
 import datetime
@@ -143,7 +144,7 @@ class Location(models.Model):
             (latitude, longitude))
         """
         try:
-            geocoder = geocoders.Google(settings.GOOGLE_MAPS_API_KEY)
+            geocoder = geopy.geocoders.Google(settings.GOOGLE_MAPS_API_KEY)
             address = self.street + ", " + str(self.postcode) + " " + self.town
             geo_info = geocoder.geocode(address)
             self.georss_point = str(geo_info[1][0]) + ' ' + str(geo_info[1][1])
@@ -168,17 +169,32 @@ class Location(models.Model):
         """
         point = geopy.point.Point.from_string(self.georss_point)
         try:
-            geocoder = geocoders.Google(settings.GOOGLE_MAPS_API_KEY)
+            geocoder = geopy.geocoders.Google(settings.GOOGLE_MAPS_API_KEY)
             geocoding_result = geocoder.reverse(
                                             (point.latitude,point.longitude) )
+            
             full_address = geocoding_result[0].split(",")
-            self.street = full_address[0] + ',' + full_address[1]
-            self.postcode = int(full_address[2].split(" ")[1])
-            full_town = full_address[2].split(" ")[2:]
-            self.town = " ".join(full_town)
-        except:
-            self.town = ""
-            self.street = ""
+            #if type(full_address).__name__ == 'bool':
+            #    self.georss_point_latitude = point.latitude
+            #    self.georss_point_longitude = point.longitude
+            #    return
+            if len(full_address)==4:
+                self.street = full_address[0] + ',' + full_address[1]
+                self.postcode = int(full_address[2].split(" ")[1])
+                full_town = full_address[2].split(" ")[2:]
+                self.town = " ".join(full_town)
+                #self.country = full_address[-1].split(" ")[1]
+            elif len(full_address)==3:
+                self.street = full_address[0]
+                self.postcode = int(full_address[1].split(" ")[1])
+                full_town = full_address[1].split(" ")[2:]
+                self.town = " ".join(full_town)
+                #self.country = full_address[-1].split(" ")[1]
+            else:
+                self.town = full_address[0]
+        except Exception, e:
+            self.town = "UNKNOWN"
+            self.street = "UNKNOWN"
             self.postcode = 0
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude
