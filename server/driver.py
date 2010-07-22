@@ -73,9 +73,9 @@ def add_trip(trip, ** kwargs):
     -------------------------------
     
     +----------------+---------------------------------------------------------+
-    |Response.value  |   Details                                               |
+    | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | Something was wrong, look at Response.message           | 
+    | False          | Something was wrong, look at Response_.message          | 
     |                | for details                                             |
     +----------------+---------------------------------------------------------+
     | trip_          | The operation was successful. The returned Trip is the  | 
@@ -85,10 +85,11 @@ def add_trip(trip, ** kwargs):
     +----------------+---------------------------------------------------------+
     
     .. _Person: http://www.dycapo.org/Protocol#Person
-    .. _Many: http://www.dycapo.org/Protocol#Trip
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
     .. _Prefs: http://www.dycapo.org/Protocol#Prefs
     .. _Location: http://www.dycapo.org/Protocol#Location
+    .. _Response: http://www.dycapo.org/Protocol#Response
 
     """
 
@@ -137,6 +138,7 @@ def add_trip(trip, ** kwargs):
     trip.mode = mode
     trip.prefs = preferences
 
+
     try:
         trip.save()
     except Exception, e:
@@ -162,20 +164,50 @@ def add_trip(trip, ** kwargs):
                       permission='server.can_xmlrpc')
 def start_trip(trip, ** kwargs):
     """
-    Starts a Trip
+    Description
+    ===========
+    
+    Starts a Trip previously saved.
 
-    TODO
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    - verify user permissions
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is saving in Dycapo
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | trip_            | id                      | int                         |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip that the Driver
-        is starting
 
-    RETURNS
-    An object of type **Response**, containing all the details
-    of the operation and results (if any)
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the ``id`` attribute is missing or not not valid.|
+    |                | The trip could also be already started.                 |
+    |                | Look at Response_.message for further details.          |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation successfully completed. The trip is       |
+    |                | set as started in the system and is available for       |
+    |                | search by passengers                                    |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Response: http://www.dycapo.org/Protocol#Response
+
     """
 
     trip_dict = trip
@@ -187,8 +219,8 @@ def start_trip(trip, ** kwargs):
                                "boolean", False)
         return resp.to_xmlrpc()
 
-    participation = models.Participation.objects.get(trip=trip.id,
-                                                     role='driver')
+
+    participation = models.Participation.objects.get(trip=trip.id, role='driver')
     driver = utils.get_xmlrpc_user(kwargs)
 
     if participation.started:
@@ -217,22 +249,53 @@ def start_trip(trip, ** kwargs):
                       permission='server.can_xmlrpc')
 def check_ride_requests(trip, ** kwargs):
     """
-    This method is for a driver to see if there are ride requests
-    for his Trip
+    Description
+    ===========
+    
+    This method is for a Driver to see if there are any ride requests
+    from potential passengers.
 
-    TODO
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    -verify user permissions
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is saving in Dycapo
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | trip_            | id                      | int                         |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip that the
-    Driver is checking
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the ``id`` attribute is missing or not not valid.|
+    |                | Also, there could be not requests.                      |
+    |                | Look at Response_.message for further details.          |
+    +----------------+---------------------------------------------------------+
+    | Person_ []     | Note that this is an array, not a single object.        |
+    |                | Every Person object supplied contains at least          |
+    |                | the ``username`` attribute                              |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Response: http://www.dycapo.org/Protocol#Response
+    .. _Person: http://www.dycapo.org/Protocol#Person
 
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
     """
 
     trip_dict = trip
@@ -274,23 +337,55 @@ def check_ride_requests(trip, ** kwargs):
                       permission='server.can_xmlrpc')
 def accept_ride_request(trip, person, ** kwargs):
     """
-    This method is for a driver to accept a ride request by a rider.
+    Description
+    ===========
+    
+    This method is for a Driver accept a Passenger request.
 
-    TODO
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    -verify user permissions
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is saving in Dycapo
+        - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
+          representing the passenger that the driver is accepting
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | trip_            | id                      | int                         |
+    +------------------+-------------------------+-----------------------------+
+    | person_          | username                | string                      |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip in which
-        the Driver is accepting a ride.
-    - ``person`` - a **Person** object, representing the Rider that
-        the Driver is accepting
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the ``id`` attributes are missing or not 
+    |                | not valid.                                              |
+    |                | Look at Response_.message for further details.          |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. Dycapo stores the request |
+    |                | as accepted by the Driver.                              |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Response: http://www.dycapo.org/Protocol#Response
+    .. _Person: http://www.dycapo.org/Protocol#Person
 
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
     """
 
     trip_dict = trip

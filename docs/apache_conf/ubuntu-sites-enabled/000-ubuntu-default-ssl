@@ -34,7 +34,7 @@ WSGIScriptAlias / /home/bodom_lx/Projects/dycapo/dycapo.wsgi
     AuthName "Login Required"
     Require valid-user
     AuthBasicProvider wsgi
-    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/apache/auth.wsgi
   </Location>
 
 
@@ -43,7 +43,7 @@ WSGIScriptAlias / /home/bodom_lx/Projects/dycapo/dycapo.wsgi
     AuthName "Login Required"
     Require valid-user
     AuthBasicProvider wsgi
-    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/auth.wsgi
+    WSGIAuthUserScript  /home/bodom_lx/Projects/dycapo/apache/auth.wsgi
   </Location>
 </VirtualHost>
 </IfModule>
