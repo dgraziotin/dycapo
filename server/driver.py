@@ -340,7 +340,7 @@ def accept_ride_request(trip, person, ** kwargs):
     Description
     ===========
     
-    This method is for a Driver accept a Passenger request.
+    This method is for a Driver to accept a Passenger request.
 
     Authentication, Permissions
     ===========================
@@ -351,7 +351,7 @@ def accept_ride_request(trip, person, ** kwargs):
     ==========
     
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
-          representing the Trip that the Driver is saving in Dycapo
+          representing the Trip that the Driver is referring to
         - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
           representing the passenger that the driver is accepting
 
@@ -441,26 +441,56 @@ def accept_ride_request(trip, person, ** kwargs):
                       permission='server.can_xmlrpc')
 def refuse_ride_request(trip, person, ** kwargs):
     """
-    This method is for a driver to refuse a ride request by a rider.
+    Description
+    ===========
+    
+    This method is for a Driver to refuse a Passenger request.
 
-    TODO
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    -verify user permissions
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is referring to.
+        - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
+          representing the passenger that the driver is refusing
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | trip_            | id                      | int                         |
+    +------------------+-------------------------+-----------------------------+
+    | person_          | username                | string                      |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip in which
-        the Driver is refusing a ride.
-    - ``person`` - a **Person** object, representing the Rider that
-        the Driver is refusing
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the ``id`` attributes are missing or not 
+    |                | not valid.                                              |
+    |                | Look at Response_.message for further details.          |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. Dycapo stores the request |
+    |                | as refused by the Driver.                               |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Response: http://www.dycapo.org/Protocol#Response
+    .. _Person: http://www.dycapo.org/Protocol#Person
 
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
-    """
-
-    trip_dict = trip
+    """    trip_dict = trip
     person_dict = person
 
     try:
@@ -511,21 +541,51 @@ def refuse_ride_request(trip, person, ** kwargs):
                       permission='server.can_xmlrpc')
 def finish_trip(trip, ** kwargs):
     """
-    This method is for a driver to close a Trip.
+    Description
+    ===========
+    
+    This method is for a Driver to set a trip as finished.
 
-    TODO
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    -verify user permissions
+    Parameters
+    ==========
+    
+        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
+          representing the Trip that the Driver is closing.
 
-    PARAMETERS
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | trip_            | id                      | int                         |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``trip`` - a **Trip** object, representing the Trip that the driver
-    is closing
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the ``id`` attribute is missing or               | 
+    |                | not valid.                                              |
+    |                | Look at Response_.message for further details.          |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. Dycapo stores the Trip    |
+    |                | as finished.                                            |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Response: http://www.dycapo.org/Protocol#Response
+    .. _Person: http://www.dycapo.org/Protocol#Person
 
-    An object of type **Response**, containing all the details of the
-    operation and results (if any)
     """
 
     
