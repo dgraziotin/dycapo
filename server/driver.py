@@ -478,7 +478,7 @@ def refuse_ride_request(trip, person, ** kwargs):
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | Either the ``id`` attributes are missing or not 
+    | False          | Either the ``id`` attributes are missing or not         |
     |                | not valid.                                              |
     |                | Look at Response_.message for further details.          |
     +----------------+---------------------------------------------------------+
@@ -490,7 +490,8 @@ def refuse_ride_request(trip, person, ** kwargs):
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
 
-    """    trip_dict = trip
+    """    
+    trip_dict = trip
     person_dict = person
 
     try:
