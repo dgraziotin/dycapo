@@ -28,17 +28,65 @@ import django.contrib.auth.models
                       permission='server.can_xmlrpc')
 def update_position(position, ** kwargs):
     """
-    This method is for updating the actual position of a Person.
+    Description
+    ===========
 
-    PARAMETERS
+    Updates the current position of the logged user.
+    
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
 
-    - ``position`` - a **Location** object, representing the current
-        position of a Person.
+    Parameters
+    ==========
+    
+        - ``position`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
+          representing the current position of the passenger.
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | source           | georss_point            | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | street                  | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | town                    | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | postcode                | int                         |
+    +------------------+-------------------------+-----------------------------+
+    |                  | point                   | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | leaves                  | dateTime.iso8601            |
+    +------------------+-------------------------+-----------------------------+
+    
+    - Either ``georss_point`` OR all from set { ``street``, ``town``, ``postcode`` } MUST be specified
+    - ``point`` value MUST be any from the set {orig, dest, wayp, posi}.
+    - See Location_ for more details
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | The supplied attributes are not valid.                  | 
+    |                | Look at Response_.message for details                   |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. The system stores the     |
+    |                | provided position for the user.                         |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Person: http://www.dycapo.org/Protocol#Person
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Mode: http://www.dycapo.org/Protocol#Mode
+    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Location: http://www.dycapo.org/Protocol#Location
+    .. _Response: http://www.dycapo.org/Protocol#Response
 
-    An object of type **Response**, containing all the details of the operation
-        and results (if any)
     """
     dict_position = position
     position = models.Location()
@@ -70,21 +118,54 @@ def update_position(position, ** kwargs):
                       permission='server.can_xmlrpc')
 def get_position(person, **kwargs):
     """
-    This method is for getting the actual position of a Person.
+    Description
+    ===========
 
-    TODO
+    Returns the position of the requested Person.
+    
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
+        * The requesting user must participate in a Trip with the person he/she wants
+        to know the position of.
 
-    - verify user permissions
+    Parameters
+    ==========
+    
+        - ``Location`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
+          representing the current position of the Person.
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | person_          | username                | string                      |
+    +------------------+-------------------------+-----------------------------+
 
-    PARAMETERS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the supplied attributes are not valid or the user|
+    |                | does not have the rights to know Person's position.     |
+    |                | Look at Response_.message for details                   |
+    +----------------+---------------------------------------------------------+
+    | Location_      | The operation was successful. The system returns the    |
+    |                | current position of the user.                           |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Person: http://www.dycapo.org/Protocol#Person
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Mode: http://www.dycapo.org/Protocol#Mode
+    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Location: http://www.dycapo.org/Protocol#Location
+    .. _Response: http://www.dycapo.org/Protocol#Response
 
-    - ``person`` - a **Person** object, representing the Person we would like to
-        know the position.
-
-    RETURNS
-
-    An object of type **Response**, containing all the details of the operation
-        and results (if any)
     """
 
     user = utils.get_xmlrpc_user(kwargs)
@@ -139,17 +220,60 @@ def get_position(person, **kwargs):
                       permission='server.can_register')
 def register(person):
     """
-    This method is for registering to the System
+    Description
+    ===========
 
-    PARAMETERS
+    For registering a user to Dycapo system.
+    
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method, can be used only by user ``register`` with password ``password``
+        * ``can_register`` - active only for user ``register``
+        * All of this is because of Apache's HTTP_BASIC_AUTH implementation
 
-    - ``person`` - a **Person** object, representing the Person we would like to
-        register to the system.
+    Parameters
+    ==========
+    
+        - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
+          representing the person that is registering to the system.
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | person_          | username                | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | password                | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | email                   | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | phone                   | string                      |
+    +------------------+-------------------------+-----------------------------+
+    
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the supplied attributes are not valid or the user|
+    |                | is already registered to the system.                    |
+    |                | Look at Response_.message for details                   |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. The system registers the  |
+    |                | user, that is automatically allowed to perform RPC calls|
+    +----------------+---------------------------------------------------------+
+    
+    .. _Person: http://www.dycapo.org/Protocol#Person
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Mode: http://www.dycapo.org/Protocol#Mode
+    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Location: http://www.dycapo.org/Protocol#Location
+    .. _Response: http://www.dycapo.org/Protocol#Response
 
-    An object of type **Response**, containing all the details of the operation
-        and results (if any)
     """
     person_dict = person
     try:
@@ -189,17 +313,58 @@ def register(person):
                       permission='server.can_xmlrpc')
 def change_password(person, **kwargs):
     """
-    This method is for changing the password of a user
+    Description
+    ===========
 
-    PARAMETERS
+    For changing the password of a Person.
+    
+    Authentication, Permissions
+    ===========================
+        * Authenticated Method
+        * ``can_xmlrpc`` - active by default for all registered users
+        * The requesting user must be the same of the supplied Person.
+        
+    Parameters
+    ==========
+    
+        - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
+          representing the person that is changing the password.
+    
+    Required Parameters Details
+    ---------------------------
+    
+    +------------------+-------------------------+-----------------------------+
+    | Object           | Object's Attribute      | Object's Attribute Type     |
+    +==================+=========================+=============================+
+    | person_          | username                | string                      |
+    +------------------+-------------------------+-----------------------------+
+    |                  | password                | string                      |
+    +------------------+-------------------------+-----------------------------+
 
-    - ``person`` - a **Person** object, representing the Person we would like to
-        register to the system.
+    
 
-    RETURNS
+    Response Possible Return Values
+    -------------------------------
+    
+    +----------------+---------------------------------------------------------+
+    | Response_.value|   Details                                               |
+    +================+=========================================================+
+    | False          | Either the supplied attributes are not valid or the user|
+    |                | is not allowed to change the password (e.g., it is      |
+    |                | trying to change another person's password)             |
+    |                | Look at Response_.message for details                   |
+    +----------------+---------------------------------------------------------+
+    | True           | The operation was successful. The system changes the    |
+    |                | password, that must be used from now on.                |
+    +----------------+---------------------------------------------------------+
+    
+    .. _Person: http://www.dycapo.org/Protocol#Person
+    .. _Trip: http://www.dycapo.org/Protocol#Trip
+    .. _Mode: http://www.dycapo.org/Protocol#Mode
+    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Location: http://www.dycapo.org/Protocol#Location
+    .. _Response: http://www.dycapo.org/Protocol#Response
 
-    An object of type **Response**, containing all the details of the operation
-        and results (if any)
     """
     person_dict = person
     person = utils.get_xmlrpc_user(kwargs)

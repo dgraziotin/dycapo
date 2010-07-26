@@ -49,7 +49,7 @@ def search_trip(source, destination, ** kwargs):
     
         - ``source`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
           representing the current position of the passenger.
-        - ``destination`` - a `Trip <http://www.dycapo.org/Protocol#Location>`_ object,
+        - ``destination`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
           representing the destination that the passenger would like to reach
     
     Required Parameters Details
@@ -284,7 +284,7 @@ def check_requested_ride(trip, ** kwargs):
     |                | parameters are not valid.                               |
     |                | Look at Response_.message for details                   |
     +----------------+---------------------------------------------------------+
-    | Person         | The operation was successful. The Driver accepted the   |
+    | Person_        | The operation was successful. The Driver accepted the   |
     |                | request and the system logs the relevant information.   |
     |                | Look at Person_.username and Person_.position           |
     +----------------+---------------------------------------------------------+
