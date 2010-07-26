@@ -35,5 +35,6 @@ urlpatterns = patterns('',
     (r'^RPC2$', 'dycapo.rpc4django.views.serve_rpc_request'),
     (r'^media_admin/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': '/home/bodom_lx/Projects/dycapo/media_admin/', 'show_indexes': True}),
-
+    (r'^media/(.*)', 'django.views.static.serve', {'document_root': '/home/bodom_lx/Projects/dycapo/media/'}),
+    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'home.html'}),
 )

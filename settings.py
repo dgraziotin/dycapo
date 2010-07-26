@@ -110,6 +110,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+
+
 ROOT_URLCONF = 'dycapo.urls'
 
 GOOGLE_MAPS_API_KEY = 'ABQIAAAAEA5TqsSgku8oY63GIt0kvxTpH3CbXHjuCVmaTc5MkkU4wO1RRhQOBSk1yb3j1mHbRPaRhtbSt_APcA'
@@ -120,6 +122,12 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    '/Users/bodom_lx/Projects/dycapo/templates',
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',

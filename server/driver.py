@@ -385,7 +385,6 @@ def accept_ride_request(trip, person, ** kwargs):
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
-
     """
 
     trip_dict = trip
