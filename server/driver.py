@@ -1,7 +1,4 @@
 """
-This module holds all the XML-RPC methods that a Driver needs.
-"""
-"""
 This file is part of Dycapo.
     Copyright (C) 2009, 2010 FBK Foundation, (http://www.fbk.eu)
     Authors: SoNet Group (see AUTHORS)
@@ -18,6 +15,9 @@ This file is part of Dycapo.
     You should have received a copy of the GNU Affero General Public License
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+"""
+This module holds all the XML-RPC methods that a Driver needs.
 """
 import datetime
 import models
@@ -374,7 +374,7 @@ def acceptRide(trip, person, ** kwargs):
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | Either the ``id`` attributes are missing or not 
+    | False          | Either the ``id`` attributes are missing or not         |
     |                | not valid.                                              |
     |                | Look at Response_.message for further details.          |
     +----------------+---------------------------------------------------------+

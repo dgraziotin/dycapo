@@ -1,23 +1,12 @@
 RELEASE NOTES
 ***************
 
-2010-07-26  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
+2010-08-04  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
 Dycapo v0.6.0 is the sixth prototype version on which we are building our APIs.
 It is a bugfix release that also includes the first complete draft of the APIs.
 
-CHANGES SINCE v0.5.0
-***************
-
-docs/
- * Updated some Apache configurations
- 
-
-2010-06-10  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
-
-Dycapo v0.5.0 is the fifth prototype version on which we are building our APIs.
-
-Dycapo v0.5.0 incorporates and shows:
+Dycapo v0.6.0 incorporates and shows:
 * Adoption of Dycapo Protocol [http://dycapo.org/Protocol]
 * The introduction of API [http://dycapo.org/Server/API]
 * Integration of Dycapo models with Django models
@@ -38,52 +27,43 @@ Dycapo v0.5.0 incorporates and shows:
 * Let the driver finish a Trip
 * A full set of tests
 
-CHANGES SINCE v0.4.0
+
+CHANGES SINCE v0.5.0
 ***************
 
-General:
-* Dycapo now requires Django 1.2.x in order to function properly, as I am using
-some of the new query features of Django
-* Every xml-rpc function has been optimized in terms of query and Python code
-(thanks to Davide "vad" Setti for helping in this)
-* Added lots of safety and privacy checks for all methods. Lots of.
-* Refactoring of all code, using also a dedicated branch. Many refactoring
-  and optimization done.
-* Added Django 1.2.x compatibility for all models' to_xmlrpc() methods
-* Added some indexex on attributes
-* Added a new permission for user to be used for registrations.
+IMPORTANT: ALL xml-rpc mehthod names have changed to more suitable names. See the APIs for more information.
 
-server/response_codes.py
-* Deleted ERROR, now using just POSITIVE and NEGATIVE as responses, for
-  simplicity
-* Added many other response messages
+accept_ride_request 	=>	acceptRide
+add_trip 				=>	insertTrip
+cancel_requested_ride	=>	cancelRide
+change_password			=>	changePassword
+check_requested_ride	=>	statusRide
+check_ride_requests		=>	getRides
+finish_ride				=>	finishRide
+finish_trip				=>	finishTrip
+get_position			=>	getPosition
+refuse_ride_request		=>	refuseRide
+register				=>	register
+request_ride			=>	requestRide
+search_trip				=>	searchRide
+start_ride				=>	startRide
+start_trip				=>	startTrip
+update_position			=>	setPosition
 
-server/models/participation.py
-* Added attributes holding information on the deletion of a ride request
-* Added attributes holding information on the refusal of a ride request
+API will contain some suggestions on how will the methods be renamed when Dycapo Protocol will switch 
+to a RESTful protocol
 
-server/matching.py
-* The matching algorithm now uses a single function with a single for loop
-instead of three for loops.
+server/models/location.py
+ * fixed some bugs passing from Python 2.5 to Python 2.6
 
-server/driver.py
-* add_trip() is now deprecated
-* Added add_trip_exp(Trip trip) that should become add_trip() replacement
-* Tests make use of this new function
-* Added refuse_ride_request(trip, person), for refusing a passenger ride request
-* Added relative tests
+rider.py
+ * renamed to passenger.py
+docs/
+ * Updated some Apache configurations
 
-server/common.py
-* get_position(person) now performs privacy checks (ie: to know the position
-  of a person, the requesting person must be in an active participation with
-  him/she)
+templates/
+ * Added a tiny styled webpage that welcomes user to Dycapo Server
 
-tests/test_registration.py
-* New test suite, tests the registration methods
-
-tests/test_password_change.py
-* New test suite, tests the possibility to change password method
-
-tests/test_multiple_matching.py
-* Added another passenger to check the new introduced methods
+tests/*
+ * Changed method names to new API names
 
