@@ -1,4 +1,7 @@
 """
+This module holds all the XML-RPC methods that a Driver needs.
+"""
+"""
 This file is part of Dycapo.
     Copyright (C) 2009, 2010 FBK Foundation, (http://www.fbk.eu)
     Authors: SoNet Group (see AUTHORS)
@@ -16,19 +19,16 @@ This file is part of Dycapo.
     along with Dycapo.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-"""
-This module holds all the XML-RPC methods that a Driver needs.
-"""
 import datetime
 import models
 import response_codes
 import rpc4django
 import utils
 
-@rpc4django.rpcmethod(name='dycapo.add_trip',
+@rpc4django.rpcmethod(name='dycapo.insertTrip',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def add_trip(trip, ** kwargs):
+def insertTrip(trip, ** kwargs):
     """
     Description
     ===========
@@ -60,7 +60,7 @@ def add_trip(trip, ** kwargs):
     +------------------+-------------------------+-----------------------------+
     |                  | expires                 | dateTime.iso8601            |
     +------------------+-------------------------+-----------------------------+
-    |                  | content                 | struct (Many_)              |
+    |                  | content                 | struct (Many)              |
     +------------------+-------------------------+-----------------------------+
     | trip_.content    | mode                    | struct (Mode_)              |
     +------------------+-------------------------+-----------------------------+
@@ -159,10 +159,10 @@ def add_trip(trip, ** kwargs):
 
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.start_trip',
+@rpc4django.rpcmethod(name='dycapo.startTrip',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def start_trip(trip, ** kwargs):
+def startTrip(trip, ** kwargs):
     """
     Description
     ===========
@@ -244,10 +244,10 @@ def start_trip(trip, ** kwargs):
     return resp.to_xmlrpc()
 
 
-@rpc4django.rpcmethod(name='dycapo.check_ride_requests',
+@rpc4django.rpcmethod(name='dycapo.getRides',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def check_ride_requests(trip, ** kwargs):
+def getRides(trip, ** kwargs):
     """
     Description
     ===========
@@ -332,10 +332,10 @@ def check_ride_requests(trip, ** kwargs):
         return resp.to_xmlrpc()
 
 
-@rpc4django.rpcmethod(name='dycapo.accept_ride_request',
+@rpc4django.rpcmethod(name='dycapo.acceptRide',
                       signature=['Response', 'Trip', 'Person'],
                       permission='server.can_xmlrpc')
-def accept_ride_request(trip, person, ** kwargs):
+def acceptRide(trip, person, ** kwargs):
     """
     Description
     ===========
@@ -435,10 +435,10 @@ def accept_ride_request(trip, person, ** kwargs):
     return resp.to_xmlrpc()
 
 
-@rpc4django.rpcmethod(name='dycapo.refuse_ride_request',
+@rpc4django.rpcmethod(name='dycapo.refuseRide',
                       signature=['Response', 'Trip', 'Person'],
                       permission='server.can_xmlrpc')
-def refuse_ride_request(trip, person, ** kwargs):
+def refuseRide(trip, person, ** kwargs):
     """
     Description
     ===========
@@ -536,10 +536,10 @@ def refuse_ride_request(trip, person, ** kwargs):
 
 
 
-@rpc4django.rpcmethod(name='dycapo.finish_trip',
+@rpc4django.rpcmethod(name='dycapo.finishTrip',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def finish_trip(trip, ** kwargs):
+def finishTrip(trip, ** kwargs):
     """
     Description
     ===========

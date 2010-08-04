@@ -29,10 +29,10 @@ import utils
 import django.db
 
 
-@rpc4django.rpcmethod(name='dycapo.search_trip',
+@rpc4django.rpcmethod(name='dycapo.searchRide',
                       signature=['Response', 'Location', 'Location'],
                       permission='server.can_xmlrpc')
-def search_trip(source, destination, ** kwargs):
+def searchRide(source, destination, ** kwargs):
     """
     Description
     ===========
@@ -149,10 +149,10 @@ def search_trip(source, destination, ** kwargs):
                            response_codes.RIDES_FOUND,
                            "Trip", [trip.to_xmlrpc() for trip in trips]).to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.request_ride',
+@rpc4django.rpcmethod(name='dycapo.requestRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def request_ride(trip, ** kwargs):
+def requestRide(trip, ** kwargs):
     """
     Description
     ===========
@@ -243,10 +243,10 @@ def request_ride(trip, ** kwargs):
                                "boolean", False)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.check_requested_ride',
+@rpc4django.rpcmethod(name='dycapo.statusRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def check_requested_ride(trip, ** kwargs):
+def statusRide(trip, ** kwargs):
     """
     Description
     ===========
@@ -334,10 +334,10 @@ def check_requested_ride(trip, ** kwargs):
                                "boolean", False)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.cancel_requested_ride',
+@rpc4django.rpcmethod(name='dycapo.cancelRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def cancel_requested_ride(trip, ** kwargs):
+def cancelRide(trip, ** kwargs):
     """
     Description
     ===========
@@ -423,10 +423,10 @@ def cancel_requested_ride(trip, ** kwargs):
                                "boolean", False)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.start_ride',
+@rpc4django.rpcmethod(name='dycapo.startRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def start_ride(trip, **kwargs):
+def startRide(trip, **kwargs):
     """
     Description
     ===========
@@ -516,10 +516,10 @@ def start_ride(trip, **kwargs):
                                "boolean", True)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.finish_ride',
+@rpc4django.rpcmethod(name='dycapo.finishRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def finish_ride(trip, **kwargs):
+def finishRide(trip, **kwargs):
     """
     Description
     ===========

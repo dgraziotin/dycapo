@@ -38,7 +38,7 @@ class TestPasswordChange():
         person = {
             "password" : "password1",
         }
-        response = self.rider.client.dycapo.change_password(person)
+        response = self.rider.client.dycapo.changePassword(person)
         print str(response)
         assert response['code'] == response_codes.POSITIVE
     def test_password_change_exception(self):
@@ -52,13 +52,13 @@ class TestPasswordChange():
         person = {
             "password" : "password1",
         }
-        response = self.rider.client.dycapo.change_password(person)
+        response = self.rider.client.dycapo.changePassword(person)
 
     def test_password_change_successful_2(self):
         person = {
             "password" : "password",
         }
         self.rider.change_password("password1")
-        response = self.rider.client.dycapo.change_password(person)
+        response = self.rider.client.dycapo.changePassword(person)
         assert response['code'] == response_codes.POSITIVE
         self.rider.change_password("password")

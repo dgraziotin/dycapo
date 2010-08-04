@@ -1,6 +1,18 @@
 RELEASE NOTES
 ***************
 
+2010-07-26  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
+
+Dycapo v0.6.0 is the sixth prototype version on which we are building our APIs.
+It is a bugfix release that also includes the first complete draft of the APIs.
+
+CHANGES SINCE v0.5.0
+***************
+
+docs/
+ * Updated some Apache configurations
+ 
+
 2010-06-10  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
 Dycapo v0.5.0 is the fifth prototype version on which we are building our APIs.

@@ -23,10 +23,10 @@ import rpc4django
 import utils
 import django.contrib.auth.models
 
-@rpc4django.rpcmethod(name='dycapo.update_position',
+@rpc4django.rpcmethod(name='dycapo.setPosition',
                       signature=['Response', 'Location'],
                       permission='server.can_xmlrpc')
-def update_position(position, ** kwargs):
+def setPosition(position, ** kwargs):
     """
     Description
     ===========
@@ -113,10 +113,10 @@ def update_position(position, ** kwargs):
                            response_codes.POSITION_UPDATED, "boolean", True)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.get_position',
+@rpc4django.rpcmethod(name='dycapo.getPosition',
                       signature=['Response', 'Person'],
                       permission='server.can_xmlrpc')
-def get_position(person, **kwargs):
+def getPosition(person, **kwargs):
     """
     Description
     ===========
@@ -308,10 +308,10 @@ def register(person):
                                False)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.change_password',
+@rpc4django.rpcmethod(name='dycapo.changePassword',
                       signature=['Response', 'Person'],
                       permission='server.can_xmlrpc')
-def change_password(person, **kwargs):
+def changePassword(person, **kwargs):
     """
     Description
     ===========
