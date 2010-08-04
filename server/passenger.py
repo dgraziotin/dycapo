@@ -110,6 +110,9 @@ def searchRide(source, destination, ** kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * missing
     """
 
     dict_destination = destination
@@ -201,6 +204,11 @@ def requestRide(trip, ** kwargs):
     .. _Prefs: http://www.dycapo.org/Protocol#Prefs
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
+    
+    RESTful proposals
+    ===========================
+    * POST https://domain.ext/trips/<id>/participations
+    * POST https://domain.ext/trips/<id>/rides
 
     """
 
@@ -296,6 +304,10 @@ def statusRide(trip, ** kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * GET https://domain.ext/trips/<id>/participations/<username>
+    * GET https://domain.ext/trips/<id>/rides/<username>
     """
     trip_dict = trip
     rider = utils.get_xmlrpc_user(kwargs)
@@ -385,6 +397,11 @@ def cancelRide(trip, ** kwargs):
     .. _Prefs: http://www.dycapo.org/Protocol#Prefs
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
+    
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>/participations/<username>
+    * PUT https://domain.ext/trips/<id>/rides/<username>
 
     """
 
@@ -477,6 +494,11 @@ def startRide(trip, **kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>/participations/<username>
+    * PUT https://domain.ext/trips/<id>/rides/<username>
+        
     """
 
     trip_dict = trip
@@ -569,6 +591,10 @@ def finishRide(trip, **kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>/participations/<username>
+    * PUT https://domain.ext/trips/<id>/rides/<username>
     """
 
     trip_dict = trip

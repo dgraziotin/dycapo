@@ -86,6 +86,10 @@ def setPosition(position, ** kwargs):
     .. _Prefs: http://www.dycapo.org/Protocol#Prefs
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
+    
+    RESTful proposals
+    ===========================
+    * POST https://domain.ext/persons/<username>/position
 
     """
     dict_position = position
@@ -166,6 +170,9 @@ def getPosition(person, **kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * GET https://domain.ext/persons/<username>/position
     """
 
     user = utils.get_xmlrpc_user(kwargs)
@@ -274,6 +281,10 @@ def register(person):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * POST https://domain.ext/persons
+        
     """
     person_dict = person
     try:
@@ -365,6 +376,9 @@ def changePassword(person, **kwargs):
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/persons/<username>
     """
     person_dict = person
     person = utils.get_xmlrpc_user(kwargs)

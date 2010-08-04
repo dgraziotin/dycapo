@@ -90,6 +90,10 @@ def insertTrip(trip, ** kwargs):
     .. _Prefs: http://www.dycapo.org/Protocol#Prefs
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
+    
+    RESTful proposals
+    ===========================
+    * POST https://domain.ext/trips/
 
     """
 
@@ -207,6 +211,10 @@ def startTrip(trip, ** kwargs):
     +----------------+---------------------------------------------------------+
     
     .. _Response: http://www.dycapo.org/Protocol#Response
+    
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>
 
     """
 
@@ -296,6 +304,10 @@ def getRides(trip, ** kwargs):
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
 
+    RESTful proposals
+    ===========================
+    * GET https://domain.ext/trips/rides
+    * GET https://domain.ext/trips/participations
     """
 
     trip_dict = trip
@@ -385,6 +397,11 @@ def acceptRide(trip, person, ** kwargs):
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
+    
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>/participations/<username>
+    * PUT https://domain.ext/trips/<id>/rides/<username>
     """
 
     trip_dict = trip
@@ -489,6 +506,10 @@ def refuseRide(trip, person, ** kwargs):
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
 
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>/participations/<username>
+    * PUT https://domain.ext/trips/<id>/rides/<username>
     """    
     trip_dict = trip
     person_dict = person
@@ -586,6 +607,9 @@ def finishTrip(trip, ** kwargs):
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
 
+    RESTful proposals
+    ===========================
+    * PUT https://domain.ext/trips/<id>
     """
 
     
