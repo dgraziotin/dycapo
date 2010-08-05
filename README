@@ -1,28 +1,23 @@
 INTRODUCTION
 ***************
 
-Dycapo (a.k.a. DyCaPo - Dynamic CarPooling) is a free software system 
-developed in the SoNET <http://sonet.fbk.eu> unit of the
-Fondazione Bruno Kessler <http://fbk.eu>
+Dycapo Server [a.k.a. DyCaPo - DYnamic CArPOoling] is a free software system 
+developed in the SoNET unit of the 
+Fondazione Bruno Kessler <http://sonet.fbk.eu>. 
+It is currently a solo project started by Daniel Graziotin 
+for his BSC thesis at the Free University of Bolzano/Bozen <http://www.unibz.it>.
 
-It is an open client (mobile) / server system that will improve travel
-experiences of people in a city. The system will let people to define a
-destination on their mobile phone. 
-Dycapo will suggest and arrange trips by either using the
-Public Transport Service or Carpooling volunteers.
+Dycapo Server is a software built using evolutionary prototyping to demonstrate 
+and support our contributions to OpenTrip <http://www.opentrip.info> 
+and therefore the definition  of a standard protocol for (Dynamic) Ridesharing. 
 
-That is, Dycapo will implement full Dynamic Carpooling functionalities 
-as well as static approaches.
+It will first provide full functionalities for dynamic ridesharing using an XML-RPC 
+based protocol. Then we will fully support and extend OpenTrip Dynamic with a 
+RESTful webservice.
 
-The system will be first thought, implemented and tested for the
-city of Trento, Italy. 
-As the implementation continues and succedes,
-the whole national territory could be served.
+See http://dycapo.org for more information about the project.
 
-It is currently a solo project started by Daniel Graziotin for his BSC thesis 
-at the Free University of Bolzano/Bozen.
-
-More information on http://dycapo.org/Server
+More information about this software: http://dycapo.org/Server
 Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
 
 STATUS
@@ -36,7 +31,7 @@ PROTOCOL
 ***************
 Dycapo defines a new Protocol for Dynamic Carpooling, heavily inspired on
 <http://opentrip.info/wiki/Home> Protocol.
-The Protocol, called Dycapo Protocol, is based on XML-RPC calls.
+The Protocol, called Dycapo Protocol, is currently based on XML-RPC calls.
 See http://dycapo.org/Protocol for more information
 
 API
@@ -71,5 +66,3 @@ developing Dycapo and has always been willing to give hints and add functionalit
 by also following my deadlines.
 Thank you Dan Kirshner for your dynamicridesharing.org project and all the force
 you put in something in which you believe!
-- Add pylint
-- Add CloneDigger
