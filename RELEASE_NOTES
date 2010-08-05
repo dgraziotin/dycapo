@@ -1,7 +1,7 @@
 RELEASE NOTES
 ***************
 
-2010-08-04  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
+2010-08-05  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
 Dycapo v0.6.0 is the sixth prototype version on which we are building our APIs.
 It is a bugfix release that also includes the first complete draft of the APIs.
@@ -31,24 +31,27 @@ Dycapo v0.6.0 incorporates and shows:
 CHANGES SINCE v0.5.0
 ***************
 
+IMPORTANT: Dycapo Server has just switched license. We moved from Gnu Affero Public License v3
+to Apache License Version 2.0
+
 IMPORTANT: ALL xml-rpc mehthod names have changed to more suitable names. See the APIs for more information.
 
 accept_ride_request 	=>	acceptRide
-add_trip 				=>	insertTrip
+add_trip 		=>	insertTrip
 cancel_requested_ride	=>	cancelRide
-change_password			=>	changePassword
+change_password		=>	changePassword
 check_requested_ride	=>	statusRide
-check_ride_requests		=>	getRides
-finish_ride				=>	finishRide
-finish_trip				=>	finishTrip
-get_position			=>	getPosition
-refuse_ride_request		=>	refuseRide
-register				=>	register
-request_ride			=>	requestRide
-search_trip				=>	searchRide
-start_ride				=>	startRide
-start_trip				=>	startTrip
-update_position			=>	setPosition
+check_ride_requests	=>	getRides
+finish_ride		=>	finishRide
+finish_trip		=>	finishTrip
+get_position		=>	getPosition
+refuse_ride_request	=>	refuseRide
+register		=>	register
+request_ride		=>	requestRide
+search_trip		=>	searchRide
+start_ride		=>	startRide
+start_trip		=>	startTrip
+update_position		=>	setPosition
 
 API will contain some suggestions on how will the methods be renamed when Dycapo Protocol will switch 
 to a RESTful protocol

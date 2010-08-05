@@ -1,0 +1,15 @@
+ Dycapo Server
+   Copyright 2010 Daniel Graziotin <daniel.graziotin@acm.org>
+
+   Geolocalization and Geocoding support is provided by Geopy library
+   package, which is open source software, written by some authors,
+   listed here: http://code.google.com/p/geopy/people/list
+   The original software is available from
+   http://code.google.com/p/geopy/
+   
+   XML-RPC support is provided by RPC4Django library
+   package, which is open source software, written by David Fischer.
+   The original software is available from
+   http://www.davidfischer.name/rpc4django/
+   
+   HTML templates and CSS are provided by http://www.templatemo.com
