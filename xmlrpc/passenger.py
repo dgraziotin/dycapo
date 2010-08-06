@@ -19,8 +19,8 @@ This module holds all the XML-RPC methods that a Rider needs.
 """
 import datetime
 import geopy
-import matching
-import models
+import server.matching as matching
+import server.models as models
 import response_codes
 import rpc4django
 import utils

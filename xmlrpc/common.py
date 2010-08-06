@@ -17,7 +17,7 @@
 """ This module holds all the XML-RPC methods that a driver
 and a rider have in common """
 
-import models
+import server.models as models
 import response_codes
 import rpc4django
 import utils

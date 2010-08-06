@@ -133,7 +133,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'dycapo.piston',
     'dycapo.geopy',
     'dycapo.rpc4django',
     'dycapo.server',
+    'dycapo.xmlrpc',
 )

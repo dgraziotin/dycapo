@@ -17,7 +17,7 @@
 This module holds all the XML-RPC methods that a Driver needs.
 """
 import datetime
-import models
+import server.models as models
 import response_codes
 import rpc4django
 import utils
