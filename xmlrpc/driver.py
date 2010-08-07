@@ -17,7 +17,8 @@
 This module holds all the XML-RPC methods that a Driver needs.
 """
 import datetime
-import server.models as models
+import server.models
+import server.driver
 import response_codes
 import rpc4django
 import utils
@@ -99,66 +100,28 @@ def insertTrip(trip, ** kwargs):
     dict_prefs = utils.clean_ids(trip["content"]["prefs"])
     array_locations = trip["content"]["locations"]
 
-    driver = utils.get_xmlrpc_user(kwargs)
+    author = utils.get_xmlrpc_user(kwargs)
 
-    source = models.Location()
+    source = server.models.Location()
     dict_source = utils.get_location_from_array(array_locations,"orig")
     source = utils.populate_object_from_dictionary(source, dict_source)
 
 
-    destination = models.Location()
+    destination = server.models.Location()
     dict_destination = utils.get_location_from_array(array_locations,"dest")
     destination = utils.populate_object_from_dictionary(destination, dict_destination)
 
-    mode = models.Mode()
+    mode = server.models.Mode()
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
-    vacancy = dict_mode['vacancy']
-    preferences = models.Prefs()
+    mode.vacancy = dict_mode['vacancy']
+    
+    preferences = server.models.Prefs()
     preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
-
-    mode, created = models.Mode.objects.get_or_create(person=driver,
-                                                 make=mode.make,
-                                                 model=mode.model,
-                                                 capacity=mode.capacity,
-                                                 kind=mode.kind)
-    mode.vacancy = vacancy
-
-    try:
-        source.save()
-        destination.save()
-        mode.save()
-        preferences.save()
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
-                               False)
-        return resp.to_xmlrpc()
-
-    trip = models.Trip()
+    
+    trip = server.models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
-    trip.author = driver
-    trip.mode = mode
-    trip.prefs = preferences
-
-
-    try:
-        trip.save()
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e), "boolean",
-                               False)
-        return resp.to_xmlrpc()
-
-    trip.locations.add(source)
-    trip.locations.add(destination)
-
-    participation = models.Participation(person=driver, trip=trip,
-                                         role='driver')
-    participation.save()
-
-    resp = models.Response(response_codes.POSITIVE,
-                           response_codes.TRIP_INSERTED, "Trip",
-                           trip.to_xmlrpc())
-
-    return resp.to_xmlrpc()
+    
+    return server.driver.insertTrip(trip, author, source, destination, mode, preferences).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.startTrip',
                       signature=['Response', 'Trip'],
@@ -216,38 +179,16 @@ def startTrip(trip, ** kwargs):
     """
 
     trip_dict = trip
+    driver = utils.get_xmlrpc_user(kwargs)
     try:
-        trip = models.Trip.objects.only("id","active").get(id=trip_dict['id'])
-    except (KeyError, models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'])
+    except (KeyError, server.models.Trip.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-
-
-    participation = models.Participation.objects.get(trip=trip.id, role='driver')
-    driver = utils.get_xmlrpc_user(kwargs)
-
-    if participation.started:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_ALREADY_STARTED,
-                               "boolean", False)
-        return resp.to_xmlrpc()
-
-    participation.started = True
-    participation.started_timestamp = datetime.datetime.now()
-    try:
-        participation.started_position_id = driver.position_id
-    except models.Location.DoesNotExist:
-        participation.started_position = None
-    participation.save()
-    trip.active = True
-    trip.save()
-
-    resp = models.Response(response_codes.POSITIVE,
-                           response_codes.TRIP_STARTED, "boolean", True)
-    return resp.to_xmlrpc()
-
+    
+    return server.driver.startTrip(trip, driver).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.getRides',
                       signature=['Response', 'Trip'],
@@ -310,36 +251,15 @@ def getRides(trip, ** kwargs):
     trip_dict = trip
 
     try:
-        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
-    except (KeyError,models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+    except (KeyError,server.models.Trip.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "Trip", trip_dict)
         return resp.to_xmlrpc()
 
     driver = utils.get_xmlrpc_user(kwargs)
-
-    participations_for_trip = (models.Participation.objects.filter(trip=trip.id)
-                               .exclude(person=driver)
-                               .filter(started=False)
-                               .filter(finished=False)
-                               .filter(requested=True)
-                               .filter(requested_deleted=False)
-                               ).only("person")
-
-    if not len(participations_for_trip):
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.RIDE_REQUESTS_NOT_FOUND,
-                               "boolean", False)
-        return resp.to_xmlrpc()
-    else:
-        participations = [participation.person.to_xmlrpc()
-                          for participation in participations_for_trip]
-        resp = models.Response(response_codes.POSITIVE,
-                               response_codes.RIDE_REQUESTS_FOUND,
-                               "Person[]", participations)
-        return resp.to_xmlrpc()
-
+    return server.driver.getRides(trip, driver).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.acceptRide',
                       signature=['Response', 'Trip', 'Person'],
@@ -403,50 +323,26 @@ def acceptRide(trip, person, ** kwargs):
 
     trip_dict = trip
     person_dict = person
+    driver = utils.get_xmlrpc_user(kwargs)
 
     try:
-        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
-    except (KeyError, models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+    except (KeyError, server.models.Trip.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
 
     try:
-        rider = models.Person.objects.only("id","position").get(
+        passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
-    except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+    except (KeyError, server.models.Person.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
-
-    try:
-        rider_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=rider.id)
-    except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND,
-                               "boolean", False)
-        return resp.to_xmlrpc()
-    if rider_participation.requested and not rider_participation.accepted:
-        rider_participation.accepted = True
-        rider_participation.accepted_timestamp = datetime.datetime.now()
-        try:
-            rider_participation.accepted_position_id = rider.position_id
-        except models.Location.DoesNotExist:
-            rider_participation.accepted_position = None
-
-        rider_participation.save()
-        resp = models.Response(response_codes.POSITIVE,
-                               response_codes.RIDE_REQUEST_ACCEPTED,
-                               "boolean", True)
-        return resp.to_xmlrpc()
-
-    resp = models.Response(response_codes.NEGATIVE,
-                           response_codes.RIDE_REQUEST_REFUSED,
-                           "boolean", False)
-    return resp.to_xmlrpc()
+    
+    return server.driver.acceptRide(trip, driver, passenger)
 
 
 @rpc4django.rpcmethod(name='dycapo.refuseRide',
@@ -512,41 +408,41 @@ def refuseRide(trip, person, ** kwargs):
     person_dict = person
 
     try:
-        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
-    except (KeyError, models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+    except (KeyError, server.models.Trip.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
 
     try:
-        rider = models.Person.objects.only("id","position").get(
+        passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
-    except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+    except (KeyError, server.models.Person.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
 
     try:
-        rider_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=rider.id)
-    except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NEGATIVE,
+        passenger_participation = server.models.Participation.objects.get(trip=trip.id,
+                                                               person=passenger.id)
+    except server.models.Participation.DoesNotExist:
+        resp = server.models.Response(response_codes.NEGATIVE,
                            response_codes.PERSON_NOT_FOUND,
                            "boolean", False)
         return resp.to_xmlrpc()
 
 
-    rider_participation.refused = True
-    rider_participation.refused_timestamp = datetime.datetime.now()
+    passenger_participation.refused = True
+    passenger_participation.refused_timestamp = datetime.datetime.now()
     try:
-        rider_participation.refused_position_id = rider.position_id
-    except models.Location.DoesNotExist:
-        rider_participation.accepted_position = None
+        passenger_participation.refused_position_id = passenger.position_id
+    except server.models.Location.DoesNotExist:
+        passenger_participation.accepted_position = None
 
-    rider_participation.save()
-    resp = models.Response(response_codes.POSITIVE,
+    passenger_participation.save()
+    resp = server.models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUEST_REFUSED,
                                "boolean", True)
     return resp.to_xmlrpc()
@@ -612,9 +508,9 @@ def finishTrip(trip, ** kwargs):
     
     trip_dict = trip
     try:
-        trip = models.Trip.objects.get(id=trip_dict['id'])
-    except (KeyError, models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        trip = server.models.Trip.objects.get(id=trip_dict['id'])
+    except (KeyError, server.models.Trip.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                            response_codes.TRIP_NOT_FOUND,
                            "boolean", False)
         return resp.to_xmlrpc()
@@ -628,7 +524,7 @@ def finishTrip(trip, ** kwargs):
     trip.active = False
     trip.save()
 
-    resp = models.Response(response_codes.POSITIVE,
+    resp = server.models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_DELETED,
                            "boolean", True)
     return resp.to_xmlrpc()

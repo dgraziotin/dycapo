@@ -21,7 +21,7 @@ This module holds some utility functions.
 import time
 
 import datetime
-import server.models as models
+import server.models
 
 def now():
     """
@@ -91,9 +91,9 @@ def get_xmlrpc_user(kwargs):
     Returns the Person object that is performing an XML-RPC call
     """
     try:
-        return models.Person.objects.get(
+        return server.models.Person.objects.get(
                                          username=kwargs['request'].META['REMOTE_USER']
                                          )
-    except (models.Person.DoesNotExist, KeyError):
+    except (server.models.Person.DoesNotExist, KeyError):
         return None
 

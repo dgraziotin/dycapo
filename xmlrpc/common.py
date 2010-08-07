@@ -17,7 +17,8 @@
 """ This module holds all the XML-RPC methods that a driver
 and a rider have in common """
 
-import server.models as models
+import server.models
+import server.common
 import response_codes
 import rpc4django
 import utils
@@ -93,29 +94,11 @@ def setPosition(position, ** kwargs):
 
     """
     dict_position = position
-    position = models.Location()
+    position = server.models.Location()
     position = utils.populate_object_from_dictionary(position, dict_position)
     user = utils.get_xmlrpc_user(kwargs)
-
-    try:
-        position.save()
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e),
-                               "boolean", False)
-        return resp.to_xmlrpc()
-
-    user.position_id = position.id
-    user.locations.add(position)
-
-    if user.is_participating():
-        participation = user.get_active_participation()
-        participation.locations.add(position)
-
-    user.save()
-
-    resp = models.Response(response_codes.POSITIVE,
-                           response_codes.POSITION_UPDATED, "boolean", True)
-    return resp.to_xmlrpc()
+    
+    return server.common.setPosition(position, user).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.getPosition',
                       signature=['Response', 'Person'],
@@ -176,51 +159,14 @@ def getPosition(person, **kwargs):
     """
 
     user = utils.get_xmlrpc_user(kwargs)
-
     try:
-        person = models.Person.objects.get(username=person['username'])
-
-        if person.id == user.id:
-            resp = models.Response(response_codes.POSITIVE,
-                               response_codes.POSITION_FOUND, 'Location',
-                               person.position.to_xmlrpc())
-            return resp.to_xmlrpc()
-
-        person_participation = person.get_requested_participation()
-        user_participation = user.get_active_participation()
+        person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, models.Person.DoesNotExist):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
-
-    if not person_participation:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND,
-                               'boolean', False)
-        return resp.to_xmlrpc()
-
-    if person_participation.trip_id != user_participation.trip_id:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND,
-                               'boolean', False)
-        return resp.to_xmlrpc()
-    else:
-        if person_participation.requested_deleted:
-            resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_DELETED_REQUESTED_RIDE,
-                               'boolean', False)
-            return resp.to_xmlrpc()
-
-    if not person.position:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.LOCATION_NOT_FOUND,
-                               'boolean', False)
-        return resp.to_xmlrpc()
-    else:
-        resp = models.Response(response_codes.POSITIVE,
-                               response_codes.POSITION_FOUND, 'Location',
-                               person.position.to_xmlrpc())
-        return resp.to_xmlrpc()
+    
+    return server.common.getPosition(user,person).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.register',
                       signature=['Response', 'Person'],
@@ -288,36 +234,17 @@ def register(person):
     """
     person_dict = person
     try:
-        person = models.Person.objects.get(username=person_dict['username'])
-    except models.Person.DoesNotExist:
+        person = server.models.Person.objects.get(username=person_dict['username'])
+    except server.models.Person.DoesNotExist:
         person = models.Person(**person)
         person.set_password(person.password)
-        try:
-            person.save()
-            person.user_permissions.add(
-                django.contrib.auth.models.Permission.objects.get(
-                    codename='can_xmlrpc'))
-            resp = models.Response(response_codes.POSITIVE,
-                               response_codes.PERSON_REGISTERED, 'boolean',
-                               True)
-        except IntegrityError, e:
-            resp = models.Response(response_codes.NEGATIVE,
-                               str(e), 'boolean',
-                               False)
-        except Exception, e:
-            resp = models.Response(response_codes.NEGATIVE,
-                               str(e), 'boolean',
-                               False)
-        return resp.to_xmlrpc()
-    except KeyError:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
-                               False)
-
+        return server.common.register(person).to_xmlrpc()
+    
     resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)
-    return resp.to_xmlrpc()
+    return resp
+
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',
                       signature=['Response', 'Person'],
@@ -381,19 +308,11 @@ def changePassword(person, **kwargs):
     * PUT https://domain.ext/persons/<username>
     """
     person_dict = person
-    person = utils.get_xmlrpc_user(kwargs)
+    user = utils.get_xmlrpc_user(kwargs)
     try:
-        person.set_password(person_dict['password'])
-        person.save()
-        resp = models.Response(response_codes.POSITIVE,
-                           response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
-                           True)
-    except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        user.password = person_dict['password']
+    except KeyError:
+        return models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
-                               False)
-    except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE,
-                               str(e), 'boolean',
-                               False)
-    return resp.to_xmlrpc()
+                               False).to_xmlrpc()
+    return server.common.changePassword(user).to_xmlrpc()
