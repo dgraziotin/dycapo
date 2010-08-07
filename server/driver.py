@@ -63,7 +63,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
 
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_INSERTED, "Trip",
-                           trip.to_xmlrpc())
+                           trip)
 
     return resp
 
@@ -75,7 +75,7 @@ def startTrip(trip, driver):
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_ALREADY_STARTED,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return resp
 
     participation.started = True
     participation.started_timestamp = datetime.datetime.now()
@@ -106,7 +106,7 @@ def getRides(trip, driver):
                                "boolean", False)
         return resp
     else:
-        participations = [participation.person.to_xmlrpc()
+        participations = [participation.person
                           for participation in participations_for_trip]
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUESTS_FOUND,
@@ -143,82 +143,7 @@ def acceptRide(trip, driver, passenger):
     return resp
 
 
-def refuseRide(trip, person, ** kwargs):
-    """
-    Description
-    ===========
-    
-    This method is for a Driver to refuse a Passenger request.
-
-    Authentication, Permissions
-    ===========================
-        * Authenticated Method
-        * ``can_xmlrpc`` - active by default for all registered users
-
-    Parameters
-    ==========
-    
-        - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
-          representing the Trip that the Driver is referring to.
-        - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
-          representing the passenger that the driver is refusing
-
-    
-    Required Parameters Details
-    ---------------------------
-    
-    +------------------+-------------------------+-----------------------------+
-    | Object           | Object's Attribute      | Object's Attribute Type     |
-    +==================+=========================+=============================+
-    | trip_            | id                      | int                         |
-    +------------------+-------------------------+-----------------------------+
-    | person_          | username                | string                      |
-    +------------------+-------------------------+-----------------------------+
-
-
-    Response Possible Return Values
-    -------------------------------
-    
-    +----------------+---------------------------------------------------------+
-    | Response_.value|   Details                                               |
-    +================+=========================================================+
-    | False          | Either the ``id`` attributes are missing or not         |
-    |                | not valid.                                              |
-    |                | Look at Response_.message for further details.          |
-    +----------------+---------------------------------------------------------+
-    | True           | The operation was successful. Dycapo stores the request |
-    |                | as refused by the Driver.                               |
-    +----------------+---------------------------------------------------------+
-    
-    .. _Trip: http://www.dycapo.org/Protocol#Trip
-    .. _Response: http://www.dycapo.org/Protocol#Response
-    .. _Person: http://www.dycapo.org/Protocol#Person
-
-    RESTful proposals
-    ===========================
-    * PUT https://domain.ext/trips/<id>/participations/<username>
-    * PUT https://domain.ext/trips/<id>/rides/<username>
-    """    
-    trip_dict = trip
-    person_dict = person
-
-    try:
-        trip = models.Trip.objects.only("id").get(id=trip_dict['id'])
-    except (KeyError, models.Trip.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
-                               "boolean", False)
-        return resp.to_xmlrpc()
-
-    try:
-        passenger = models.Person.objects.only("id","position").get(
-            username=person_dict['username'])
-    except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND,
-                               "boolean", False)
-        return resp.to_xmlrpc()
-
+def refuseRide(trip, passenger):
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
@@ -226,7 +151,7 @@ def refuseRide(trip, person, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE,
                            response_codes.PERSON_NOT_FOUND,
                            "boolean", False)
-        return resp.to_xmlrpc()
+        return resp
 
 
     passenger_participation.refused = True
@@ -240,14 +165,11 @@ def refuseRide(trip, person, ** kwargs):
     resp = models.Response(response_codes.POSITIVE,
                                response_codes.RIDE_REQUEST_REFUSED,
                                "boolean", True)
-    return resp.to_xmlrpc()
+    return resp
 
 
 
 
-@rpc4django.rpcmethod(name='dycapo.finishTrip',
-                      signature=['Response', 'Trip'],
-                      permission='server.can_xmlrpc')
 def finishTrip(trip, ** kwargs):
     """
     Description
@@ -308,7 +230,7 @@ def finishTrip(trip, ** kwargs):
         resp = models.Response(response_codes.NEGATIVE,
                            response_codes.TRIP_NOT_FOUND,
                            "boolean", False)
-        return resp.to_xmlrpc()
+        return resp
     driver = utils.get_xmlrpc_user(kwargs)
     
     if driver.is_participating():
@@ -322,6 +244,6 @@ def finishTrip(trip, ** kwargs):
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.TRIP_DELETED,
                            "boolean", True)
-    return resp.to_xmlrpc()
+    return resp
 
 

@@ -15,7 +15,7 @@
 """
 
 """ This module holds all the XML-RPC methods that a driver
-and a rider have in common """
+and a passenger have in common """
 
 import models
 import utils
@@ -47,7 +47,7 @@ def getPosition(person, user):
     if person.id == user.id:
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.POSITION_FOUND, 'Location',
-                               person.position.to_xmlrpc())
+                               person.position)
         return resp
 
     person_participation = person.get_requested_participation()
@@ -55,7 +55,7 @@ def getPosition(person, user):
 
     if not person_participation:
         resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND,
+                               response_codes.PERSON_NOT_FOUND+str(person),
                                'boolean', False)
         return resp
 
@@ -79,7 +79,7 @@ def getPosition(person, user):
     else:
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.POSITION_FOUND, 'Location',
-                               person.position.to_xmlrpc())
+                               person.position)
         return resp
 
 def register(person):

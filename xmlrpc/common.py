@@ -161,12 +161,12 @@ def getPosition(person, **kwargs):
     user = utils.get_xmlrpc_user(kwargs)
     try:
         person = server.models.Person.objects.get(username=person['username'])
-    except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+    except (KeyError, server.models.Person.DoesNotExist):
+        resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
     
-    return server.common.getPosition(user,person).to_xmlrpc()
+    return server.common.getPosition(person, user).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.register',
                       signature=['Response', 'Person'],
@@ -236,14 +236,14 @@ def register(person):
     try:
         person = server.models.Person.objects.get(username=person_dict['username'])
     except server.models.Person.DoesNotExist:
-        person = models.Person(**person)
+        person = server.models.Person(**person)
         person.set_password(person.password)
         return server.common.register(person).to_xmlrpc()
     
-    resp = models.Response(response_codes.NEGATIVE,
+    resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)
-    return resp
+    return resp.to_xmlrpc()
 
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',
@@ -312,7 +312,7 @@ def changePassword(person, **kwargs):
     try:
         user.password = person_dict['password']
     except KeyError:
-        return models.Response(response_codes.NEGATIVE,
+        return server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False).to_xmlrpc()
     return server.common.changePassword(user).to_xmlrpc()

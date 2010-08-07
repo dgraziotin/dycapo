@@ -424,29 +424,7 @@ def refuseRide(trip, person, ** kwargs):
                                "boolean", False)
         return resp.to_xmlrpc()
 
-    try:
-        passenger_participation = server.models.Participation.objects.get(trip=trip.id,
-                                                               person=passenger.id)
-    except server.models.Participation.DoesNotExist:
-        resp = server.models.Response(response_codes.NEGATIVE,
-                           response_codes.PERSON_NOT_FOUND,
-                           "boolean", False)
-        return resp.to_xmlrpc()
-
-
-    passenger_participation.refused = True
-    passenger_participation.refused_timestamp = datetime.datetime.now()
-    try:
-        passenger_participation.refused_position_id = passenger.position_id
-    except server.models.Location.DoesNotExist:
-        passenger_participation.accepted_position = None
-
-    passenger_participation.save()
-    resp = server.models.Response(response_codes.POSITIVE,
-                               response_codes.RIDE_REQUEST_REFUSED,
-                               "boolean", True)
-    return resp.to_xmlrpc()
-
+    return server.driver.refuseRide(trip, passenger)
 
 
 
