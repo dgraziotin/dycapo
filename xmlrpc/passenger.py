@@ -22,7 +22,7 @@ import geopy
 import server.matching as matching
 import server.models
 import server.passenger
-import response_codes
+import server.response_codes
 import rpc4django
 import utils
 import django.db
@@ -194,18 +194,23 @@ def requestRide(trip, ** kwargs):
     passenger = utils.get_xmlrpc_user(kwargs)
     try:
         trip = server.models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
-    except (KeyError,server.models.Trip.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
+    except server.models.Trip.DoesNotExist:
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
         return resp.to_xmlrpc()
     
     return server.passenger.requestRide(trip, passenger).to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.statusRide',
+@rpc4django.rpcmethod(name='dycapo.statusRequestedRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def statusRide(trip, ** kwargs):
+def statusRequestedRide(trip, ** kwargs):
     """
     Description
     ===========
@@ -266,9 +271,14 @@ def statusRide(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
-    except (KeyError,server.models.Trip.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
+    except server.models.Trip.DoesNotExist:
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
         return resp.to_xmlrpc()
     
@@ -338,9 +348,14 @@ def cancelRide(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
-    except (KeyError,server.models.Trip.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
+    except server.models.Trip.DoesNotExist:
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
         return resp.to_xmlrpc()
     return server.passenger.cancelRide(trip, passenger).to_xmlrpc()
@@ -412,9 +427,14 @@ def startRide(trip, **kwargs):
     try:
         trip = server.models.Trip.objects.only('id','participation').get(
             id=trip_dict['id'])
-    except (KeyError,server.models.Trip.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
+    except server.models.Trip.DoesNotExist:
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
         return resp.to_xmlrpc()
     
@@ -485,9 +505,14 @@ def finishRide(trip, **kwargs):
     try:
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
-    except (KeyError,server.models.Trip.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.TRIP_NOT_FOUND,
+    except server.models.Trip.DoesNotExist:
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.TRIP_NOT_FOUND,
+                               "boolean", False)
+        return resp.to_xmlrpc()
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
         return resp.to_xmlrpc()
     

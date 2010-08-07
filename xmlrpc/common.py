@@ -19,7 +19,7 @@ and a rider have in common """
 
 import server.models
 import server.common
-import response_codes
+import server.response_codes
 import rpc4django
 import utils
 import django.contrib.auth.models
@@ -162,8 +162,8 @@ def getPosition(person, **kwargs):
     try:
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
-        resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND, 'boolean', False)
+        resp = server.models.Response(server.response_codes.NOT_HERE,
+                               server.response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
     
     return server.common.getPosition(current_user, person).to_xmlrpc()
@@ -240,8 +240,8 @@ def register(person):
         person.set_password(person.password)
         return server.common.register(person).to_xmlrpc()
     
-    resp = server.models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
+    resp = server.models.Response(server.response_codes.DUPLICATE_ENTRY,
+                               server.response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                                False)
     return resp.to_xmlrpc()
 
@@ -312,7 +312,7 @@ def changePassword(person, **kwargs):
     try:
         current_user.password = person_dict['password']
     except KeyError:
-        return server.models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND, 'boolean',
+        return server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR, 'boolean',
                                False).to_xmlrpc()
     return server.common.changePassword(current_user).to_xmlrpc()

@@ -31,7 +31,7 @@ def searchRide(source, destination, passenger):
         
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
                                "Trip", passenger_active_participation.trip)
         return resp
@@ -43,11 +43,11 @@ def searchRide(source, destination, passenger):
     trips = matching.search_ride(destination,passenger)
 
     if not trips:
-        return models.Response(response_codes.NEGATIVE,
+        return models.Response(response_codes.NOT_HERE,
                                response_codes.RIDES_NOT_FOUND,
                                "boolean", False)
 
-    return models.Response(response_codes.POSITIVE,
+    return models.Response(response_codes.ALL_OK,
                            response_codes.RIDES_FOUND,
                            "Trip", [trip for trip in trips])
 
@@ -55,7 +55,7 @@ def requestRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
     
     if passenger_active_participation:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
                                "Trip", passenger_active_participation.trip)
         return resp
@@ -71,20 +71,19 @@ def requestRide(trip, passenger):
         participation.requested_position_id = passenger.position_id
     try:
         participation.save()
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.CREATED,
                                response_codes.RIDE_REQUESTED,
                                "boolean", True)
     except django.db.IntegrityError, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                                str(e),
                                "boolean", False)
     return resp
 
 def statusRide(trip, passenger):
-
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
                                "Trip", passenger_active_participation.trip)
         return resp
@@ -94,16 +93,16 @@ def statusRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
     if passenger_participation.accepted:
         
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.ALL_OK,
                                response_codes.RIDE_REQUEST_ACCEPTED,
                                "Person", trip.author.to_xmlrpc(position=True))
     else:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.RIDE_REQUEST_NOT_YET_ACCEPTED,
                                "boolean", False)
     return resp
@@ -114,7 +113,7 @@ def cancelRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                     response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
         return resp
 
@@ -125,11 +124,11 @@ def cancelRide(trip, passenger):
         passenger_participation.requested_deleted_position_id = passenger.position_id
     try:
         passenger_participation.save()
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.DELETED,
                                response_codes.PERSON_DELETED_REQUESTED_RIDE,
                                "boolean", True)
     except django.db.IntegrityError, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                                str(e),
                                "boolean", False)
     return resp
@@ -139,11 +138,11 @@ def startRide(trip, passenger):
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 
         if not is_already_participating:
-            resp = models.Response(response_codes.NEGATIVE,
+            resp = models.Response(response_codes.NOT_HERE,
                     response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
             return resp
     except (KeyError,models.Participation.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp
@@ -158,11 +157,11 @@ def startRide(trip, passenger):
         participation.started_position_id = passenger.position_id
         participation.save()
     except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp
-    resp = models.Response(response_codes.POSITIVE,
+    resp = models.Response(response_codes.ALL_OK,
                                response_codes.RIDE_STARTED,
                                "boolean", True)
     return resp
@@ -172,12 +171,12 @@ def finishRide(trip, passenger):
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 
         if not is_already_participating:
-            resp = models.Response(response_codes.NEGATIVE,
+            resp = models.Response(response_codes.NOT_HERE,
                     response_codes.MUST_FIRST_REQUEST_RIDE, "boolean", False)
             return resp
 
     except (KeyError,models.Participation.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp
@@ -190,7 +189,7 @@ def finishRide(trip, passenger):
     participation.finished_timestamp = datetime.datetime.now()
     participation.finished_position_id = passenger.position_id
     participation.save()
-    resp = models.Response(response_codes.POSITIVE,
+    resp = models.Response(response_codes.ALL_OK,
                                response_codes.RIDE_STARTED,
                                "boolean", True)
     return resp

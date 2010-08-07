@@ -26,7 +26,7 @@ def setPosition(current_user, position):
     try:
         position.save()
     except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE, str(e),
+        resp = models.Response(response_codes.BAD_REQUEST, str(e),
                                "boolean", False)
         return resp
 
@@ -39,13 +39,13 @@ def setPosition(current_user, position):
 
     current_user.save()
 
-    resp = models.Response(response_codes.POSITIVE,
+    resp = models.Response(response_codes.CREATED,
                            response_codes.POSITION_UPDATED, "boolean", True)
     return resp
 
 def getPosition(current_user, person):
     if person.id == current_user.id:
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.ALL_OK,
                                response_codes.POSITION_FOUND, 'Location',
                                person.position)
         return resp
@@ -54,49 +54,54 @@ def getPosition(current_user, person):
     current_user_participation = current_user.get_active_participation()
 
     if not person_participation:
-        resp = models.Response(response_codes.NEGATIVE,
-                               response_codes.PERSON_NOT_FOUND+str(person),
+        resp = models.Response(response_codes.NOT_HERE,
+                               response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
         return resp
 
     if person_participation.trip_id != current_user_participation.trip_id:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
         return resp
     else:
         if person_participation.requested_deleted:
-            resp = models.Response(response_codes.NEGATIVE,
+            resp = models.Response(response_codes.NOT_HERE,
                                response_codes.PERSON_DELETED_REQUESTED_RIDE,
                                'boolean', False)
             return resp
 
     if not person.position:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.LOCATION_NOT_FOUND,
                                'boolean', False)
         return resp
     else:
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.ALL_OK,
                                response_codes.POSITION_FOUND, 'Location',
                                person.position)
         return resp
 
 def register(person):
+    if models.Person.objects.filter(username=person.username).exists():
+        resp = models.Response(response_codes.DUPLICATE_ENTRY,
+                           str(e), 'boolean',
+                           False)
+        return resp
     try:
         person.save()
         person.current_user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(
                 codename='can_xmlrpc'))
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.CREATED,
                            response_codes.PERSON_REGISTERED, 'boolean',
                            True)
     except IntegrityError, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                            str(e), 'boolean',
                            False)
     except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                            str(e), 'boolean',
                            False)
     return resp
@@ -106,15 +111,15 @@ def changePassword(person):
     try:
         person.set_password(person.password)
         person.save()
-        resp = models.Response(response_codes.POSITIVE,
+        resp = models.Response(response_codes.ALL_OK,
                            response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
                            True)
     except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.NOT_HERE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False)
     except Exception, e:
-        resp = models.Response(response_codes.NEGATIVE,
+        resp = models.Response(response_codes.BAD_REQUEST,
                                str(e), 'boolean',
                                False)
     return resp
