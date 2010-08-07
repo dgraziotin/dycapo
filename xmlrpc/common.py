@@ -32,7 +32,7 @@ def setPosition(position, ** kwargs):
     Description
     ===========
 
-    Updates the current position of the logged user.
+    Updates the current position of the logged current_user.
     
     Authentication, Permissions
     ===========================
@@ -96,9 +96,9 @@ def setPosition(position, ** kwargs):
     dict_position = position
     position = server.models.Location()
     position = utils.populate_object_from_dictionary(position, dict_position)
-    user = utils.get_xmlrpc_user(kwargs)
+    current_user = utils.get_xmlrpc_user(kwargs)
     
-    return server.common.setPosition(position, user).to_xmlrpc()
+    return server.common.setPosition(current_user, position).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.getPosition',
                       signature=['Response', 'Person'],
@@ -114,7 +114,7 @@ def getPosition(person, **kwargs):
     ===========================
         * Authenticated Method
         * ``can_xmlrpc`` - active by default for all registered users
-        * The requesting user must participate in a Trip with the person he/she wants
+        * The requesting current_user must participate in a Trip with the person he/she wants
         to know the position of.
 
     Parameters
@@ -158,7 +158,7 @@ def getPosition(person, **kwargs):
     * GET https://domain.ext/persons/<username>/position
     """
 
-    user = utils.get_xmlrpc_user(kwargs)
+    current_user = utils.get_xmlrpc_user(kwargs)
     try:
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
@@ -166,7 +166,7 @@ def getPosition(person, **kwargs):
                                response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
     
-    return server.common.getPosition(person, user).to_xmlrpc()
+    return server.common.getPosition(current_user, person).to_xmlrpc()
 
 @rpc4django.rpcmethod(name='dycapo.register',
                       signature=['Response', 'Person'],
@@ -180,8 +180,8 @@ def register(person):
     
     Authentication, Permissions
     ===========================
-        * Authenticated Method, can be used only by user ``register`` with password ``password``
-        * ``can_register`` - active only for user ``register``
+        * Authenticated Method, can be used only by current_user ``register`` with password ``password``
+        * ``can_register`` - active only for current_user ``register``
         * All of this is because of Apache's HTTP_BASIC_AUTH implementation
 
     Parameters
@@ -260,7 +260,7 @@ def changePassword(person, **kwargs):
     ===========================
         * Authenticated Method
         * ``can_xmlrpc`` - active by default for all registered users
-        * The requesting user must be the same of the supplied Person.
+        * The requesting current_user must be the same of the supplied Person.
         
     Parameters
     ==========
@@ -308,11 +308,11 @@ def changePassword(person, **kwargs):
     * PUT https://domain.ext/persons/<username>
     """
     person_dict = person
-    user = utils.get_xmlrpc_user(kwargs)
+    current_user = utils.get_xmlrpc_user(kwargs)
     try:
-        user.password = person_dict['password']
+        current_user.password = person_dict['password']
     except KeyError:
         return server.models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False).to_xmlrpc()
-    return server.common.changePassword(user).to_xmlrpc()
+    return server.common.changePassword(current_user).to_xmlrpc()

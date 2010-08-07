@@ -22,7 +22,7 @@ import utils
 import django.contrib.auth.models
 import response_codes
 
-def setPosition(position, user):
+def setPosition(current_user, position):
     try:
         position.save()
     except Exception, e:
@@ -30,28 +30,28 @@ def setPosition(position, user):
                                "boolean", False)
         return resp
 
-    user.position_id = position.id
-    user.locations.add(position)
+    current_user.position_id = position.id
+    current_user.locations.add(position)
 
-    if user.is_participating():
-        participation = user.get_active_participation()
+    if current_user.is_participating():
+        participation = current_user.get_active_participation()
         participation.locations.add(position)
 
-    user.save()
+    current_user.save()
 
     resp = models.Response(response_codes.POSITIVE,
                            response_codes.POSITION_UPDATED, "boolean", True)
     return resp
 
-def getPosition(person, user):
-    if person.id == user.id:
+def getPosition(current_user, person):
+    if person.id == current_user.id:
         resp = models.Response(response_codes.POSITIVE,
                                response_codes.POSITION_FOUND, 'Location',
                                person.position)
         return resp
 
     person_participation = person.get_requested_participation()
-    user_participation = user.get_active_participation()
+    current_user_participation = current_user.get_active_participation()
 
     if not person_participation:
         resp = models.Response(response_codes.NEGATIVE,
@@ -59,7 +59,7 @@ def getPosition(person, user):
                                'boolean', False)
         return resp
 
-    if person_participation.trip_id != user_participation.trip_id:
+    if person_participation.trip_id != current_user_participation.trip_id:
         resp = models.Response(response_codes.NEGATIVE,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
@@ -85,7 +85,7 @@ def getPosition(person, user):
 def register(person):
     try:
         person.save()
-        person.user_permissions.add(
+        person.current_user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(
                 codename='can_xmlrpc'))
         resp = models.Response(response_codes.POSITIVE,

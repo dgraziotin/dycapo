@@ -181,7 +181,7 @@ def startTrip(trip, ** kwargs):
     trip_dict = trip
     driver = utils.get_xmlrpc_user(kwargs)
     try:
-        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'])
+        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except (KeyError, server.models.Trip.DoesNotExist):
         resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -249,9 +249,9 @@ def getRides(trip, ** kwargs):
     """
 
     trip_dict = trip
-
+    driver = utils.get_xmlrpc_user(kwargs)
     try:
-        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except (KeyError,server.models.Trip.DoesNotExist):
         resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -326,7 +326,7 @@ def acceptRide(trip, person, ** kwargs):
     driver = utils.get_xmlrpc_user(kwargs)
 
     try:
-        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except (KeyError, server.models.Trip.DoesNotExist):
         resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -406,9 +406,9 @@ def refuseRide(trip, person, ** kwargs):
     """    
     trip_dict = trip
     person_dict = person
-
+    driver = utils.get_xmlrpc_user(kwargs)
     try:
-        trip = server.models.Trip.objects.only("id").get(id=trip_dict['id'])
+        trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except (KeyError, server.models.Trip.DoesNotExist):
         resp = server.models.Response(response_codes.NEGATIVE,
                                response_codes.TRIP_NOT_FOUND,
@@ -483,10 +483,10 @@ def finishTrip(trip, ** kwargs):
     * PUT https://domain.ext/trips/<id>
     """
 
-    
+    driver = utils.get_xmlrpc_user(kwargs)
     trip_dict = trip
     try:
-        trip = server.models.Trip.objects.get(id=trip_dict['id'])
+        trip = server.models.Trip.objects.get(id=trip_dict['id'],active=True,author=driver)
     except (KeyError, server.models.Trip.DoesNotExist):
         resp = server.models.Response(response_codes.NEGATIVE,
                            response_codes.TRIP_NOT_FOUND,
