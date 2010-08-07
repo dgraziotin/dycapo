@@ -249,10 +249,10 @@ def requestRide(trip, ** kwargs):
                                "boolean", False)
     return resp.to_xmlrpc()
 
-@rpc4django.rpcmethod(name='dycapo.statusRide',
+@rpc4django.rpcmethod(name='dycapo.statusRequestedRide',
                       signature=['Response', 'Trip'],
                       permission='server.can_xmlrpc')
-def statusRide(trip, ** kwargs):
+def statusRequestedRide(trip, ** kwargs):
     """
     Description
     ===========
