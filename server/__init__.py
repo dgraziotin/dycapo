@@ -13,12 +13,3 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-
-"""
-This file must import all the XML-RPC methods
-that we also want to expose to the public.
-"""
-from driver import insertTrip, startTrip, getRides
-from driver import acceptRide, refuseRide, finishTrip
-from passenger import searchRide, requestRide, statusRide, cancelRide, startRide, finishRide
-from common import setPosition, getPosition, register, changePassword

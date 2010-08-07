@@ -17,19 +17,16 @@
 """
 This module contains response codes and messages
 """
-import piston.utils as piston
-
 POSITIVE = 1
 NEGATIVE = 0
 
-ALL_OK = piston.rc.ALL_OK.status_code
-CREATED = piston.rc.CREATED.status_code
-DELETED = piston.rc.DELETED.status_code
-FORBIDDEN = piston.rc.FORBIDDEN.status_code
-NOT_HERE = piston.rc.NOT_HERE.status_code
-BAD_REQUEST = piston.rc.BAD_REQUEST.status_code
-DUPLICATE_ENTRY = piston.rc.DUPLICATE_ENTRY.status_code
-
+ALL_OK = 200
+CREATED = 201
+DELETED = 204
+FORBIDDEN = 401
+NOT_HERE = 410
+BAD_REQUEST = 400
+DUPLICATE_ENTRY = 409
 """
 rc.ALL_OK	200 OK	        Everything went well.
 rc.CREATED	201 Created	Object was created.
