@@ -43,17 +43,17 @@ class TestSimpleMatching():
 
     def test_position(self):
         response = self.driver.update_position(location=self.driver.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.position.georss_point
         self.driver.position = response['value']
         response = self.rider.update_position(location=self.rider.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.rider.get_position()
         assert response['value']['georss_point'] == self.rider.position.georss_point
         self.rider.position = response['value']
         response = self.rider2.update_position(location=self.rider2.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.rider2.get_position()
         assert response['value']['georss_point'] == self.rider2.position.georss_point
         self.rider2.position = response['value']
@@ -70,23 +70,24 @@ class TestSimpleMatching():
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE
     """
+    
     def test_insert_trip_exp(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
-        assert response['code']==response_codes.POSITIVE
+        assert response['code']==response_codes.CREATED
         self.driver.trip = response['value']
 
     def test_start_trip(self):
         response = self.driver.start_trip()
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
 
     def test_search_trip_after_start(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
         self.rider.trip = response['value'][0]
         response = self.rider2.search_ride(self.rider2.position,self.rider2.destination)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
         self.rider2.trip = response['value'][0]
 
     def test_search_trip_driver_closest_to_destination(self):
@@ -95,54 +96,54 @@ class TestSimpleMatching():
         self.driver.update_position()
 
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
         self.driver.position = classes.Location(georss_point=self.driver_position)
         self.driver.update_position()
 
     def test_check_ride_requests_before_request(self):
         response = self.driver.check_ride_requests()
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
 
     def test_request_ride(self):
         response = self.rider.request_ride(trip=self.rider.trip)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.rider2.request_ride(trip=self.rider2.trip)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
 
     def test_check_requested_ride(self):
         response = self.rider.check_requested_ride(trip=self.rider.trip)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
         response = self.rider2.check_requested_ride(trip=self.rider2.trip)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
 
     def test_check_ride_requests_after_request(self):
         response = self.driver.check_ride_requests()
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
         self.driver.ride_request = response['value']
         assert len(self.driver.ride_request) == 2
 
     def test_accept_ride_request(self):
         response = self.driver.accept_ride_request(self.driver.ride_request[0])
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
 
     def test_refuse_ride_request(self):
         response = self.driver.refuse_ride_request(self.driver.ride_request[1])
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
 
     def test_check_requested_ride_after_ride_accepted(self):
         response = self.rider.check_requested_ride(trip=self.rider.trip)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
         response = self.rider2.check_requested_ride(trip=self.rider2.trip)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
 
     def test_start_ride(self):
         if not hasattr(self.rider,"trip"):
             return
         response = self.rider.start_ride(self.rider.trip)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
 
     def test_finish_ride(self):
         if not hasattr(self.rider,"trip"):
             return
         response = self.rider.finish_ride(self.rider.trip)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK

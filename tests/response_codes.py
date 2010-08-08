@@ -16,26 +16,23 @@
 """
 This module contains response codes and messages
 """
-POSITIVE = 1
-NEGATIVE = 0
-ERROR = 0
 
-TRIP_INSERTED = "Trip successfully inserted."
-TRIP_STARTED = "Trip successfully started."
-TRIP_STARTED = "Trip already started."
-TRIP_DELETED = ""
-TRIP_NOT_FOUND = "Trip not found. Please specify at least a valid id attribute."
-TRIP_PROTOCOL_ERROR = "Protocol Error. Trip attributes expires and content MUST be provided."
-RIDE_REQUESTS_NOT_FOUND = "Ride requests not found."
-RIDE_REQUESTS_FOUND = "Ride requests found."
-RIDE_REQUEST_ACCEPTED = "Ride request accepted."
-RIDE_REQUEST_REFUSED = "Ride request refused."
-RIDES_NOT_FOUND = "Rides not found."
-RIDES_FOUND = "Rides found."
-RIDE_REQUESTED = "Ride successfully requested."
-RIDE_IN_COURSE = "Rider is already participating"
-POSITION_UPDATED = "Current Position successfully updated"
-POSITION_FOUND = "Position found"
-PERSON_NOT_FOUND = "Person(s) not found."
-PERSON_FOUND = "Person(s) found"
-LOCATION_NOT_FOUND = "Location not available"
+ALL_OK = 200
+CREATED = 201
+DELETED = 204
+FORBIDDEN = 401
+NOT_FOUND = 404
+BAD_REQUEST = 400
+DUPLICATE_ENTRY = 409
+
+"""
+rc.ALL_OK	200 OK	        Everything went well.
+rc.CREATED	201 Created	Object was created.
+rc.DELETED	204 (Emtpy body, as per RFC2616)	Object was deleted.
+rc.BAD_REQUEST	400 Bad Request	Request was malformed/not understood.
+rc.FORBIDDEN	401 Forbidden	Permission denied.
+rc.DUPLICATE_ENTRY	409 Conflict/Duplicate	Object already exists.
+rc.NOT_HERE	410 Gone	Object does not exist.
+rc.NOT_IMPLEMENTED	501 Not Implemented	Action not available.
+rc.THROTTLED	503 Throttled	Request was throttled.
+"""

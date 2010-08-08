@@ -39,9 +39,7 @@ class TestRegistration():
             "phone" : "12345",
         }
         response = self.rider.client.dycapo.register(person)
-        if response['message'] == ALREADY_REGISTERED:
-            return
-        assert response['code'] != response_codes.ERROR
+        assert response['code'] == response_codes.CREATED or response_codes.DUPLICATE_ENTRY
 
     def test_registrations_real(self):
         person = {
@@ -62,9 +60,8 @@ class TestRegistration():
             "phone" : "1234567",
         }
 
-        if response['code'] == response_codes.ERROR:
-            print str(response)
-        assert response['code'] != response_codes.ERROR
+      
+        assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
         person = {
             "username" : "dio",
@@ -72,9 +69,8 @@ class TestRegistration():
             "email" : "dio@ronniejamesdio.com",
             "phone" : "12345678",
         }
-        if response['code'] == response_codes.ERROR:
-            print str(response)
-        assert response['code'] != response_codes.ERROR
+       
+        assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
         person = {
             "username" : "rob",
@@ -92,9 +88,7 @@ class TestRegistration():
             "email" : "ozzy@acdcd.com",
             "phone" : "1234567890",
         }
-        if response['code'] == response_codes.ERROR:
-            print str(response)
-        assert response['code'] != response_codes.ERROR
+        assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
         person = {
             "username" : "angela",
@@ -102,9 +96,7 @@ class TestRegistration():
             "email" : "angela@archenemy.com",
             "phone" : "12345678901",
         }
-        if response['code'] == response_codes.ERROR:
-            print str(response)
-        assert response['code'] != response_codes.ERROR
+        assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
 
     def test_unvalid_registration(self):
@@ -115,4 +107,4 @@ class TestRegistration():
             "phone" : "12345678901",
         }
         response = self.rider.client.dycapo.register(person)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.DUPLICATE_ENTRY

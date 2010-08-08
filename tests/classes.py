@@ -260,7 +260,7 @@ class Rider(Person):
         print "*" * 80
         print self.username + ": CHECK REQUESTED RIDE..."
         print "*" * 80
-        response = self.client.dycapo.statusRide(trip)
+        response = self.client.dycapo.statusRequestedRide(trip)
         print "Dycapo Response: \n" + str(response)
         return response
 

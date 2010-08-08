@@ -19,14 +19,11 @@ This module contains response codes and messages
 """
 import piston.utils as piston
 
-POSITIVE = 1
-NEGATIVE = 0
-
 ALL_OK = piston.rc.ALL_OK.status_code
 CREATED = piston.rc.CREATED.status_code
 DELETED = piston.rc.DELETED.status_code
 FORBIDDEN = piston.rc.FORBIDDEN.status_code
-NOT_HERE = piston.rc.NOT_HERE.status_code
+NOT_FOUND = piston.rc.NOT_FOUND.status_code
 BAD_REQUEST = piston.rc.BAD_REQUEST.status_code
 DUPLICATE_ENTRY = piston.rc.DUPLICATE_ENTRY.status_code
 
@@ -37,7 +34,7 @@ rc.DELETED	204 (Emtpy body, as per RFC2616)	Object was deleted.
 rc.BAD_REQUEST	400 Bad Request	Request was malformed/not understood.
 rc.FORBIDDEN	401 Forbidden	Permission denied.
 rc.DUPLICATE_ENTRY	409 Conflict/Duplicate	Object already exists.
-rc.NOT_HERE	410 Gone	Object does not exist.
+rc.NOT_FOUND	404 Not found	Object does not exist.
 rc.NOT_IMPLEMENTED	501 Not Implemented	Action not available.
 rc.THROTTLED	503 Throttled	Request was throttled.
 """

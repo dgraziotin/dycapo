@@ -195,7 +195,7 @@ def requestRide(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.filter(id=trip_dict['id']).only('id','participation').get()
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -272,7 +272,7 @@ def statusRequestedRide(trip, ** kwargs):
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -349,7 +349,7 @@ def cancelRide(trip, ** kwargs):
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -428,7 +428,7 @@ def startRide(trip, **kwargs):
         trip = server.models.Trip.objects.only('id','participation').get(
             id=trip_dict['id'])
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -506,7 +506,7 @@ def finishRide(trip, **kwargs):
         trip = server.models.Trip.objects.only('id','participation','author').get(
             id=trip_dict['id'])
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()

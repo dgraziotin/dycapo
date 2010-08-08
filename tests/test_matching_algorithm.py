@@ -49,12 +49,12 @@ class TestMatchingAlgorithm():
 
     def test_position(self):
         response = self.driver.update_position(location=self.driver.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.position.georss_point
         self.driver.position = response['value']
         response = self.rider.update_position(location=self.rider.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.rider.get_position()
         assert response['value']['georss_point'] == self.rider.position.georss_point
         self.rider.position = response['value']
@@ -70,16 +70,16 @@ class TestMatchingAlgorithm():
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0
         assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
-        assert response['code']==response_codes.POSITIVE
+        assert response['code']==response_codes.CREATED
         self.driver.trip = response['value']
 
     def test_start_trip(self):
         response = self.driver.start_trip()
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
 
     def test_search_trip_base(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.ALL_OK
         self.rider.trip = response['value'][0]
 
     def test_search_trip_valid(self):
@@ -98,9 +98,9 @@ class TestMatchingAlgorithm():
             self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
             self.driver.position = classes.Location(georss_point=self.driver_position)
             response = self.driver.update_position(location=self.driver.position)
-            assert response['code'] == response_codes.POSITIVE
+            assert response['code'] == response_codes.CREATED
             response = self.rider.search_ride(self.rider.position,self.rider.destination)
-            assert response['code'] == response_codes.POSITIVE
+            assert response['code'] == response_codes.ALL_OK
             self.rider.trip = response['value'][0]
 
         driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
@@ -124,9 +124,9 @@ class TestMatchingAlgorithm():
         self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
         self.driver.position = classes.Location(georss_point=self.driver_position)
         response = self.driver.update_position(location=self.driver.position)
-        assert response['code'] == response_codes.POSITIVE
+        assert response['code'] == response_codes.CREATED
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
 
     def test_search_trip_driver_moving_away_from_rider(self):
         '''
@@ -144,8 +144,8 @@ class TestMatchingAlgorithm():
             self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
             self.driver.position = classes.Location(georss_point=self.driver_position)
             response = self.driver.update_position(location=self.driver.position)
-            assert response['code'] == response_codes.POSITIVE
+            assert response['code'] == response_codes.CREATED
         driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
 
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND

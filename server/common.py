@@ -54,25 +54,25 @@ def getPosition(current_user, person):
     current_user_participation = current_user.get_active_participation()
 
     if not person_participation:
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
         return resp
 
     if person_participation.trip_id != current_user_participation.trip_id:
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.PERSON_NOT_FOUND,
                                'boolean', False)
         return resp
     else:
         if person_participation.requested_deleted:
-            resp = models.Response(response_codes.NOT_HERE,
+            resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.PERSON_DELETED_REQUESTED_RIDE,
                                'boolean', False)
             return resp
 
     if not person.position:
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.LOCATION_NOT_FOUND,
                                'boolean', False)
         return resp
@@ -115,7 +115,7 @@ def changePassword(person):
                            response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
                            True)
     except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.PERSON_NOT_FOUND, 'boolean',
                                False)
     except Exception, e:

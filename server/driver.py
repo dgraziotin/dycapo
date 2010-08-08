@@ -101,7 +101,7 @@ def getRides(trip, driver):
                                ).only("person")
 
     if not len(participations_for_trip):
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.RIDE_REQUESTS_NOT_FOUND,
                                "boolean", False)
         return resp
@@ -119,7 +119,7 @@ def acceptRide(trip, driver, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                                response_codes.PERSON_NOT_FOUND,
                                "boolean", False)
         return resp
@@ -148,7 +148,7 @@ def refuseRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NOT_HERE,
+        resp = models.Response(response_codes.NOT_FOUND,
                            response_codes.PERSON_NOT_FOUND,
                            "boolean", False)
         return resp

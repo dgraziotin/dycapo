@@ -49,7 +49,7 @@ class TestRider():
 
     def test_search_trip(self):
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
-        assert response['code'] == response_codes.NEGATIVE
+        assert response['code'] == response_codes.NOT_FOUND
 
     def test_request_ride(self,trip=None):
         if not trip:
@@ -62,7 +62,7 @@ class TestRider():
             trip.mode = ""
             trip.locations = []
         response = self.rider.request_ride(trip)
-        assert response['code'] == response_codes.ERROR
+        assert response['code'] == response_codes.BAD_REQUEST
     """
     def test_start_ride(self,trip=None):
         if not trip:

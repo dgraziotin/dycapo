@@ -162,7 +162,7 @@ def getPosition(person, **kwargs):
     try:
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.PERSON_NOT_FOUND, 'boolean', False)
         return resp.to_xmlrpc()
     

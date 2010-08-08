@@ -183,7 +183,7 @@ def startTrip(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -258,7 +258,7 @@ def getRides(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -337,7 +337,7 @@ def acceptRide(trip, person, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -351,7 +351,7 @@ def acceptRide(trip, person, ** kwargs):
         passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -430,7 +430,7 @@ def refuseRide(trip, person, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -444,7 +444,7 @@ def refuseRide(trip, person, ** kwargs):
         passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
@@ -518,7 +518,7 @@ def finishTrip(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_HERE,
+        resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
         return resp.to_xmlrpc()
