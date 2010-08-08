@@ -105,7 +105,7 @@ def searchRide(source, destination, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
@@ -179,7 +179,7 @@ def requestRide(trip, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
     
@@ -256,7 +256,7 @@ def statusRequestedRide(trip, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
@@ -332,7 +332,7 @@ def cancelRide(trip, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
     
@@ -410,7 +410,7 @@ def startRide(trip, **kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
@@ -489,7 +489,7 @@ def finishRide(trip, **kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 

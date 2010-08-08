@@ -58,7 +58,7 @@ class TestRider():
             trip = self.trip
             trip.author = ""
             trip.mode = ""
-            trip.prefs = ""
+            trip.preferences = ""
             trip.mode = ""
             trip.locations = []
         response = self.rider.request_ride(trip)

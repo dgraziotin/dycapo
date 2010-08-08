@@ -29,7 +29,7 @@ class Location():
 class Trip():
     def __init__(self,expires=utils.now):
         self.expires = expires
-        self.prefs = None
+        self.preferences = None
         self.mode = None
         self.author = None
         self.locations = None
@@ -43,10 +43,10 @@ class Trip():
             author = {}
         else:
             author = self.author.__dict__
-        if not self.prefs:
-            prefs = {}
+        if not self.preferences:
+            preferences = {}
         else:
-            prefs = self.prefs.__dict__
+            preferences = self.preferences.__dict__
         if not self.locations:
             locations = {}
         else:
@@ -56,7 +56,7 @@ class Trip():
             "expires" : self.expires,
             "content" : {
                 "author" : author,
-                "prefs" : prefs,
+                "preferences" : preferences,
                 "mode" : mode,
                 "locations": locations
             }
@@ -74,7 +74,7 @@ class Mode():
         self.cost = cost
         self.model = model
 
-class Prefs():
+class Preferences():
     def __init__(self,age='18-30',nonsmoking=False):
         self.age = age
         self.nonsmoking = nonsmoking
@@ -155,14 +155,14 @@ class Driver(Person):
         source = Location(georss_point=self.position.georss_point,point='orig')
         destination = self.destination
         mode = Mode()
-        prefs = Prefs()
+        preferences = Preferences()
         trip = Trip()
         trip.expires = utils.nowplusdays(3)
         print "initializing Trip from " + self.position.georss_point + " to " + self.destination.georss_point
         print "#" * 80
         print self.username + ": SAVING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.insertTrip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
+        response = self.client.dycapo.insertTrip(trip.__dict__,mode.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)
@@ -172,11 +172,11 @@ class Driver(Person):
         source = Location(georss_point=self.position.georss_point,point='orig')
         destination = self.destination
         mode = Mode()
-        prefs = Prefs()
+        preferences = Preferences()
         trip = Trip()
         trip.expires = utils.nowplusdays(3)
         trip.mode = mode
-        trip.prefs = prefs
+        trip.preferences = preferences
         trip.locations = [source, destination]
         class person():
             pass

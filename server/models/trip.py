@@ -22,7 +22,7 @@ from django.db import models, IntegrityError
 import person
 import location
 import mode as modulemode
-import prefs as moduleprefs
+import preferences as modulepreferences
 import participation as moduleparticipation
 import participation
 
@@ -41,7 +41,7 @@ class Trip(models.Model):
     author = models.ForeignKey('Person', related_name='author', blank=False, null=True)
     locations = models.ManyToManyField(location.Location, blank=False)
     mode = models.ForeignKey(modulemode.Mode, blank=False, null=True)
-    prefs = models.ForeignKey(moduleprefs.Prefs, null=True)
+    preferences = models.ForeignKey(modulepreferences.Preferences, null=True)
     participation = models.ManyToManyField('Person', through='Participation', related_name='participation')
 
     def __repr__(self):
@@ -81,7 +81,7 @@ class Trip(models.Model):
         """
         Ensures integrity.
         """
-        if not self.expires or not self.mode or not self.prefs or not self.author:
+        if not self.expires or not self.mode or not self.preferences or not self.author:
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, ** kwargs) # Call the "real" save() method.
 
@@ -107,7 +107,9 @@ class Trip(models.Model):
             'published': self.published,
             'updated': self.updated,
             'expires': self.expires,
-            'content': {'mode': self.mode.to_xmlrpc(), 'prefs': self.prefs.to_xmlrpc(), 'locations': locations_dict},
+            'mode': self.mode.to_xmlrpc(), 
+            'preferences': self.preferences.to_xmlrpc(), 
+            'locations': locations_dict,
             'author': self.author.to_xmlrpc(),
         }
         return trip_dict

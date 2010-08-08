@@ -55,7 +55,7 @@ class DriverTest(Thread):
         source = common_classes_and_methods.Location()
         destination = common_classes_and_methods.Location()
         mode = common_classes_and_methods.Mode()
-        prefs = common_classes_and_methods.Prefs()
+        preferences = common_classes_and_methods.Prefs()
         trip = common_classes_and_methods.Trip()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)
@@ -85,8 +85,8 @@ class DriverTest(Thread):
         #mode.year = 2003
         mode.kind = 'auto'
 
-        prefs.age = '18-40'
-        prefs.nonsmoking = False
+        preferences.age = '18-40'
+        preferences.nonsmoking = False
 
         trip.content = 'description of the trip'
         trip.expires = common_classes_and_methods.nowplusdays(3)
@@ -94,7 +94,7 @@ class DriverTest(Thread):
         print "#" * 80
         print self.username + ": SAVING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,prefs.__dict__,source.__dict__,destination.__dict__)
+        response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)

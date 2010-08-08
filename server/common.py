@@ -20,6 +20,7 @@ and a passenger have in common """
 import models
 import utils
 import django.contrib.auth.models
+import django.db
 import response_codes
 
 def setPosition(current_user, position):
@@ -90,16 +91,12 @@ def register(person):
         return resp
     try:
         person.save()
-        person.current_user_permissions.add(
+        person.user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(
                 codename='can_xmlrpc'))
         resp = models.Response(response_codes.CREATED,
                            response_codes.PERSON_REGISTERED, 'boolean',
                            True)
-    except IntegrityError, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
-                           str(e), 'boolean',
-                           False)
     except Exception, e:
         resp = models.Response(response_codes.BAD_REQUEST,
                            str(e), 'boolean',

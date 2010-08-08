@@ -84,7 +84,7 @@ def setPosition(position, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
     
@@ -149,7 +149,7 @@ def getPosition(person, **kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
@@ -223,7 +223,7 @@ def register(person):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 
@@ -299,7 +299,7 @@ def changePassword(person, **kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
 

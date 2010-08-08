@@ -62,7 +62,7 @@ def insertTrip(trip, ** kwargs):
     +------------------+-------------------------+-----------------------------+
     | trip_.content    | mode                    | struct (Mode_)              |
     +------------------+-------------------------+-----------------------------+
-    |                  | prefs                   | struct (Prefs_)             |
+    |                  | preferences                   | struct (Prefs_)             |
     +------------------+-------------------------+-----------------------------+
     |                  | locations               | array (Location_)           |
     +------------------+-------------------------+-----------------------------+
@@ -85,7 +85,7 @@ def insertTrip(trip, ** kwargs):
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
-    .. _Prefs: http://www.dycapo.org/Protocol#Prefs
+    .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
     
@@ -96,9 +96,9 @@ def insertTrip(trip, ** kwargs):
     """
 
     dict_trip = utils.clean_ids(trip)
-    dict_mode = utils.clean_ids(trip["content"]["mode"])
-    dict_prefs = utils.clean_ids(trip["content"]["prefs"])
-    array_locations = trip["content"]["locations"]
+    dict_mode = utils.clean_ids(trip["mode"])
+    dict_preferences = utils.clean_ids(trip["preferences"])
+    array_locations = trip["locations"]
 
     author = utils.get_xmlrpc_user(kwargs)
 
@@ -116,7 +116,7 @@ def insertTrip(trip, ** kwargs):
     mode.vacancy = dict_mode['vacancy']
     
     preferences = server.models.Prefs()
-    preferences = utils.populate_object_from_dictionary(preferences, dict_prefs)
+    preferences = utils.populate_object_from_dictionary(preferences, dict_preferences)
     
     trip = server.models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)

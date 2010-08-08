@@ -44,7 +44,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
 
     trip.author = author
     trip.mode = mode
-    trip.prefs = preferences
+    trip.preferences = preferences
 
 
     try:

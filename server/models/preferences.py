@@ -27,7 +27,7 @@ GENDER_CHOICES = (
     (u'B', u'Both'),
 )
 
-class Prefs(models.Model):
+class Preferences(models.Model):
     """
     Stores the preferences of a Trip set by the Person who creates it.
     See `OpenTrip_Core#Preference_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Preference_Constructs>`_ for more info.
@@ -45,7 +45,7 @@ class Prefs(models.Model):
         Ensures integrity
         """
         try:
-            retrieven_prefs = Prefs.objects.get(age=self.age,
+            retrieven_preferences = Prefs.objects.get(age=self.age,
                                               nonsmoking=self.nonsmoking,
                                               gender=self.gender,
                                               drive=self.drive,
@@ -54,17 +54,17 @@ class Prefs(models.Model):
         except Prefs.DoesNotExist:
             super(Prefs, self).save(force_insert=True)
             return
-        self.id = retrieven_prefs.id
+        self.id = retrieven_preferences.id
         super(Prefs, self).save(force_update=True)
 
     def to_xmlrpc(self):
         """
         Prepares the dictionary to be returned when returned as XML-RPC
         """
-        prefs_dict = copy.deepcopy(self.__dict__)
-        del prefs_dict['id']
-        del prefs_dict['_state']
-        return prefs_dict
+        preferences_dict = copy.deepcopy(self.__dict__)
+        del preferences_dict['id']
+        del preferences_dict['_state']
+        return preferences_dict
 
     class Meta:
         app_label = 'server'
