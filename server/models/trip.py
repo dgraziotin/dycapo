@@ -32,7 +32,6 @@ class Trip(models.Model):
     See `OpenTrip_Core#Entry_Elements <http://opentrip.info/wiki/OpenTrip_Core#Entry_Elements>`_ for more info.
     atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
     in case of an export of a Trip in OpenTrip Feed format.
-    TODO: return Prefs and Mode in XML_RPC
     """
     published = models.DateTimeField(auto_now_add=True, blank=False, null=True)
     updated = models.DateTimeField(auto_now=True, blank=False, null=True)

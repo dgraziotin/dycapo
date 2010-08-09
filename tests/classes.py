@@ -54,12 +54,10 @@ class Trip():
 
         return {
             "expires" : self.expires,
-            "content" : {
-                "author" : author,
-                "preferences" : preferences,
-                "mode" : mode,
-                "locations": locations
-            }
+            "author" : author,
+            "preferences" : preferences,
+            "mode" : mode,
+            "locations": locations
         }
 
 
@@ -136,6 +134,9 @@ class Person():
 
         person = {'username':person.username}
         response = self.client.dycapo.getPosition(person)
+        if not type(response['value']) is type(True):
+            self.position = Location()
+            self.position.__dict__.update(response['value'])
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response

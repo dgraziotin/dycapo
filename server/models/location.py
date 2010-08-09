@@ -225,6 +225,7 @@ class Location(models.Model):
         del location_dict['georss_point_longitude']
         del location_dict['id']
         del location_dict['_state']
+        location_dict['leaves'] = self.leaves.isoformat(' ')
         return location_dict
 
     class Meta:

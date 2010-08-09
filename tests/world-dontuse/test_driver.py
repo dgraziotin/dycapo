@@ -55,7 +55,7 @@ class DriverTest(Thread):
         source = common_classes_and_methods.Location()
         destination = common_classes_and_methods.Location()
         mode = common_classes_and_methods.Mode()
-        preferences = common_classes_and_methods.Prefs()
+        preferences = common_classes_and_methods.Preferences()
         trip = common_classes_and_methods.Trip()
         points = [1.00,2.00,3.00]
         point_lat = random.choice(points)

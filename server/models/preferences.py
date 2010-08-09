@@ -15,7 +15,7 @@
 """
 
 """
-This module holds the Prefs model
+This module holds the Preferences model
 """
 
 from django.db import models
@@ -45,17 +45,17 @@ class Preferences(models.Model):
         Ensures integrity
         """
         try:
-            retrieven_preferences = Prefs.objects.get(age=self.age,
+            retrieven_preferences = Preferences.objects.get(age=self.age,
                                               nonsmoking=self.nonsmoking,
                                               gender=self.gender,
                                               drive=self.drive,
                                               ride=self.ride
                                               )
-        except Prefs.DoesNotExist:
-            super(Prefs, self).save(force_insert=True)
+        except Preferences.DoesNotExist:
+            super(Preferences, self).save(force_insert=True)
             return
         self.id = retrieven_preferences.id
-        super(Prefs, self).save(force_update=True)
+        super(Preferences, self).save(force_update=True)
 
     def to_xmlrpc(self):
         """

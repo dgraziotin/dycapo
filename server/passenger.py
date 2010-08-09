@@ -33,7 +33,7 @@ def searchRide(source, destination, passenger):
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
-                               "Trip", passenger_active_participation.trip)
+                               "Trip", passenger_active_participation.trip.to_xmlrpc())
         return resp
 
     if passenger.position.georss_point != source.georss_point:
@@ -49,7 +49,7 @@ def searchRide(source, destination, passenger):
 
     return models.Response(response_codes.ALL_OK,
                            response_codes.RIDES_FOUND,
-                           "Trip", [trip for trip in trips])
+                           "Trip", [trip.to_xmlrpc() for trip in trips])
 
 def requestRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
@@ -57,7 +57,7 @@ def requestRide(trip, passenger):
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
-                               "Trip", passenger_active_participation.trip)
+                               "Trip", passenger_active_participation.trip.to_xmlrpc())
         return resp
 
     participation = models.Participation(trip_id = trip.id,
@@ -85,7 +85,7 @@ def statusRide(trip, passenger):
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
                                response_codes.RIDE_IN_COURSE,
-                               "Trip", passenger_active_participation.trip)
+                               "Trip", passenger_active_participation.trip.to_xmlrpc())
         return resp
     
 

@@ -234,6 +234,17 @@ def register(person):
     """
     person_dict = person
     try:
+        if server.models.Person.objects.filter(username=person_dict['username']).exists():
+            resp = server.models.Response(server.response_codes.DUPLICATE_ENTRY,
+                           server.response_codes.PROTOCOL_ERROR, 'boolean',
+                           False)
+            return resp
+    except KeyError:
+        resp = models.Response(response_codes.BAD_REQUEST,
+                           server.response_codes.PROTOCOL_ERROR, 'boolean',
+                           False)
+        return resp
+    try:
         person = server.models.Person.objects.get(username=person_dict['username'])
     except server.models.Person.DoesNotExist:
         person = server.models.Person(**person)

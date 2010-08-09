@@ -48,7 +48,7 @@ def getPosition(current_user, person):
     if person.id == current_user.id:
         resp = models.Response(response_codes.ALL_OK,
                                response_codes.POSITION_FOUND, 'Location',
-                               person.position)
+                               person.position.to_xmlrpc())
         return resp
 
     person_participation = person.get_requested_participation()
@@ -80,15 +80,16 @@ def getPosition(current_user, person):
     else:
         resp = models.Response(response_codes.ALL_OK,
                                response_codes.POSITION_FOUND, 'Location',
-                               person.position)
+                               person.position.to_xmlrpc())
         return resp
 
 def register(person):
     if models.Person.objects.filter(username=person.username).exists():
         resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                           str(e), 'boolean',
+                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
                            False)
         return resp
+    
     try:
         person.save()
         person.user_permissions.add(
@@ -97,6 +98,10 @@ def register(person):
         resp = models.Response(response_codes.CREATED,
                            response_codes.PERSON_REGISTERED, 'boolean',
                            True)
+    except django.db.IntegrityError:
+        resp = models.Response(response_codes.DUPLICATE_ENTRY,
+                           response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
+                           False)
     except Exception, e:
         resp = models.Response(response_codes.BAD_REQUEST,
                            str(e), 'boolean',

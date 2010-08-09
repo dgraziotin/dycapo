@@ -13,3 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+from django.conf.urls.defaults import *
+from piston.resource import Resource
+from api.handlers import PersonHandler
+
+person_handler = Resource(PersonHandler)
+
+urlpatterns = patterns('',
+   url(r'^persons', person_handler),
+)

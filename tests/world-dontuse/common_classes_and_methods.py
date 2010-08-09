@@ -108,7 +108,7 @@ class Mode():
     #year = 0
     model = ''
 
-class Prefs():
+class Preferences():
     age = '18-30'
     nonsmoking = False
 

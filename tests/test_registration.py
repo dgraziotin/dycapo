@@ -40,7 +40,7 @@ class TestRegistration():
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
-
+        
     def test_registrations_real(self):
         person = {
             "username" : "driver1",
@@ -88,6 +88,16 @@ class TestRegistration():
         }
         assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
+
+        person = {
+            "username" : "bruce",
+            "password" : "password",
+            "email" : "bruce@ironmaiden.com",
+            "phone" : "1234567801324",
+        }
+        response = self.rider.client.dycapo.register(person)
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
+        
         person = {
             "username" : "angela",
             "password" : "password",
@@ -96,7 +106,7 @@ class TestRegistration():
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
-
+        
     def test_unvalid_registration(self):
         person = {
             "username" : "angela",

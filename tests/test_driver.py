@@ -55,7 +55,7 @@ class TestDriver():
     def test_insert_trip(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0
-        assert [location for location in response['value']['content']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
+        assert [location for location in response['value']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
         assert response['code']==response_codes.CREATED
         self.driver.trip = response['value']
 

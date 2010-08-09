@@ -95,11 +95,17 @@ def insertTrip(trip, ** kwargs):
 
     """
 
-    dict_trip = utils.clean_ids(trip)
-    dict_mode = utils.clean_ids(trip["mode"])
-    dict_preferences = utils.clean_ids(trip["preferences"])
-    array_locations = trip["locations"]
-
+    try:
+        dict_trip = utils.clean_ids(trip)
+        dict_mode = utils.clean_ids(trip["mode"])
+        dict_preferences = utils.clean_ids(trip["preferences"])
+        array_locations = trip["locations"]
+        
+    except KeyError:
+        resp = server.models.Response(server.response_codes.BAD_REQUEST,
+                               server.response_codes.PROTOCOL_ERROR,
+                               "boolean", False)
+        return resp.to_xmlrpc()
     author = utils.get_xmlrpc_user(kwargs)
 
     source = server.models.Location()
@@ -115,7 +121,7 @@ def insertTrip(trip, ** kwargs):
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
     mode.vacancy = dict_mode['vacancy']
     
-    preferences = server.models.Prefs()
+    preferences = server.models.Preferences()
     preferences = utils.populate_object_from_dictionary(preferences, dict_preferences)
     
     trip = server.models.Trip()

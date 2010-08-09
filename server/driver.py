@@ -106,7 +106,7 @@ def getRides(trip, driver):
                                "boolean", False)
         return resp
     else:
-        participations = [participation.person
+        participations = [participation.person.to_xmlrpc()
                           for participation in participations_for_trip]
         resp = models.Response(response_codes.ALL_OK,
                                response_codes.RIDE_REQUESTS_FOUND,

@@ -14,7 +14,6 @@
    limitations under the License.
 """
 from django.conf.urls.defaults import *
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -30,6 +29,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     (r'^RPC2$', 'dycapo.rpc4django.views.serve_rpc_request'),
+    (r'^api/', include('dycapo.api.urls')),
     (r'^media_admin/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': '/home/bodom_lx/Projects/dycapo/media_admin/', 'show_indexes': True}),
     (r'^media/(.*)', 'django.views.static.serve', {'document_root': '/home/bodom_lx/Projects/dycapo/media/'}),
