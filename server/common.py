@@ -20,6 +20,7 @@ and a passenger have in common """
 import models
 import utils
 import django.contrib.auth.models
+import django.core.exceptions
 import django.db
 import response_codes
 
@@ -91,6 +92,7 @@ def register(person):
         return resp
     
     try:
+        person.full_clean()
         person.save()
         person.user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(

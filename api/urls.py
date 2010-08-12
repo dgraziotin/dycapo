@@ -15,10 +15,14 @@
 """
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from api.handlers import PersonHandler
+from api.handlers import PersonHandler #, PersonPositionHandler
 
 person_handler = Resource(PersonHandler)
+#person_position_handler = Resource(PersonPositionHandler)
 
 urlpatterns = patterns('',
-   url(r'^persons', person_handler),
+   url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json' }),
+   #url(r'^persons/(?P<username>\w+)/position/$', person_position_handler, { 'emitter_format': 'json' }),
+   #url(r'^persons/(?P<username>\w+)/email/$', person_position_handler),
+   url(r'^persons/$', person_handler),
 )

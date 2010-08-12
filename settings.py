@@ -28,7 +28,7 @@ RPC4DJANGO_RESTRICT_JSONRPC = True
 RPC4DJANGO_RESTRICT_XMLRPC = False
 RPC4DJANGO_RESTRICT_METHOD_SUMMARY = False
 RPC4DJANGO_RESTRICT_RPCTEST = True
-RPC4DJANGO_RESTRICT_REST = True
+RPC4DJANGO_RESTRICT_REST = False
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -104,6 +104,7 @@ MIDDLEWARE_CLASSES = (
 # Also requires Django 1.1+
 AUTHENTICATION_BACKENDS = (
     'dycapo.auth_backends.DycapoRemoteUserBackend',
+    'piston.authentication.HttpBasicAuthentication',
     'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.ModelBackend',
 )

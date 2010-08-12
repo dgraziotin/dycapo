@@ -97,3 +97,15 @@ def get_xmlrpc_user(kwargs):
     except (models.Person.DoesNotExist, KeyError):
         return None
 
+def get_rest_user(request):
+    """
+    Returns the Person object that is performing a REST call
+    """
+    try:
+        return models.Person.objects.get(
+                                         username=request.META['REMOTE_USER']
+                                         )
+    except (models.Person.DoesNotExist, KeyError):
+        return None
+
+    
