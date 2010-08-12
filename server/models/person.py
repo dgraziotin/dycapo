@@ -43,7 +43,7 @@ class Person(authmodels.User):
     # username from Django
     # password from Django
     uri = models.CharField(max_length=200, blank=True)
-    phone = models.CharField(max_length=200, null=True, unique=True)
+    phone = models.CharField(max_length=200, blank=False, null=True, unique=True)
     position = models.ForeignKey(location.Location, blank=True, null=True)
     age = models.PositiveIntegerField(null=True, default=0)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=True)

@@ -26,10 +26,15 @@ import response_codes
 
 def setPosition(current_user, position):
     try:
+        position.full_clean()
         position.save()
+    except django.core.exceptions.ValidationError, e:
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(e.message_dict))
+        return resp
     except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST, str(e),
-                               "boolean", False)
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(str(e)))
         return resp
 
     current_user.position_id = position.id
@@ -42,13 +47,13 @@ def setPosition(current_user, position):
     current_user.save()
 
     resp = models.Response(response_codes.CREATED,
-                           response_codes.POSITION_UPDATED, "boolean", True)
+                           "Message", models.Message(response_codes.POSITION_UPDATED))
     return resp
 
 def getPosition(current_user, person):
     if person.id == current_user.id:
         resp = models.Response(response_codes.ALL_OK,
-                               response_codes.POSITION_FOUND, 'Location',
+                               'Location',
                                person.position.to_xmlrpc())
         return resp
 
@@ -57,57 +62,44 @@ def getPosition(current_user, person):
 
     if not person_participation:
         resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.PERSON_NOT_FOUND,
-                               'boolean', False)
+                               'Message', models.Message(response_codes.PERSON_NOT_FOUND))
         return resp
 
     if person_participation.trip_id != current_user_participation.trip_id:
         resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.PERSON_NOT_FOUND,
-                               'boolean', False)
+                               'Message', models.Message(response_codes.PERSON_NOT_FOUND))
         return resp
     else:
         if person_participation.requested_deleted:
             resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.PERSON_DELETED_REQUESTED_RIDE,
-                               'boolean', False)
+                                   'Message', models.Message(response_codes.PERSON_DELETED_REQUESTED_RIDE))
             return resp
 
     if not person.position:
         resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.LOCATION_NOT_FOUND,
-                               'boolean', False)
+                               'Message', models.Message(response_codes.LOCATION_NOT_FOUND))
         return resp
     else:
         resp = models.Response(response_codes.ALL_OK,
-                               response_codes.POSITION_FOUND, 'Location',
+                               'Location',
                                person.position.to_xmlrpc())
         return resp
 
 def register(person):
-    if models.Person.objects.filter(username=person.username).exists():
-        resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                               response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
-                           False)
-        return resp
-    
     try:
+        person.set_password(person.password)
         person.full_clean()
         person.save()
         person.user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(
                 codename='can_xmlrpc'))
         resp = models.Response(response_codes.CREATED,
-                           response_codes.PERSON_REGISTERED, 'boolean',
-                           True)
-    except django.db.IntegrityError:
-        resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                           response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
-                           False)
+                           'Person',
+                           person)
+    except django.core.exceptions.ValidationError, e:
+        resp = models.Response(response_codes.BAD_REQUEST,'Message',models.Message(e.message_dict))
     except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
-                           str(e), 'boolean',
-                           False)
+        resp = models.Response(response_codes.BAD_REQUEST,'Message',models.Message(e.message_dict))
     return resp
 
 
@@ -116,14 +108,11 @@ def changePassword(person):
         person.set_password(person.password)
         person.save()
         resp = models.Response(response_codes.ALL_OK,
-                           response_codes.PERSON_PASSWORD_CHANGED, 'boolean',
-                           True)
+                           'Message',
+                           models.Message(response_codes.PERSON_PASSWORD_CHANGED))
     except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.PERSON_NOT_FOUND, 'boolean',
-                               False)
+        resp = models.Response(response_codes.NOT_FOUND,'Message', models.Message(response_codes.PERSON_NOT_FOUND))
     except Exception, e:
         resp = models.Response(response_codes.BAD_REQUEST,
-                               str(e), 'boolean',
-                               False)
+                               'Message',models.Message(str(e)))
     return resp

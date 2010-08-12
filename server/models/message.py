@@ -17,19 +17,19 @@
 """
 This module holds the Response model
 """
+import django.core.exceptions
 
-class Response(object):
+class Message(django.core.exceptions.ValidationError):
     """
-    This is an envelope that standardizes the response of Dycapo.
-    see http://dycapo.org/Protocol#Response
+    This class acts as a wrapper for all communications from Dycapo to clients.
+    It is used for both standard information and error communication
     """
-    code = -1
-    type = ""
-    value = {}
-    def __init__(self, code, type, value):
-        self.code = code
-        self.type = type
-        self.value = value
+    def __init__(self, message, code=None, params=None):
+        if not isinstance(message, dict):
+            message = {
+                "_message" : str(message)
+            }
+        django.core.exceptions.ValidationError.__init__(self, message, code, params)
 
     def to_xmlrpc(self):
         return self.__dict__

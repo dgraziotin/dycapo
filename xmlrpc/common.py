@@ -162,8 +162,7 @@ def getPosition(person, **kwargs):
     try:
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.PERSON_NOT_FOUND, 'boolean', False)
+        resp = server.models.Response(server.response_codes.NOT_FOUND, 'Message', server.models.Message(server.response_codes.PERSON_NOT_FOUND))
         return resp.to_xmlrpc()
     
     return server.common.getPosition(current_user, person).to_xmlrpc()
@@ -234,27 +233,12 @@ def register(person):
     """
     person_dict = person
     try:
-        if server.models.Person.objects.filter(username=person_dict['username']).exists():
-            resp = server.models.Response(server.response_codes.DUPLICATE_ENTRY,
-                           server.response_codes.PROTOCOL_ERROR, 'boolean',
-                           False)
-            return resp
-    except KeyError:
-        resp = models.Response(response_codes.BAD_REQUEST,
-                           server.response_codes.PROTOCOL_ERROR, 'boolean',
-                           False)
-        return resp
-    try:
-        person = server.models.Person.objects.get(username=person_dict['username'])
-    except server.models.Person.DoesNotExist:
         person = server.models.Person(**person)
-        person.set_password(person.password)
-        return server.common.register(person).to_xmlrpc()
-    
-    resp = server.models.Response(server.response_codes.DUPLICATE_ENTRY,
-                               server.response_codes.PERSON_ALREADY_REGISTERED, 'boolean',
-                               False)
-    return resp.to_xmlrpc()
+    except TypeError, e:
+        resp = models.Response(response_codes.NOT_FOUND,
+                               'Message', models.Message(str(e)))
+        return resp
+    return server.common.register(person).to_xmlrpc()
 
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',
@@ -324,6 +308,6 @@ def changePassword(person, **kwargs):
         current_user.password = person_dict['password']
     except KeyError:
         return server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR, 'boolean',
-                               False).to_xmlrpc()
+                            'Message',
+                               server.models.Message(server.response_codes.PROTOCOL_ERROR)).to_xmlrpc()
     return server.common.changePassword(current_user).to_xmlrpc()

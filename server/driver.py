@@ -33,13 +33,22 @@ def insertTrip(trip, author, source, destination, mode, preferences):
     mode.vacancy = vacancy
 
     try:
+        source.full_clean()
+        destination.full_clean()
+        mode.full_clean()
+        preferences.full_clean()
+        
         source.save()
         destination.save()
         mode.save()
         preferences.save()
+    except django.core.exceptions.ValidationError, e:
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(e.message_dict))
+        return resp
     except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST, str(e), "boolean",
-                               False)
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(str(e)))
         return resp
 
     trip.author = author
@@ -48,12 +57,17 @@ def insertTrip(trip, author, source, destination, mode, preferences):
 
 
     try:
+        trip.full_clean()
         trip.save()
-    except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST, str(e), "boolean",
-                               False)
+    except django.core.exceptions.ValidationError, e:
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(e.message_dict))
         return resp
-
+    except Exception, e:
+        resp = models.Response(response_codes.BAD_REQUEST,
+                               "Message", models.Message(str(e)))
+        return resp
+    
     trip.locations.add(source)
     trip.locations.add(destination)
 
@@ -62,7 +76,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
     participation.save()
 
     resp = models.Response(response_codes.CREATED,
-                           response_codes.TRIP_INSERTED, "Trip",
+                           "Trip",
                            trip.to_xmlrpc())
 
     return resp
@@ -73,8 +87,7 @@ def startTrip(trip, driver):
 
     if participation.started:
         resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                               response_codes.TRIP_ALREADY_STARTED,
-                               "boolean", False)
+                               "Message", models.Message(response_codes.TRIP_ALREADY_STARTED))
         return resp
 
     participation.started = True
@@ -88,7 +101,7 @@ def startTrip(trip, driver):
     trip.save()
 
     resp = models.Response(response_codes.ALL_OK,
-                           response_codes.TRIP_STARTED, "boolean", True)
+                           "Message", models.Message(response_codes.TRIP_STARTED))
     return resp
 
 def getRides(trip, driver):
@@ -102,14 +115,12 @@ def getRides(trip, driver):
 
     if not len(participations_for_trip):
         resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.RIDE_REQUESTS_NOT_FOUND,
-                               "boolean", False)
+                               "Message", models.Message(response_codes.RIDE_REQUESTS_NOT_FOUND))
         return resp
     else:
         participations = [participation.person.to_xmlrpc()
                           for participation in participations_for_trip]
         resp = models.Response(response_codes.ALL_OK,
-                               response_codes.RIDE_REQUESTS_FOUND,
                                "Person[]", participations)
         return resp
 
@@ -120,8 +131,7 @@ def acceptRide(trip, driver, passenger):
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(response_codes.NOT_FOUND,
-                               response_codes.PERSON_NOT_FOUND,
-                               "boolean", False)
+                               "Message", models.Message(response_codes.PERSON_NOT_FOUND))
         return resp
     if passenger_participation.requested and not passenger_participation.accepted:
         passenger_participation.accepted = True
@@ -133,13 +143,11 @@ def acceptRide(trip, driver, passenger):
 
         passenger_participation.save()
         resp = models.Response(response_codes.ALL_OK,
-                               response_codes.RIDE_REQUEST_ACCEPTED,
-                               "boolean", True)
+                               "Message", models.Message(response_codes.RIDE_REQUEST_ACCEPTED))
         return resp
     
     resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                           response_codes.RIDE_REQUEST_REFUSED,
-                           "boolean", False)
+                           "Message", models.Message(response_codes.RIDE_REQUEST_REFUSED))
     return resp
 
 
@@ -149,8 +157,7 @@ def refuseRide(trip, passenger):
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(response_codes.NOT_FOUND,
-                           response_codes.PERSON_NOT_FOUND,
-                           "boolean", False)
+                           "Message", models.Message(response_codes.PERSON_NOT_FOUND))
         return resp
 
 
@@ -163,8 +170,7 @@ def refuseRide(trip, passenger):
 
     passenger_participation.save()
     resp = models.Response(response_codes.ALL_OK,
-                               response_codes.RIDE_REQUEST_REFUSED,
-                               "boolean", True)
+                            "Message", models.Message(response_codes.RIDE_REQUEST_REFUSED))
     return resp
 
 
@@ -180,8 +186,7 @@ def finishTrip(trip, driver):
     trip.save()
 
     resp = models.Response(response_codes.DELETED,
-                           response_codes.TRIP_DELETED,
-                           "boolean", True)
+                           "Message", models.Message(response_codes.TRIP_DELETED))
     return resp
 
 

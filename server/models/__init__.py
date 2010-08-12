@@ -21,5 +21,6 @@ from server.models.preferences import Preferences
 from server.models.trip import Trip
 from server.models.participation import Participation
 from server.models.response import Response
+from server.models.message import Message
 
-__all__ = ['Location', 'Person', 'Mode', 'Preferences', 'Trip', 'Participation', 'Response']
+__all__ = ['Location', 'Person', 'Mode', 'Preferences', 'Trip', 'Participation', 'Response', 'Message']
