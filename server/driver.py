@@ -18,7 +18,6 @@ This module holds all the XML-RPC methods that a Driver needs.
 """
 import datetime
 import models
-import response_codes
 import rpc4django
 import utils
 
@@ -43,11 +42,11 @@ def insertTrip(trip, author, source, destination, mode, preferences):
         mode.save()
         preferences.save()
     except django.core.exceptions.ValidationError, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
+        resp = models.Response(models.response.BAD_REQUEST,
                                "Message", models.Message(e.message_dict))
         return resp
     except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
+        resp = models.Response(models.response.BAD_REQUEST,
                                "Message", models.Message(str(e)))
         return resp
 
@@ -60,11 +59,11 @@ def insertTrip(trip, author, source, destination, mode, preferences):
         trip.full_clean()
         trip.save()
     except django.core.exceptions.ValidationError, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
+        resp = models.Response(models.response.BAD_REQUEST,
                                "Message", models.Message(e.message_dict))
         return resp
     except Exception, e:
-        resp = models.Response(response_codes.BAD_REQUEST,
+        resp = models.Response(models.response.BAD_REQUEST,
                                "Message", models.Message(str(e)))
         return resp
 
@@ -75,7 +74,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
                                          role='driver')
     participation.save()
 
-    resp = models.Response(response_codes.CREATED,
+    resp = models.Response(models.response.CREATED,
                            "Trip",
                            trip)
 
@@ -86,8 +85,8 @@ def startTrip(trip, driver):
     participation = models.Participation.objects.get(trip=trip.id, role='driver')
 
     if participation.started:
-        resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                               "Message", models.Message(response_codes.TRIP_ALREADY_STARTED))
+        resp = models.Response(models.response.DUPLICATE_ENTRY,
+                               "Message", models.Message(models.response.TRIP_ALREADY_STARTED))
         return resp
 
     participation.started = True
@@ -100,8 +99,8 @@ def startTrip(trip, driver):
     trip.active = True
     trip.save()
 
-    resp = models.Response(response_codes.ALL_OK,
-                           "Message", models.Message(response_codes.TRIP_STARTED))
+    resp = models.Response(models.response.ALL_OK,
+                           "Message", models.Message(models.response.TRIP_STARTED))
     return resp
 
 def getRides(trip, driver):
@@ -114,13 +113,13 @@ def getRides(trip, driver):
                                ).only("person")
 
     if not len(participations_for_trip):
-        resp = models.Response(response_codes.NOT_FOUND,
-                               "Message", models.Message(response_codes.RIDE_REQUESTS_NOT_FOUND))
+        resp = models.Response(models.response.NOT_FOUND,
+                               "Message", models.Message(models.response.RIDE_REQUESTS_NOT_FOUND))
         return resp
     else:
         participations = [participation.person
                           for participation in participations_for_trip]
-        resp = models.Response(response_codes.ALL_OK,
+        resp = models.Response(models.response.ALL_OK,
                                "Person[]", participations)
         return resp
 
@@ -130,8 +129,8 @@ def acceptRide(trip, driver, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NOT_FOUND,
-                               "Message", models.Message(response_codes.PERSON_NOT_FOUND))
+        resp = models.Response(models.response.NOT_FOUND,
+                               "Message", models.Message(models.response.PERSON_NOT_FOUND))
         return resp
     if passenger_participation.requested and not passenger_participation.accepted:
         passenger_participation.accepted = True
@@ -142,12 +141,12 @@ def acceptRide(trip, driver, passenger):
             passenger_participation.accepted_position = None
 
         passenger_participation.save()
-        resp = models.Response(response_codes.ALL_OK,
-                               "Message", models.Message(response_codes.RIDE_REQUEST_ACCEPTED))
+        resp = models.Response(models.response.ALL_OK,
+                               "Message", models.Message(models.response.RIDE_REQUEST_ACCEPTED))
         return resp
 
-    resp = models.Response(response_codes.DUPLICATE_ENTRY,
-                           "Message", models.Message(response_codes.RIDE_REQUEST_REFUSED))
+    resp = models.Response(models.response.DUPLICATE_ENTRY,
+                           "Message", models.Message(models.response.RIDE_REQUEST_REFUSED))
     return resp
 
 
@@ -156,8 +155,8 @@ def refuseRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(response_codes.NOT_FOUND,
-                           "Message", models.Message(response_codes.PERSON_NOT_FOUND))
+        resp = models.Response(models.response.NOT_FOUND,
+                           "Message", models.Message(models.response.PERSON_NOT_FOUND))
         return resp
 
 
@@ -169,8 +168,8 @@ def refuseRide(trip, passenger):
         passenger_participation.accepted_position = None
 
     passenger_participation.save()
-    resp = models.Response(response_codes.ALL_OK,
-                            "Message", models.Message(response_codes.RIDE_REQUEST_REFUSED))
+    resp = models.Response(models.response.ALL_OK,
+                            "Message", models.Message(models.response.RIDE_REQUEST_REFUSED))
     return resp
 
 
@@ -185,6 +184,6 @@ def finishTrip(trip, driver):
     trip.active = False
     trip.save()
 
-    resp = models.Response(response_codes.DELETED,
-                           "Message", models.Message(response_codes.TRIP_DELETED))
+    resp = models.Response(models.response.DELETED,
+                           "Message", models.Message(models.response.TRIP_DELETED))
     return resp

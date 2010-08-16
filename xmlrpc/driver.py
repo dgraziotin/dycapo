@@ -19,7 +19,6 @@ This module holds all the XML-RPC methods that a Driver needs.
 import datetime
 import server.models
 import server.driver
-import server.response_codes
 import rpc4django
 import utils
 
@@ -102,8 +101,8 @@ def insertTrip(trip, ** kwargs):
         array_locations = trip["locations"]
 
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               "Message", server.models.Message(server.response_codes.PROTOCOL_ERROR))
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               "Message", server.models.Message(server.models.response.PROTOCOL_ERROR))
         return utils.to_xmlrpc(resp)
     author = utils.get_xmlrpc_user(kwargs)
 
@@ -189,12 +188,12 @@ def startTrip(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               "Message", server.models.Message(server.response_codes.TRIP_NOT_FOUND))
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               "Message", server.models.Message(server.models.response.TRIP_NOT_FOUND))
         return utils.to_xmlrpc(response)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(response)
 
@@ -264,13 +263,13 @@ def getRides(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
 
@@ -344,13 +343,13 @@ def acceptRide(trip, person, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
 
@@ -358,13 +357,13 @@ def acceptRide(trip, person, ** kwargs):
         passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
 
@@ -437,13 +436,13 @@ def refuseRide(trip, person, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
 
@@ -451,13 +450,13 @@ def refuseRide(trip, person, ** kwargs):
         passenger = server.models.Person.objects.only("id","position").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
 
@@ -526,13 +525,13 @@ def finishTrip(trip, ** kwargs):
     try:
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
-        resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
+        resp = server.models.Response(server.models.response.NOT_FOUND,
+                               server.models.response.TRIP_NOT_FOUND,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     except KeyError:
-        resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
+        resp = server.models.Response(server.models.response.BAD_REQUEST,
+                               server.models.response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
     

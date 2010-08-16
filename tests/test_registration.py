@@ -57,8 +57,6 @@ class TestRegistration():
             "phone" : "1234567",
         }
 
-
-
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
 

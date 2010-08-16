@@ -17,6 +17,8 @@
 """
 This module holds the Response model
 """
+import piston.utils as piston
+
 ALL_OK = piston.rc.ALL_OK.status_code
 CREATED = piston.rc.CREATED.status_code
 DELETED = piston.rc.DELETED.status_code
