@@ -33,7 +33,7 @@ def setPosition(position, ** kwargs):
     ===========
 
     Updates the current position of the logged current_user.
-    
+
     Authentication, Permissions
     ===========================
         * Authenticated Method
@@ -41,13 +41,13 @@ def setPosition(position, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``position`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
           representing the current position of the passenger.
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -63,31 +63,31 @@ def setPosition(position, ** kwargs):
     +------------------+-------------------------+-----------------------------+
     |                  | leaves                  | dateTime.iso8601            |
     +------------------+-------------------------+-----------------------------+
-    
+
     - Either ``georss_point`` OR all from set { ``street``, ``town``, ``postcode`` } MUST be specified
     - ``point`` value MUST be any from the set {orig, dest, wayp, posi}.
     - See Location_ for more details
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | The supplied attributes are not valid.                  | 
+    | False          | The supplied attributes are not valid.                  |
     |                | Look at Response_.message for details                   |
     +----------------+---------------------------------------------------------+
     | True           | The operation was successful. The system stores the     |
     |                | provided position for the user.                         |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
     .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
-    
+
     RESTful proposals
     ===========================
     * POST https://domain.ext/persons/<username>/position
@@ -97,8 +97,9 @@ def setPosition(position, ** kwargs):
     position = server.models.Location()
     position = utils.populate_object_from_dictionary(position, dict_position)
     current_user = utils.get_xmlrpc_user(kwargs)
-    
-    return server.common.setPosition(current_user, position).to_xmlrpc()
+
+    response = server.common.setPosition(current_user, position)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.getPosition',
                       signature=['Response', 'Person'],
@@ -109,7 +110,7 @@ def getPosition(person, **kwargs):
     ===========
 
     Returns the position of the requested Person.
-    
+
     Authentication, Permissions
     ===========================
         * Authenticated Method
@@ -119,13 +120,13 @@ def getPosition(person, **kwargs):
 
     Parameters
     ==========
-    
+
         - ``Location`` - a `Location <http://www.dycapo.org/Protocol#Location>`_ object,
           representing the current position of the Person.
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -134,7 +135,7 @@ def getPosition(person, **kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -145,7 +146,7 @@ def getPosition(person, **kwargs):
     | Location_      | The operation was successful. The system returns the    |
     |                | current position of the user.                           |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
@@ -163,9 +164,10 @@ def getPosition(person, **kwargs):
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
         resp = server.models.Response(server.response_codes.NOT_FOUND, 'Message', server.models.Message(server.response_codes.PERSON_NOT_FOUND))
-        return resp.to_xmlrpc()
-    
-    return server.common.getPosition(current_user, person).to_xmlrpc()
+        return utils.to_xmlrpc(response)
+
+    response = server.common.getPosition(current_user, person)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.register',
                       signature=['Response', 'Person'],
@@ -176,7 +178,7 @@ def register(person):
     ===========
 
     For registering a user to Dycapo system.
-    
+
     Authentication, Permissions
     ===========================
         * Authenticated Method, can be used only by current_user ``register`` with password ``password``
@@ -185,13 +187,13 @@ def register(person):
 
     Parameters
     ==========
-    
+
         - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
           representing the person that is registering to the system.
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -203,11 +205,11 @@ def register(person):
     +------------------+-------------------------+-----------------------------+
     |                  | phone                   | string                      |
     +------------------+-------------------------+-----------------------------+
-    
+
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -218,7 +220,7 @@ def register(person):
     | True           | The operation was successful. The system registers the  |
     |                | user, that is automatically allowed to perform RPC calls|
     +----------------+---------------------------------------------------------+
-    
+
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
@@ -229,7 +231,7 @@ def register(person):
     RESTful proposals
     ===========================
     * POST https://domain.ext/persons
-        
+
     """
     person_dict = person
     try:
@@ -238,7 +240,8 @@ def register(person):
         resp = models.Response(response_codes.NOT_FOUND,
                                'Message', models.Message(str(e)))
         return resp
-    return server.common.register(person).to_xmlrpc()
+    response = server.common.register(person)
+    return utils.to_xmlrpc(response)
 
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',
@@ -250,22 +253,22 @@ def changePassword(person, **kwargs):
     ===========
 
     For changing the password of a Person.
-    
+
     Authentication, Permissions
     ===========================
         * Authenticated Method
         * ``can_xmlrpc`` - active by default for all registered users
         * The requesting current_user must be the same of the supplied Person.
-        
+
     Parameters
     ==========
-    
+
         - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
           representing the person that is changing the password.
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -274,11 +277,11 @@ def changePassword(person, **kwargs):
     |                  | password                | string                      |
     +------------------+-------------------------+-----------------------------+
 
-    
+
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -290,7 +293,7 @@ def changePassword(person, **kwargs):
     | True           | The operation was successful. The system changes the    |
     |                | password, that must be used from now on.                |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
@@ -307,7 +310,8 @@ def changePassword(person, **kwargs):
     try:
         current_user.password = person_dict['password']
     except KeyError:
-        return server.models.Response(server.response_codes.BAD_REQUEST,
+        return utils.to_xmlrpc(server.models.Response(server.response_codes.BAD_REQUEST,
                             'Message',
-                               server.models.Message(server.response_codes.PROTOCOL_ERROR)).to_xmlrpc()
-    return server.common.changePassword(current_user).to_xmlrpc()
+                               server.models.Message(server.response_codes.PROTOCOL_ERROR)))
+    response = server.common.changePassword(current_user)
+    return utils.to_xmlrpc(response)

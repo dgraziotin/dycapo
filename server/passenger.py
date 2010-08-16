@@ -28,17 +28,17 @@ import django.db
 
 
 def searchRide(source, destination, passenger):
-        
+
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
-                               "Trip", passenger_active_participation.trip.to_xmlrpc())
+                               "Trip", passenger_active_participation.trip)
         return resp
 
     if passenger.position.georss_point != source.georss_point:
         passenger.position = source
         passenger.position.save()
-    
+
     trips = matching.search_ride(destination,passenger)
 
     if not trips:
@@ -46,21 +46,21 @@ def searchRide(source, destination, passenger):
                                "Message", models.Message(response_codes.RIDES_NOT_FOUND))
 
     return models.Response(response_codes.ALL_OK,
-                           "Trip[]", [trip.to_xmlrpc() for trip in trips])
+                           "Trip[]", trips)
 
 def requestRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
-    
+
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
-                               "Trip", passenger_active_participation.trip.to_xmlrpc())
+                               "Trip", passenger_active_participation.trip)
         return resp
 
     participation = models.Participation(trip_id = trip.id,
                                          person_id = passenger.id,
                                          role = 'rider',
                                          requested = True,
-                                         requested_timestamp = 
+                                         requested_timestamp =
                                          datetime.datetime.now())
 
     if passenger.position:
@@ -78,9 +78,9 @@ def statusRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
         resp = models.Response(response_codes.FORBIDDEN,
-                               "Trip", passenger_active_participation.trip.to_xmlrpc())
+                               "Trip", passenger_active_participation.trip)
         return resp
-    
+
 
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
@@ -88,11 +88,11 @@ def statusRide(trip, passenger):
     except models.Participation.DoesNotExist:
         resp = models.Response(response_codes.NOT_FOUND,
                                "Message", models.Message(response_codes.PERSON_NOT_FOUND))
-        
+
     if passenger_participation.accepted:
-        
+        #TODO: return author's position
         resp = models.Response(response_codes.ALL_OK,
-                               "Person", trip.author.to_xmlrpc(position=True))
+                               "Person", trip.author)
     else:
         resp = models.Response(response_codes.NOT_FOUND,
                                "Message", models.Message(response_codes.RIDE_REQUEST_NOT_YET_ACCEPTED))

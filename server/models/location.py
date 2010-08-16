@@ -169,7 +169,7 @@ class Location(models.Model):
             geocoder = geopy.geocoders.Google(settings.GOOGLE_MAPS_API_KEY)
             geocoding_result = geocoder.reverse(
                                             (point.latitude,point.longitude) )
-            
+
             full_address = geocoding_result[0].split(",")
             #if type(full_address).__name__ == 'bool':
             #    self.georss_point_latitude = point.latitude

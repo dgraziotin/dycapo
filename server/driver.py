@@ -37,7 +37,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
         destination.full_clean()
         mode.full_clean()
         preferences.full_clean()
-        
+
         source.save()
         destination.save()
         mode.save()
@@ -67,7 +67,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
         resp = models.Response(response_codes.BAD_REQUEST,
                                "Message", models.Message(str(e)))
         return resp
-    
+
     trip.locations.add(source)
     trip.locations.add(destination)
 
@@ -77,12 +77,12 @@ def insertTrip(trip, author, source, destination, mode, preferences):
 
     resp = models.Response(response_codes.CREATED,
                            "Trip",
-                           trip.to_xmlrpc())
+                           trip)
 
     return resp
 
 def startTrip(trip, driver):
-    
+
     participation = models.Participation.objects.get(trip=trip.id, role='driver')
 
     if participation.started:
@@ -118,7 +118,7 @@ def getRides(trip, driver):
                                "Message", models.Message(response_codes.RIDE_REQUESTS_NOT_FOUND))
         return resp
     else:
-        participations = [participation.person.to_xmlrpc()
+        participations = [participation.person
                           for participation in participations_for_trip]
         resp = models.Response(response_codes.ALL_OK,
                                "Person[]", participations)
@@ -145,7 +145,7 @@ def acceptRide(trip, driver, passenger):
         resp = models.Response(response_codes.ALL_OK,
                                "Message", models.Message(response_codes.RIDE_REQUEST_ACCEPTED))
         return resp
-    
+
     resp = models.Response(response_codes.DUPLICATE_ENTRY,
                            "Message", models.Message(response_codes.RIDE_REQUEST_REFUSED))
     return resp
@@ -188,5 +188,3 @@ def finishTrip(trip, driver):
     resp = models.Response(response_codes.DELETED,
                            "Message", models.Message(response_codes.TRIP_DELETED))
     return resp
-
-

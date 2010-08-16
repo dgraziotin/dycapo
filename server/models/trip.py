@@ -106,8 +106,8 @@ class Trip(models.Model):
             'published': self.published,
             'updated': self.updated,
             'expires': self.expires,
-            'mode': self.mode.to_xmlrpc(), 
-            'preferences': self.preferences.to_xmlrpc(), 
+            'mode': self.mode.to_xmlrpc(),
+            'preferences': self.preferences.to_xmlrpc(),
             'locations': locations_dict,
             'author': self.author.to_xmlrpc(),
         }

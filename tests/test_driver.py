@@ -51,7 +51,7 @@ class TestDriver():
         response = self.driver.get_position()
         assert response['value']['georss_point'] == old_position.georss_point
         assert response['value']['georss_point'] != new_position.georss_point
-        
+
     def test_insert_trip(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0

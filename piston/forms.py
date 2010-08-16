@@ -5,7 +5,7 @@ from django.conf import settings
 
 class Form(forms.Form):
     pass
-    
+
 class ModelForm(forms.ModelForm):
     """
     Subclass of `forms.ModelForm` which makes sure
@@ -59,4 +59,3 @@ class OAuthAuthenticationForm(forms.Form):
 
         # calculate the digest base 64
         return base64.b64encode(hashed.digest())
-

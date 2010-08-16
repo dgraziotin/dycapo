@@ -26,13 +26,13 @@ BAD_REQUEST = 400
 DUPLICATE_ENTRY = 409
 
 """
-rc.ALL_OK	200 OK	        Everything went well.
-rc.CREATED	201 Created	Object was created.
-rc.DELETED	204 (Emtpy body, as per RFC2616)	Object was deleted.
-rc.BAD_REQUEST	400 Bad Request	Request was malformed/not understood.
-rc.FORBIDDEN	401 Forbidden	Permission denied.
-rc.DUPLICATE_ENTRY	409 Conflict/Duplicate	Object already exists.
-rc.NOT_HERE	410 Gone	Object does not exist.
-rc.NOT_IMPLEMENTED	501 Not Implemented	Action not available.
-rc.THROTTLED	503 Throttled	Request was throttled.
+rc.ALL_OK       200 OK          Everything went well.
+rc.CREATED      201 Created     Object was created.
+rc.DELETED      204 (Emtpy body, as per RFC2616)        Object was deleted.
+rc.BAD_REQUEST  400 Bad Request Request was malformed/not understood.
+rc.FORBIDDEN    401 Forbidden   Permission denied.
+rc.DUPLICATE_ENTRY      409 Conflict/Duplicate  Object already exists.
+rc.NOT_HERE     410 Gone        Object does not exist.
+rc.NOT_IMPLEMENTED      501 Not Implemented     Action not available.
+rc.THROTTLED    503 Throttled   Request was throttled.
 """

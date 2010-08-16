@@ -70,7 +70,7 @@ class TestSimpleMatching():
         response = self.rider.search_ride(self.rider.position,self.rider.destination)
         assert response['code'] == response_codes.NEGATIVE
     """
-    
+
     def test_insert_trip_exp(self):
         response = self.driver.insert_trip_exp()
         assert response['value']['id'] > 0

@@ -29,9 +29,9 @@ def search_ride(location,rider):
     """
 
     box_around_location = location.get_box_around()
-    lat_max = max((box_around_location[0].georss_point_latitude, 
+    lat_max = max((box_around_location[0].georss_point_latitude,
                    box_around_location[1].georss_point_latitude))
-    lat_min = min((box_around_location[3].georss_point_latitude, 
+    lat_min = min((box_around_location[3].georss_point_latitude,
                    box_around_location[2].georss_point_latitude))
 
     lon_max = max((box_around_location[1].georss_point_longitude,

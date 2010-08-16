@@ -54,7 +54,7 @@ def getPosition(current_user, person):
     if person.id == current_user.id:
         resp = models.Response(response_codes.ALL_OK,
                                'Location',
-                               person.position.to_xmlrpc())
+                               person.position)
         return resp
 
     person_participation = person.get_requested_participation()
@@ -82,7 +82,7 @@ def getPosition(current_user, person):
     else:
         resp = models.Response(response_codes.ALL_OK,
                                'Location',
-                               person.position.to_xmlrpc())
+                               person.position)
         return resp
 
 def register(person):

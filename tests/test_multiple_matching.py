@@ -30,17 +30,17 @@ class TestMultipleMatching():
         self.riders = [self.rider1, self.rider2, self.rider3, self.rider4]
         self.rider5 = classes.Rider(settings.RIDER_USERNAME,settings.RIDER_PASSWORD,settings.DYCAPO_URL)
         self.rider6 = classes.Rider("bruce",settings.RIDER_PASSWORD,settings.DYCAPO_URL)
-        
+
         self.driver_position = '46.490200 11.342294'
         self.driver_destination = '46.500740 11.345073'
         self.rider_position = '46.494957  11.340239'
         self.rider_destination = '46.500891  11.344306'
-    
+
     def teardown_class(self):
         if settings.FINISH_TRIP_AFTER_TESTS:
             self.driver.finish_trip(self.driver.trip)
-    
-    
+
+
     def setup_method(self,method):
         self.driver.position = classes.Location(georss_point=self.driver_position)
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
@@ -59,21 +59,21 @@ class TestMultipleMatching():
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.position.georss_point
         self.driver.position = response['value']
-        
+
         response = self.rider5.update_position()
         assert response['code'] == response_codes.CREATED
         response = self.rider5.get_position()
         assert response['value']['georss_point'] == self.rider5.position.georss_point
         self.rider5.position = response['value']
-        
-        
+
+
         response = self.rider6.update_position(location=self.rider6.position)
         assert response['code'] == response_codes.CREATED
         response = self.rider6.get_position()
         assert response['value']['georss_point'] == self.rider6.position.georss_point
         self.rider6.position = response['value']
 
-        
+
         for rider in self.riders:
             response = rider.update_position()
             assert response['code'] == response_codes.CREATED

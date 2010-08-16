@@ -86,6 +86,15 @@ def get_location_from_array(locations, point="dest"):
             return location
     return none
 
+def to_xmlrpc(response):
+    if response.type in server.models.__all__:
+        response.value = response.value.to_xmlrpc()
+    elif response.type.endswith('[]'):
+        response.value = [entry.to_xmlrpc() for entry in response.value]
+    return response.to_xmlrpc()
+
+
+
 def get_xmlrpc_user(kwargs):
     """
     Returns the Person object that is performing an XML-RPC call
@@ -96,4 +105,3 @@ def get_xmlrpc_user(kwargs):
                                          )
     except (server.models.Person.DoesNotExist, KeyError):
         return None
-

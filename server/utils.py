@@ -107,5 +107,3 @@ def get_rest_user(request):
                                          )
     except (models.Person.DoesNotExist, KeyError):
         return None
-
-    

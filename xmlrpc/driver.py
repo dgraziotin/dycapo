@@ -30,7 +30,7 @@ def insertTrip(trip, ** kwargs):
     """
     Description
     ===========
-    
+
     Inserts a new Trip in Dycapo System. This method does **not** start the
     Trip. use ``start_trip(Trip trip)`` for this scope.
 
@@ -41,14 +41,14 @@ def insertTrip(trip, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is saving in Dycapo
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -69,26 +69,26 @@ def insertTrip(trip, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | Something was wrong, look at Response_.message          | 
+    | False          | Something was wrong, look at Response_.message          |
     |                | for details                                             |
     +----------------+---------------------------------------------------------+
-    | trip_          | The operation was successful. The returned Trip is the  | 
+    | trip_          | The operation was successful. The returned Trip is the  |
     |                | one inserted including the id (Trip.id) to be used for  |
     |                | next operations and Trip.locations have more details    |
     |                | then those submitted as input                           |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Person: http://www.dycapo.org/Protocol#Person
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Mode: http://www.dycapo.org/Protocol#Mode
     .. _Preferences: http://www.dycapo.org/Protocol#Preferences
     .. _Location: http://www.dycapo.org/Protocol#Location
     .. _Response: http://www.dycapo.org/Protocol#Response
-    
+
     RESTful proposals
     ===========================
     * POST https://domain.ext/trips/
@@ -100,12 +100,11 @@ def insertTrip(trip, ** kwargs):
         dict_mode = utils.clean_ids(trip["mode"])
         dict_preferences = utils.clean_ids(trip["preferences"])
         array_locations = trip["locations"]
-        
+
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
-                               server.response_codes.PROTOCOL_ERROR,
-                               "boolean", False)
-        return resp.to_xmlrpc()
+                               "Message", server.models.Message(server.response_codes.PROTOCOL_ERROR))
+        return utils.to_xmlrpc(resp)
     author = utils.get_xmlrpc_user(kwargs)
 
     source = server.models.Location()
@@ -120,14 +119,15 @@ def insertTrip(trip, ** kwargs):
     mode = server.models.Mode()
     mode = utils.populate_object_from_dictionary(mode, dict_mode)
     mode.vacancy = dict_mode['vacancy']
-    
+
     preferences = server.models.Preferences()
     preferences = utils.populate_object_from_dictionary(preferences, dict_preferences)
-    
+
     trip = server.models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
-    
-    return server.driver.insertTrip(trip, author, source, destination, mode, preferences).to_xmlrpc()
+
+    response = server.driver.insertTrip(trip, author, source, destination, mode, preferences)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.startTrip',
                       signature=['Response', 'Trip'],
@@ -136,7 +136,7 @@ def startTrip(trip, ** kwargs):
     """
     Description
     ===========
-    
+
     Starts a Trip previously saved.
 
     Authentication, Permissions
@@ -146,14 +146,14 @@ def startTrip(trip, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is saving in Dycapo
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -163,7 +163,7 @@ def startTrip(trip, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -175,9 +175,9 @@ def startTrip(trip, ** kwargs):
     |                | set as started in the system and is available for       |
     |                | search by passengers                                    |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Response: http://www.dycapo.org/Protocol#Response
-    
+
     RESTful proposals
     ===========================
     * PUT https://domain.ext/trips/<id>
@@ -190,16 +190,16 @@ def startTrip(trip, ** kwargs):
         trip = server.models.Trip.objects.only("id","active").get(id=trip_dict['id'],author=driver)
     except server.models.Trip.DoesNotExist:
         resp = server.models.Response(server.response_codes.NOT_FOUND,
-                               server.response_codes.TRIP_NOT_FOUND,
-                               "boolean", False)
-        return resp.to_xmlrpc()
+                               "Message", server.models.Message(server.response_codes.TRIP_NOT_FOUND))
+        return utils.to_xmlrpc(response)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
-    
-    return server.driver.startTrip(trip, driver).to_xmlrpc()
+        return utils.to_xmlrpc(response)
+
+    response = server.driver.startTrip(trip, driver)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.getRides',
                       signature=['Response', 'Trip'],
@@ -208,7 +208,7 @@ def getRides(trip, ** kwargs):
     """
     Description
     ===========
-    
+
     This method is for a Driver to see if there are any ride requests
     from potential passengers.
 
@@ -219,14 +219,14 @@ def getRides(trip, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is saving in Dycapo
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -236,7 +236,7 @@ def getRides(trip, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -248,7 +248,7 @@ def getRides(trip, ** kwargs):
     |                | Every Person object supplied contains at least          |
     |                | the ``username`` attribute                              |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
@@ -267,14 +267,15 @@ def getRides(trip, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
 
-    return server.driver.getRides(trip, driver).to_xmlrpc()
+    response = server.driver.getRides(trip, driver)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.acceptRide',
                       signature=['Response', 'Trip', 'Person'],
@@ -283,7 +284,7 @@ def acceptRide(trip, person, ** kwargs):
     """
     Description
     ===========
-    
+
     This method is for a Driver to accept a Passenger request.
 
     Authentication, Permissions
@@ -293,16 +294,16 @@ def acceptRide(trip, person, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is referring to
         - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
           representing the passenger that the driver is accepting
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -314,7 +315,7 @@ def acceptRide(trip, person, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -325,11 +326,11 @@ def acceptRide(trip, person, ** kwargs):
     | True           | The operation was successful. Dycapo stores the request |
     |                | as accepted by the Driver.                              |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
-    
+
     RESTful proposals
     ===========================
     * PUT https://domain.ext/trips/<id>/participations/<username>
@@ -346,12 +347,12 @@ def acceptRide(trip, person, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
 
     try:
         passenger = server.models.Person.objects.only("id","position").get(
@@ -360,16 +361,16 @@ def acceptRide(trip, person, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
-    
-    
-    return server.driver.acceptRide(trip, driver, passenger)
+        return utils.to_xmlrpc(resp)
 
+
+    response = server.driver.acceptRide(trip, driver, passenger)
+    return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.refuseRide',
                       signature=['Response', 'Trip', 'Person'],
@@ -378,7 +379,7 @@ def refuseRide(trip, person, ** kwargs):
     """
     Description
     ===========
-    
+
     This method is for a Driver to refuse a Passenger request.
 
     Authentication, Permissions
@@ -388,16 +389,16 @@ def refuseRide(trip, person, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is referring to.
         - ``person`` - a `Person <http://www.dycapo.org/Protocol#Person>`_ object,
           representing the passenger that the driver is refusing
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -409,7 +410,7 @@ def refuseRide(trip, person, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
@@ -420,7 +421,7 @@ def refuseRide(trip, person, ** kwargs):
     | True           | The operation was successful. Dycapo stores the request |
     |                | as refused by the Driver.                               |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
@@ -429,7 +430,7 @@ def refuseRide(trip, person, ** kwargs):
     ===========================
     * PUT https://domain.ext/trips/<id>/participations/<username>
     * PUT https://domain.ext/trips/<id>/rides/<username>
-    """    
+    """
     trip_dict = trip
     person_dict = person
     driver = utils.get_xmlrpc_user(kwargs)
@@ -439,12 +440,12 @@ def refuseRide(trip, person, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
 
     try:
         passenger = server.models.Person.objects.only("id","position").get(
@@ -453,14 +454,15 @@ def refuseRide(trip, person, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
 
-    return server.driver.refuseRide(trip, passenger)
+    response = server.driver.refuseRide(trip, passenger)
+    return utils.to_xmlrpc(response)
 
 
 
@@ -471,7 +473,7 @@ def finishTrip(trip, ** kwargs):
     """
     Description
     ===========
-    
+
     This method is for a Driver to set a trip as finished.
 
     Authentication, Permissions
@@ -481,14 +483,14 @@ def finishTrip(trip, ** kwargs):
 
     Parameters
     ==========
-    
+
         - ``trip`` - a `Trip <http://www.dycapo.org/Protocol#Trip>`_ object,
           representing the Trip that the Driver is closing.
 
-    
+
     Required Parameters Details
     ---------------------------
-    
+
     +------------------+-------------------------+-----------------------------+
     | Object           | Object's Attribute      | Object's Attribute Type     |
     +==================+=========================+=============================+
@@ -498,18 +500,18 @@ def finishTrip(trip, ** kwargs):
 
     Response Possible Return Values
     -------------------------------
-    
+
     +----------------+---------------------------------------------------------+
     | Response_.value|   Details                                               |
     +================+=========================================================+
-    | False          | Either the ``id`` attribute is missing or               | 
+    | False          | Either the ``id`` attribute is missing or               |
     |                | not valid.                                              |
     |                | Look at Response_.message for further details.          |
     +----------------+---------------------------------------------------------+
     | True           | The operation was successful. Dycapo stores the Trip    |
     |                | as finished.                                            |
     +----------------+---------------------------------------------------------+
-    
+
     .. _Trip: http://www.dycapo.org/Protocol#Trip
     .. _Response: http://www.dycapo.org/Protocol#Response
     .. _Person: http://www.dycapo.org/Protocol#Person
@@ -527,13 +529,13 @@ def finishTrip(trip, ** kwargs):
         resp = server.models.Response(server.response_codes.NOT_FOUND,
                                server.response_codes.TRIP_NOT_FOUND,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     except KeyError:
         resp = server.models.Response(server.response_codes.BAD_REQUEST,
                                server.response_codes.PROTOCOL_ERROR,
                                "boolean", False)
-        return resp.to_xmlrpc()
+        return utils.to_xmlrpc(resp)
     
     driver = utils.get_xmlrpc_user(kwargs)
-    return server.driver.finishTrip(trip, driver).to_xmlrpc()
-
+    response = server.driver.finishTrip(trip, driver)
+    return utils.to_xmlrpc(response)
