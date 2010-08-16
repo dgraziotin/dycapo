@@ -2,6 +2,10 @@ import piston.utils
 import server.response_codes
 
 def get_rc_from_code(status_code):
+    """
+    Conversion method. Given a Response status code, it retrieves
+    the corresponding piston rc object, returning it
+    """
     for key in piston.utils.rc.CODES.keys():
         if piston.utils.rc.CODES[key][1] == status_code:
             rc = eval('piston.utils.rc.'+key)
@@ -10,6 +14,12 @@ def get_rc_from_code(status_code):
     return None
 
 def extract_result_from_response(response):
+    """
+    Given a Response object, if status code != 200,
+    it retrieves the corresponding piston rc object
+    and converts a Response object to a RESTful
+    object
+    """
     if response.code != server.response_codes.ALL_OK:
         result = get_rc_from_code(response.code)
         if response.value:
@@ -17,3 +27,14 @@ def extract_result_from_response(response):
     else:
         result = response.value
     return result
+
+def get_rest_user(request):
+    """
+    Returns the Person object that is performing a REST call
+    """
+    try:
+        return models.Person.objects.get(
+                                         username=request.META['REMOTE_USER']
+                                         )
+    except (models.Person.DoesNotExist, KeyError):
+        return None

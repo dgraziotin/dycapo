@@ -23,35 +23,6 @@ import time
 import datetime
 import server.models
 
-def now():
-    """
-    Returns a timestamp representing the current time, suitable for XML-RPC
-    """
-    now_seconds = time.time()
-    now_date = datetime.datetime.fromtimestamp(now_seconds)
-    return now_date.isoformat(' ')
-
-def now_plus_minutes(num_minutes):
-    """
-    Returns a timestamp representing the current time plus a given number
-    of minutes, suitable for XML-RPC
-    """
-    now_seconds = time.time()
-    now_date = datetime.datetime.fromtimestamp(now_seconds)
-    now_plus = now_date + timedelta(minutes=num_minutes)
-    return now_plus.isoformat(' ')
-
-def now_minus_minutes(num_minutes):
-    """
-    Returns a timestamp representing the current time minus a given number
-    of minutes, suitable for XML-RPC
-    """
-    now_seconds = time.time()
-    now_date = datetime.datetime.fromtimestamp(now_seconds)
-    now_minus = now_date - timedelta(minutes=num_minutes)
-    return now_minus.isoformat(' ')
-
-
 def clean_ids(dictionary):
     """
     Removes attributes with key 'id' from dictionaries. Suitable for XML-RPC
@@ -71,22 +42,24 @@ def populate_object_from_dictionary(obj, dictionary):
     obj.__dict__.update(dictionary)
     return obj
 
-def synchronize_objects(old_obj, new_obj):
-    """
-    Synchronizes attributes values of two objects
-    """
-    for key in old_obj.__dict__:
-        if key != 'id' and key != '_state':
-            old_obj.__dict__[key] = new_obj.__dict__[key]
-    return old_obj
-
 def get_location_from_array(locations, point="dest"):
+    """
+    Given a list of Location objects, it retrieves the one with specified point
+    """
     for location in locations:
         if location["point"] == point:
             return location
     return none
 
 def to_xmlrpc(response):
+    """
+    Utility function to extract Response.value in a clever way and call 
+    all objects' to_xmlrpc() methods.
+    If Response.type is a server.models type, it simply calls the to_xmlrpc() method
+    of the object contained in Response.value
+    If Response.type is an array of a server.models type, it calls the to_xmlrpc()
+    method of all of the objects in Response.value.
+    """
     if response.type in server.models.__all__:
         response.value = response.value.to_xmlrpc()
     elif response.type.endswith('[]'):
