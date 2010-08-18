@@ -30,7 +30,7 @@ def searchRide(source, destination, passenger):
 
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
-        resp = models.Response(models.response.FORBIDDEN,
+        resp = models.Response(models.Response.FORBIDDEN,
                                "Trip", passenger_active_participation.trip)
         return resp
 
@@ -39,25 +39,25 @@ def searchRide(source, destination, passenger):
         try:
             passenger.position.full_clean()
         except django.core.exceptions.ValidationError, e:
-            resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", server.models.Message(e.message_dict))
+            resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
             return resp
         passenger.position.save()
 
     trips = matching.search_ride(destination,passenger)
 
     if not trips:
-        return models.Response(models.response.NOT_FOUND,
-                               "Message", models.Message(models.response.RIDES_NOT_FOUND))
+        return models.Response(models.Response.NOT_FOUND,
+                               "Message", models.Response.RIDES_NOT_FOUND)
 
-    return models.Response(models.response.ALL_OK,
+    return models.Response(models.Response.ALL_OK,
                            "Trip[]", trips)
 
 def requestRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
 
     if passenger_active_participation:
-        resp = models.Response(models.response.FORBIDDEN,
+        resp = models.Response(models.Response.FORBIDDEN,
                                "Trip", passenger_active_participation.trip)
         return resp
 
@@ -72,17 +72,17 @@ def requestRide(trip, passenger):
         participation.requested_position_id = passenger.position_id
     try:
         participation.save()
-        resp = models.Response(models.response.CREATED,
-                               "Message", models.Message(models.response.RIDE_REQUESTED))
+        resp = models.Response(models.Response.CREATED,
+                               "Message", models.Response.RIDE_REQUESTED)
     except django.db.IntegrityError, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", models.Message(str(e)))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
     return resp
 
 def statusRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
-        resp = models.Response(models.response.FORBIDDEN,
+        resp = models.Response(models.Response.FORBIDDEN,
                                "Trip", passenger_active_participation.trip)
         return resp
 
@@ -91,16 +91,16 @@ def statusRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(models.response.NOT_FOUND,
-                               "Message", models.Message(models.response.PERSON_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               "Message", models.Response.PERSON_NOT_FOUND)
 
     if passenger_participation.accepted:
         #TODO: return author's position
-        resp = models.Response(models.response.ALL_OK,
+        resp = models.Response(models.Response.ALL_OK,
                                "Person", trip.author)
     else:
-        resp = models.Response(models.response.NOT_FOUND,
-                               "Message", models.Message(models.response.RIDE_REQUEST_NOT_YET_ACCEPTED))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               "Message", models.Response.RIDE_REQUEST_NOT_YET_ACCEPTED)
     return resp
 
 
@@ -109,8 +109,8 @@ def cancelRide(trip, passenger):
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
     except models.Participation.DoesNotExist:
-        resp = models.Response(models.response.NOT_FOUND,
-                    "Message", models.Message(models.response.MUST_FIRST_REQUEST_RIDE))
+        resp = models.Response(models.Response.NOT_FOUND,
+                    "Message", models.Response.MUST_FIRST_REQUEST_RIDE)
         return resp
 
     passenger_participation.requested_deleted = True
@@ -120,11 +120,11 @@ def cancelRide(trip, passenger):
         passenger_participation.requested_deleted_position_id = passenger.position_id
     try:
         passenger_participation.save()
-        resp = models.Response(models.response.DELETED,
-                               "Message", models.Message(models.response.PERSON_DELETED_REQUESTED_RIDE))
+        resp = models.Response(models.Response.DELETED,
+                               "Message", models.Response.PERSON_DELETED_REQUESTED_RIDE)
     except django.db.IntegrityError, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", models.Message(str(e)))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
     return resp
 
 def startRide(trip, passenger):
@@ -132,12 +132,12 @@ def startRide(trip, passenger):
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 
         if not is_already_participating:
-            resp = models.Response(models.response.NOT_FOUND,
-                    "Message", models.Message(models.response.MUST_FIRST_REQUEST_RIDE))
+            resp = models.Response(models.Response.NOT_FOUND,
+                    "Message", models.Response.MUST_FIRST_REQUEST_RIDE)
             return resp
     except (KeyError,models.Participation.DoesNotExist):
-        resp = models.Response(models.response.NOT_FOUND,
-                               "Message", models.Message(models.response.TRIP_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               "Message", models.Response.TRIP_NOT_FOUND)
         return resp
 
     try:
@@ -150,11 +150,11 @@ def startRide(trip, passenger):
         participation.started_position_id = passenger.position_id
         participation.save()
     except Exception, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", models.Message(str(e)))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
         return resp
-    resp = models.Response(models.response.ALL_OK,
-                               "Message", models.Message(models.response.RIDE_STARTED))
+    resp = models.Response(models.Response.ALL_OK,
+                               "Message", models.Response.RIDE_STARTED)
     return resp
 
 def finishRide(trip, passenger):
@@ -162,13 +162,13 @@ def finishRide(trip, passenger):
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 
         if not is_already_participating:
-            resp = models.Response(models.response.NOT_FOUND,
-                    models.response.MUST_FIRST_REQUEST_RIDE, "boolean", False)
+            resp = models.Response(models.Response.NOT_FOUND,
+                    models.Response.MUST_FIRST_REQUEST_RIDE, "boolean", False)
             return resp
 
     except (KeyError,models.Participation.DoesNotExist):
-        resp = models.Response(models.response.NOT_FOUND,
-                               "Message", models.Message(models.response.TRIP_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               "Message", models.Response.TRIP_NOT_FOUND)
         return resp
 
     participation = trip.get_participations().only('finished',
@@ -179,6 +179,6 @@ def finishRide(trip, passenger):
     participation.finished_timestamp = datetime.datetime.now()
     participation.finished_position_id = passenger.position_id
     participation.save()
-    resp = models.Response(models.response.ALL_OK,
-                               "Message", models.Message(models.response.RIDE_STARTED))
+    resp = models.Response(models.Response.ALL_OK,
+                               "Message", models.Response.RIDE_STARTED)
     return resp

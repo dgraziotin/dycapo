@@ -28,12 +28,12 @@ def setPosition(current_user, position):
         position.full_clean()
         position.save()
     except django.core.exceptions.ValidationError, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", models.Message(e.message_dict))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
         return resp
     except Exception, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               "Message", models.Message(str(e)))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               "Message", e)
         return resp
 
     current_user.position_id = position.id
@@ -45,13 +45,13 @@ def setPosition(current_user, position):
 
     current_user.save()
 
-    resp = models.Response(models.response.CREATED,
-                           "Message", models.Message(models.response.POSITION_UPDATED))
+    resp = models.Response(models.Response.CREATED,
+                           "Message", models.Response.POSITION_UPDATED)
     return resp
 
 def getPosition(current_user, person):
     if person.id == current_user.id:
-        resp = models.Response(models.response.ALL_OK,
+        resp = models.Response(models.Response.ALL_OK,
                                'Location',
                                person.position)
         return resp
@@ -60,26 +60,26 @@ def getPosition(current_user, person):
     current_user_participation = current_user.get_active_participation()
 
     if not person_participation:
-        resp = models.Response(models.response.NOT_FOUND,
-                               'Message', models.Message(models.response.PERSON_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               'Message', models.Response.PERSON_NOT_FOUND)
         return resp
 
     if person_participation.trip_id != current_user_participation.trip_id:
-        resp = models.Response(models.response.NOT_FOUND,
-                               'Message', models.Message(models.response.PERSON_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               'Message', models.Response.PERSON_NOT_FOUND)
         return resp
     else:
         if person_participation.requested_deleted:
-            resp = models.Response(models.response.NOT_FOUND,
-                                   'Message', models.Message(models.response.PERSON_DELETED_REQUESTED_RIDE))
+            resp = models.Response(models.Response.NOT_FOUND,
+                                   'Message', models.Response.PERSON_DELETED_REQUESTED_RIDE)
             return resp
 
     if not person.position:
-        resp = models.Response(models.response.NOT_FOUND,
-                               'Message', models.Message(models.response.LOCATION_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,
+                               'Message', models.Response.LOCATION_NOT_FOUND)
         return resp
     else:
-        resp = models.Response(models.response.ALL_OK,
+        resp = models.Response(models.Response.ALL_OK,
                                'Location',
                                person.position)
         return resp
@@ -92,13 +92,13 @@ def register(person):
         person.user_permissions.add(
             django.contrib.auth.models.Permission.objects.get(
                 codename='can_xmlrpc'))
-        resp = models.Response(models.response.CREATED,
+        resp = models.Response(models.Response.CREATED,
                            'Person',
                            person)
     except django.core.exceptions.ValidationError, e:
-        resp = models.Response(models.response.BAD_REQUEST,'Message',models.Message(e.message_dict))
+        resp = models.Response(models.Response.BAD_REQUEST,'Message',e)
     except Exception, e:
-        resp = models.Response(models.response.BAD_REQUEST,'Message',models.Message(e.message_dict))
+        resp = models.Response(models.Response.BAD_REQUEST,'Message',e)
     
     return resp
 
@@ -107,12 +107,12 @@ def changePassword(person):
     try:
         person.set_password(person.password)
         person.save()
-        resp = models.Response(models.response.ALL_OK,
+        resp = models.Response(models.Response.ALL_OK,
                            'Message',
-                           models.Message(models.response.PERSON_PASSWORD_CHANGED))
+                           models.Response.PERSON_PASSWORD_CHANGED)
     except (KeyError, models.Person.DoesNotExist):
-        resp = models.Response(models.response.NOT_FOUND,'Message', models.Message(models.response.PERSON_NOT_FOUND))
+        resp = models.Response(models.Response.NOT_FOUND,'Message',models.Response.PERSON_NOT_FOUND)
     except Exception, e:
-        resp = models.Response(models.response.BAD_REQUEST,
-                               'Message',models.Message(str(e)))
+        resp = models.Response(models.Response.BAD_REQUEST,
+                               'Message',e)
     return resp

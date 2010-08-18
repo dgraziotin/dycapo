@@ -162,7 +162,7 @@ def getPosition(person, **kwargs):
     try:
         person = server.models.Person.objects.get(username=person['username'])
     except (KeyError, server.models.Person.DoesNotExist):
-        resp = server.models.Response(server.models.response.NOT_FOUND, 'Message', server.models.Message(server.models.response.PERSON_NOT_FOUND))
+        resp = server.models.Response(server.models.Response.NOT_FOUND, 'Message', server.models.Response.PERSON_NOT_FOUND)
         return utils.to_xmlrpc(response)
 
     response = server.common.getPosition(current_user, person)
@@ -233,14 +233,16 @@ def register(person):
 
     """
     person_dict = person
+    
     try:
         person = server.models.Person(**person)
     except TypeError, e:
-        resp = models.Response(server.models.response.NOT_FOUND,
-                               'Message', models.Message(str(e)))
+        resp = server.models.Response(server.models.Response.NOT_FOUND,
+                               'Message', e)
         return resp
     response = server.common.register(person)
     return utils.to_xmlrpc(response)
+    
 
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',
@@ -309,8 +311,8 @@ def changePassword(person, **kwargs):
     try:
         current_user.password = person_dict['password']
     except KeyError:
-        return utils.to_xmlrpc(server.models.response.BAD_REQUEST,
+        return utils.to_xmlrpc(server.models.Response.BAD_REQUEST,
                             'Message',
-                               server.models.Message(server.models.response.PROTOCOL_ERROR))
+                               server.models.Response.PROTOCOL_ERROR)
     response = server.common.changePassword(current_user)
     return utils.to_xmlrpc(response)

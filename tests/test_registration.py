@@ -37,8 +37,12 @@ class TestRegistration():
             "password" : "password",
             "email" : "blah@blah.com",
             "phone" : "12345",
+            "gender" : "M",
+            
         }
         response = self.rider.client.dycapo.register(person)
+        print response
+        
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
 
     def test_registrations_real(self):
@@ -47,6 +51,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "driver@drivers.com",
             "phone" : "123456",
+            "gender" : "M",
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
@@ -55,6 +60,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "rider@riders.com",
             "phone" : "1234567",
+            "gender" : "M",
         }
 
         response = self.rider.client.dycapo.register(person)
@@ -65,6 +71,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "dio@ronniejamesdio.com",
             "phone" : "12345678",
+            "gender" : "M",
         }
 
         response = self.rider.client.dycapo.register(person)
@@ -74,6 +81,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "rob@judaspriest.com",
             "phone" : "123456789",
+            "gender" : "M",
         }
 
         response = self.rider.client.dycapo.register(person)
@@ -83,6 +91,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "ozzy@acdcd.com",
             "phone" : "1234567890",
+            "gender" : "M",
         }
         assert response['code'] != response_codes.BAD_REQUEST or response_codes.NOT_HERE
         response = self.rider.client.dycapo.register(person)
@@ -92,6 +101,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "bruce@ironmaiden.com",
             "phone" : "1234567801324",
+            "gender" : "M",
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
@@ -101,6 +111,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "angela@archenemy.com",
             "phone" : "12345678901",
+            "gender" : "F",
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
@@ -111,6 +122,7 @@ class TestRegistration():
             "password" : "password",
             "email" : "angela@archenemy.com",
             "phone" : "12345678901",
+            "gender" : "M",
         }
         response = self.rider.client.dycapo.register(person)
         assert response['code'] == response_codes.DUPLICATE_ENTRY
