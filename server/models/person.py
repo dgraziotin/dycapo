@@ -53,6 +53,16 @@ class Person(authmodels.User):
     dog = models.BooleanField(default=False)
     locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True, db_index=True) # MUST
 
+    cannot_update = [
+        'first_name',
+        'last_name',
+        'last_login',
+        'date_joined',
+        'username',
+        'position',
+        'locations',
+    ]
+    
     def get_recent_locations(self, max_results=10):
         """
         Returns the last n locations of a Person. If the person is participating

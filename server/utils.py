@@ -50,3 +50,12 @@ def now_minus_minutes(num_minutes):
     now_date = datetime.datetime.fromtimestamp(now_seconds)
     now_minus = now_date - timedelta(minutes=num_minutes)
     return now_minus.isoformat(' ')
+
+def synchronize_objects(old_obj, new_obj):
+    """
+    Synchronizes attributes values of two objects
+    """
+    for key in old_obj.__dict__:
+        if key != 'id' and key != '_state' and key not in old_obj.cannot_update and new_obj.__dict__[key]:
+            old_obj.__dict__[key] = new_obj.__dict__[key]
+    return old_obj

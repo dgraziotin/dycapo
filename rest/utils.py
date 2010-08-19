@@ -1,4 +1,5 @@
 import piston.utils
+import server.models
 def get_rc_from_code(status_code):
     """
     Conversion method. Given a Response status code, it retrieves
@@ -31,8 +32,8 @@ def get_rest_user(request):
     Returns the Person object that is performing a REST call
     """
     try:
-        return models.Person.objects.get(
+        return server.models.Person.objects.get(
                                          username=request.META['REMOTE_USER']
                                          )
-    except (models.Person.DoesNotExist, KeyError):
+    except (server.models.Person.DoesNotExist, KeyError):
         return None

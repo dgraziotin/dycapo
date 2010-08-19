@@ -23,6 +23,8 @@ import geopy.geocoders
 import settings
 import copy
 import datetime
+import django.core.exceptions
+import django.db
 
 WAYPOINT_CHOICES = (
     (u'orig', u'Origin'),
@@ -197,6 +199,18 @@ class Location(models.Model):
         self.georss_point_longitude = point.longitude
 
 
+    def clean(self):
+        """
+        Ensures integrity
+        """
+        if not self.point:
+            raise django.core.exceptions.ValidationError('Attribute point must be given.')
+        if not self.leaves:
+            raise django.core.exceptions.ValidationError('Attribute leaves must be given.')
+        if (    (not self.street or not self.town or not self.postcode)
+                and not self.georss_point):
+            raise django.core.exceptions.ValidationError('Give either address details or georss_point')
+    
     def save(self, * args, ** kwargs):
         """
         Ensures integrity
