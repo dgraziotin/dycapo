@@ -13,14 +13,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from rest.handlers import PersonHandler, LocationHandler
+from rest.handlers import PersonHandler, LocationHandler, TripHandler
 
 person_handler = Resource(PersonHandler)
 location_handler = Resource(LocationHandler)
+trip_handler = Resource(TripHandler)
 
 urlpatterns = patterns('',
+   url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
+   url(r'^trips/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
    url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
    url(r'^persons/(?P<username>\w+)/location/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
    #url(r'^persons/(?P<username>\w+)/position/$', person_position_handler, { 'emitter_format': 'json' }),

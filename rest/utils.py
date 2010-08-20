@@ -1,5 +1,6 @@
 import piston.utils
 import server.models
+
 def get_rc_from_code(status_code):
     """
     Conversion method. Given a Response status code, it retrieves
@@ -37,3 +38,32 @@ def get_rest_user(request):
                                          )
     except (server.models.Person.DoesNotExist, KeyError):
         return None
+    
+def clean_ids(dictionary):
+    """
+    Removes attributes with key 'id' from dictionaries. Suitable for XML-RPC
+    returns
+    """
+    try:
+        del dictionary['id']
+    except KeyError:
+        pass
+    return dictionary
+
+
+def get_location_from_array(locations, point="dest"):
+    """
+    Given a list of Location objects, it retrieves the one with specified point
+    """
+    for location in locations:
+        if location["point"] == point:
+            return location
+    return none
+
+def populate_object_from_dictionary(obj, dictionary):
+    """
+    Given an object and a dictionary, it updates all the object's
+    attributes with name matching a key of the dictionary
+    """
+    obj.__dict__.update(dictionary)
+    return obj
