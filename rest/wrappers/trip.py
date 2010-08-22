@@ -8,10 +8,10 @@ from piston.utils import require_mime
 import django.core.urlresolvers
 
 class TripHandler(BaseHandler):
-    allowed_methods = ['GET','POST','PUT']
+    allowed_methods = ['GET','POST','DELETE']
     model = server.models.Trip
     fields = ('id', 'published', 'updated', 'expires', 'author', 'locations',
-              'mode', 'preferences')
+              'mode', 'preferences', 'active')
 
     def read(self, request, id=None):
         if not id:
@@ -56,29 +56,41 @@ class TripHandler(BaseHandler):
             trip = server.models.Trip.objects.get(id=result.value['id'])
             return trip
         return result.to_xmlrpc() #rest.utils.extract_result_from_response(result)
-    
-    @classmethod
-    def resource_uri(*args, **kwargs):
-        return ('trip_handler', ['id',])
-
-"""  
-    def update(self, request, username=None):
-        if not username:
-            return piston.utils.rc.NOT_FOUND
-        attrs = self.flatten_dict(request.data)
+  
+    def update(self, request, id=None):
         current_user = rest.utils.get_rest_user(request)
+        data = request.data
         try:
-            person = server.models.Person(**attrs)
-            if person.username != current_user.username:
+            trip = server.models.Trip.objects.get(id=id)
+            if trip.author.id != current_user.id:
                 return piston.utils.rc.FORBIDDEN
+            if trip.active:
+                return piston.utils.rc.FORBIDDEN
+            result = server.driver.startTrip(trip, current_user)
+            return rest.utils.extract_result_from_response(result)
+        except server.models.Trip.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
         except Exception, e:
             rc = piston.utils.rc.BAD_REQUEST
             rc.write(str(e))
             return rc
-        result = server.common.updatePerson(current_user, person)
-        return rest.utils.extract_result_from_response(result)
+        
+    def delete(self, request, id=None):
+        current_user = rest.utils.get_rest_user(request)
+        try:
+            trip = server.models.Trip.objects.get(id=id, active=True)
+            if trip.author.id != current_user.id:
+                return piston.utils.rc.FORBIDDEN
+            result = server.driver.finishTrip(trip, current_user)
+            return rest.utils.extract_result_from_response(result)
+        except server.models.Trip.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except Exception, e:
+            rc = piston.utils.rc.BAD_REQUEST
+            rc.write(str(e))
+            return rc
     
     @classmethod
     def resource_uri(*args, **kwargs):
-        return ('person_handler', ['username',])
-"""
+        return ('trip_handler', ['id',])
+    

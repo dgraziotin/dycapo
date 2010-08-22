@@ -55,7 +55,8 @@ def searchRide(source, destination, passenger):
 
 def requestRide(trip, passenger):
     passenger_active_participation = passenger.get_active_participation()
-
+    trip_participations = trip.get_participations().exclude(role='driver')
+    
     if passenger_active_participation:
         resp = models.Response(models.Response.FORBIDDEN,
                                "Trip", passenger_active_participation.trip)

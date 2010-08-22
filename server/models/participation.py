@@ -35,6 +35,16 @@ class Participation(models.Model):
     This is an OpenTrip extension and should be considered as a proposal for OpenTrip Dynamic.
     It is currently used internally in Dycapo
     """
+
+    _status = {
+        "request" : ("request",1),
+        "accept" : ("accept", 2),
+        "start" : ("start", 3),
+        "finish" : ("finish", 4),
+        "cancel": ("cancel", 100),
+        "refuse": ("refuse", 200),
+    }
+    
     person = models.ForeignKey('Person', related_name="participant")
     trip = models.ForeignKey(moduletrip.Trip, related_name="trip")
     role = models.CharField(max_length=6, choices=ROLE_CHOICES, blank=False)
@@ -56,11 +66,38 @@ class Participation(models.Model):
     finished = models.BooleanField(blank=False, default=False)
     finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
     finished_position = models.ForeignKey(location.Location, related_name="finished_position", blank=True, null=True)
-    locations = models.ManyToManyField(location.Location, related_name="participaion_locations")
-
+    locations = models.ManyToManyField(location.Location, related_name="participation_locations")
 
     def __unicode__(self):
         return str(self.person) + " -> " + str(self.trip)
+    
+    def get_status(self):
+        if self.refused: 
+            return self._status['refuse']
+        elif self.requested_deleted: 
+            return self._status['cancel']
+        elif self.finished: 
+            return self._status['finish']
+        elif self.started:
+            return self._status['start']
+        elif self.accepted:
+            return self._status['accept']
+        else:
+            return self._status['request']
+    
+    def get_status_code(self, status_name=None):
+        if status_name:
+            return self._status[status_name][1]
+        else:
+            return self.get_status()[1]
+        
+    
+    def get_status_name(self, status_code=None):
+        if status_code:
+            return [k for k, v in self._status.iteritems() if v[1] == status_code][0]
+        else:
+            return self.get_status()[0]
 
     class Meta:
         app_label = 'server'
+        unique_together = (("person","trip"),)

@@ -39,6 +39,7 @@ class Response(Exception):
     TRIP_STARTED = "Trip already started."
     TRIP_DELETED = "Trip succesfully closed."
     TRIP_NOT_DELETED = "Could not close Trip. Please contact Dycapo administrators."
+    TRIP_STILL_ACTIVE = "Could not close Trip, there are already passengers."
     TRIP_NOT_FOUND = """Trip not found. Please specify at least a
                         valid id attribute."""
     TRIP_PROTOCOL_ERROR = """Protocol Error. Trip attributes expires and content

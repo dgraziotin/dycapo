@@ -67,3 +67,12 @@ def populate_object_from_dictionary(obj, dictionary):
     """
     obj.__dict__.update(dictionary)
     return obj
+
+def synchronize_objects(old_obj, new_obj):
+    """
+    Synchronizes attributes values of two objects
+    """
+    for key in old_obj.__dict__:
+        if key != 'id' and key != '_state' and key not in old_obj.cannot_update and new_obj.__dict__[key]:
+            old_obj.__dict__[key] = new_obj.__dict__[key]
+    return old_obj

@@ -33,6 +33,14 @@ class Trip(models.Model):
     atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
     in case of an export of a Trip in OpenTrip Feed format.
     """
+    cannot_update = [
+        'published',
+        'updated',
+        'expires',
+        'locations',
+        'mode',
+        'participation',
+    ]
     published = models.DateTimeField(auto_now_add=True, blank=False, null=True)
     updated = models.DateTimeField(auto_now=True, blank=False, null=True)
     expires = models.DateTimeField(blank=False, null=True, db_index=True)

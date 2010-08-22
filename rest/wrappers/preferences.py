@@ -10,7 +10,7 @@ import django.core.urlresolvers
 class PreferencesHandler(BaseHandler):
     #allowed_methods = ['GET','POST','PUT']
     model = server.models.Preferences
-    exclude = ('_state')
+    exclude = ('_state', 'id')
     """
     @classmethod
     def resource_uri(*args, **kwargs):

@@ -8,7 +8,7 @@ from piston.utils import require_mime
 import django.core.urlresolvers
 
 from wrappers.person import PersonHandler
-#from wrappers.mode import ModeHandler
+from wrappers.participation import ParticipationHandler
 from wrappers.preferences import PreferencesHandler
 from wrappers.location import LocationHandler
 from wrappers.trip import TripHandler
