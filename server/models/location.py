@@ -70,7 +70,7 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255, blank=True)
     days = models.CharField(max_length=255, choices=RECURS_CHOICES, blank=True)
     leaves = models.DateTimeField(blank=True, null=True)
-
+    
     def distance(self, location):
         """
         Returns the distance in KMs from this location to a given location

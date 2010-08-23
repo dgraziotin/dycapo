@@ -11,8 +11,9 @@ import re
 class LocationHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Location
-    exclude = ('_state','id',
-               'georss_point_longitude','georss_point_latitude')
+    fields = ("town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
+    "recurs","georss_point")
+    
 
     def read(self, request, username):
         user = rest.utils.get_rest_user(request)
@@ -21,6 +22,8 @@ class LocationHandler(BaseHandler):
         except server.models.Person.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         result = server.common.getPosition(user,person)
+        if result.type=='Location':
+            result.value.username = username
         return rest.utils.extract_result_from_response(result)
     
     def create(self, request, username):
@@ -35,3 +38,11 @@ class LocationHandler(BaseHandler):
             return piston.utils.rc.NOT_FOUND
         result = server.common.setPosition(user, location)
         return rest.utils.extract_result_from_response(result)
+    
+    def update(self, request, username):
+        return self.create(request, username)
+"""    
+    @classmethod
+    def resource_uri(*args, **kwargs):
+        return ('location_handler', ['username'])
+"""
