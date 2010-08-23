@@ -53,7 +53,7 @@ def get_location_from_array(locations, point="dest"):
 
 def to_xmlrpc(response):
     """
-    Utility function to extract Response.value in a clever way and call 
+    Utility function to extract Response.value in a clever way and call
     all objects' to_xmlrpc() methods.
     If Response.type is a server.models type, it simply calls the to_xmlrpc() method
     of the object contained in Response.value

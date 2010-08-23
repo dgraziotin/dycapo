@@ -12,7 +12,7 @@ class ParticipationHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Participation
     fields = ('person','status')
-    
+
     def read(self, request, trip_id=None, username=None):
         if username:
             try:
@@ -31,8 +31,8 @@ class ParticipationHandler(BaseHandler):
                 participation.status = participation.get_status_name()
             return participations
         except server.models.Trip.DoesNotExist:
-                return piston.utils.rc.NOT_FOUND
-            
+            return piston.utils.rc.NOT_FOUND
+
     def create(self, request, trip_id):
         data = request.data
         current_user = rest.utils.get_rest_user(request)
@@ -46,20 +46,20 @@ class ParticipationHandler(BaseHandler):
                         server.models.Response.BAD_REQUEST,
                         'Message',
                          {'status': [u'This field is required and its value must be request.']})
-                    
+
                 return rest.utils.extract_result_from_response(result)
-                    
+
         except server.models.Trip.DoesNotExist:
-                return piston.utils.rc.NOT_FOUND
+            return piston.utils.rc.NOT_FOUND
         except KeyError, e:
-                result = server.models.Response(
-                        server.models.Response.BAD_REQUEST,
-                        'Message',
-                         e)
-                    
-                return rest.utils.extract_result_from_response(result)
-            
-            
+            result = server.models.Response(
+                    server.models.Response.BAD_REQUEST,
+                    'Message',
+                     e)
+
+            return rest.utils.extract_result_from_response(result)
+
+
     def update(self, request, trip_id=None, username=None):
         data = request.data
         current_user = rest.utils.get_rest_user(request)
@@ -67,9 +67,16 @@ class ParticipationHandler(BaseHandler):
             trip = server.models.Trip.objects.get(id=trip_id)
             status = data['status']
             person_participation = trip.get_participations().filter(person__username=username).get()
+            person = person_participation.person
+
+            if current_user != person and current_user != trip.author:
+            # only the author of the trip or the owner of the
+            # participation can manipulate here
+                return piston.utils.rc.FORBIDDEN
+
             status_code = person_participation.get_status_code(status)
-            
-            if status_code < person_participation.get_status_code():
+
+            if status_code <= person_participation.get_status_code():
                 result = server.models.Response(
                         server.models.Response.FORBIDDEN,
                         'Message',
@@ -77,8 +84,10 @@ class ParticipationHandler(BaseHandler):
                 return rest.utils.extract_result_from_response(result)
 
             status_set = server.models.Participation._status
+
             if status == status_set['accept'][0]:
                 if not current_user == trip.author:
+                    # this is a status that can be set just by the driver
                     return piston.utils.rc.FORBIDDEN
                 result = server.driver.acceptRide(trip, current_user, person_participation.person)
             elif status == status_set['start'][0]:
@@ -91,53 +100,50 @@ class ParticipationHandler(BaseHandler):
                         'Message',
                          'Can not fall back to ' +status+ 'status at this point')
             return rest.utils.extract_result_from_response(result)
-            
-                    
-        except server.models.Trip.DoesNotExist, server.models.Participation.DoesNotExist:
-                return piston.utils.rc.NOT_FOUND
-        except KeyError, e:
-                result = server.models.Response(
-                        server.models.Response.BAD_REQUEST,
-                        'Message',
-                         e)
-                    
-                return rest.utils.extract_result_from_response(result)
-    
-    def delete(self, request, trip_id=None, username=None):
-        if username and trip_id:
-            current_user = rest.utils.get_rest_user(request)
-            try:
-                person = server.models.Person.objects.get(username=username)
-                trip = server.models.Trip.objects.get(id=trip_id)
-                participation = trip.get_participations().filter(person=person)[0]
-                if current_user == trip.author:
-                    result = server.driver.refuseRide(trip, person)
-                else:
-                    result = server.passenger.cancelRide(trip, person)
-                return rest.utils.extract_result_from_response(result)
-            except server.models.Participation.DoesNotExist, e:
-                return rest.utils.extract_result_from_response(
-                    server.models.Response(
-                        server.models.Response.NOD_FOUND,"Message",e)
-                )
-            except server.models.Trip.DoesNotExist, e:
-                return rest.utils.extract_result_from_response(
-                    server.models.Response(
-                        server.models.Response.NOT_FOUND,"Message",e)
-                )
-            except server.models.Person.DoesNotExist, e:
-                return rest.utils.extract_result_from_response(
-                    server.models.Response(
-                        server.models.Response.NOT_FOUND,"Message",e)
-                )
-            except Exception, e:
-                return rest.utils.extract_result_from_response(
-                    server.models.Response(
-                        server.models.Response.NOT_FOUND,"Message",e)
-                )
 
-        return piston.utils.rc.NOT_FOUND
-    
+
+        except server.models.Trip.DoesNotExist, server.models.Participation.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except KeyError, e:
+            result = server.models.Response(
+                    server.models.Response.BAD_REQUEST,
+                    'Message',
+                     e)
+
+            return rest.utils.extract_result_from_response(result)
+
+    def delete(self, request, trip_id=None, username=None):
+        data = request.data
+        current_user = rest.utils.get_rest_user(request)
+        try:
+            trip = server.models.Trip.objects.get(id=trip_id)
+            status = data['status']
+            person_participation = trip.get_participations().filter(person__username=username).get()
+            person = person_participation.person
+
+            if current_user != person and current_user != trip.author:
+            # only the author of the trip or the owner of the
+            # participation can manipulate here
+                return piston.utils.rc.FORBIDDEN
+
+            if current_user == person:
+                return server.passenger.cancelRide(trip, current_user)
+            elif current_user == trip.author:
+                return server.driver.refuseRide(trip, person)
+            else:
+                return piston.utils.rc.FORBIDDEN
+
+
+        except server.models.Trip.DoesNotExist, server.models.Participation.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except KeyError, e:
+            result = server.models.Response(
+                    server.models.Response.BAD_REQUEST,
+                    'Message',
+                     e)
+
+            return rest.utils.extract_result_from_response(result)
+
     @classmethod
     def resource_uri(*args, **kwargs):
         return ('participation_handler', ['trip_id','person'])

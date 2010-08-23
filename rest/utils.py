@@ -38,7 +38,7 @@ def get_rest_user(request):
                                          )
     except (server.models.Person.DoesNotExist, KeyError):
         return None
-    
+
 def clean_ids(dictionary):
     """
     Removes attributes with key 'id' from dictionaries. Suitable for XML-RPC

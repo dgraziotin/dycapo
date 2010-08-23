@@ -29,7 +29,7 @@ class PersonHandler(BaseHandler):
         person = server.models.Person(**attrs)
         result = server.common.register(person)
         return rest.utils.extract_result_from_response(result)
-    
+
     def update(self, request, username=None):
         if not username:
             return piston.utils.rc.NOT_FOUND
@@ -45,7 +45,7 @@ class PersonHandler(BaseHandler):
             return rc
         result = server.common.updatePerson(current_user, person)
         return rest.utils.extract_result_from_response(result)
-    
+
     @classmethod
     def resource_uri(*args, **kwargs):
         return ('person_handler', ['username',])

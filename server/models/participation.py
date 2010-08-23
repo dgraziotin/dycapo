@@ -44,7 +44,7 @@ class Participation(models.Model):
         "cancel": ("cancel", 100),
         "refuse": ("refuse", 200),
     }
-    
+
     person = models.ForeignKey('Person', related_name="participant")
     trip = models.ForeignKey(moduletrip.Trip, related_name="trip")
     role = models.CharField(max_length=6, choices=ROLE_CHOICES, blank=False)
@@ -70,13 +70,13 @@ class Participation(models.Model):
 
     def __unicode__(self):
         return str(self.person) + " -> " + str(self.trip)
-    
+
     def get_status(self):
-        if self.refused: 
+        if self.refused:
             return self._status['refuse']
-        elif self.requested_deleted: 
+        elif self.requested_deleted:
             return self._status['cancel']
-        elif self.finished: 
+        elif self.finished:
             return self._status['finish']
         elif self.started:
             return self._status['start']
@@ -84,14 +84,14 @@ class Participation(models.Model):
             return self._status['accept']
         else:
             return self._status['request']
-    
+
     def get_status_code(self, status_name=None):
         if status_name:
             return self._status[status_name][1]
         else:
             return self.get_status()[1]
-        
-    
+
+
     def get_status_name(self, status_code=None):
         if status_code:
             return [k for k, v in self._status.iteritems() if v[1] == status_code][0]

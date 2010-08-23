@@ -73,7 +73,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
     participation = models.Participation(person=author, trip=trip,
                                          role='driver')
     participation.save()
-    
+
     resp = models.Response(models.Response.CREATED,
                            "Trip",
                            trip)

@@ -38,11 +38,11 @@ class TestRegistration():
             "email" : "blah@blah.com",
             "phone" : "12345",
             "gender" : "M",
-            
+
         }
         response = self.rider.client.dycapo.register(person)
         print response
-        
+
         assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY
 
     def test_registrations_real(self):

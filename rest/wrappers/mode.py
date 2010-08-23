@@ -11,7 +11,7 @@ class ModeHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Mode
     #fields = ('make')
-    
+
     """
     @classmethod
     def resource_uri(*args, **kwargs):

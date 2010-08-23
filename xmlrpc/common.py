@@ -233,7 +233,7 @@ def register(person):
 
     """
     person_dict = person
-    
+
     try:
         person = server.models.Person(**person)
     except TypeError, e:
@@ -242,7 +242,7 @@ def register(person):
         return resp
     response = server.common.register(person)
     return utils.to_xmlrpc(response)
-    
+
 
 
 @rpc4django.rpcmethod(name='dycapo.changePassword',

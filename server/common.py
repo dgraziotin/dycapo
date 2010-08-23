@@ -99,7 +99,7 @@ def register(person):
         resp = models.Response(models.Response.BAD_REQUEST,'Message',e)
     except Exception, e:
         resp = models.Response(models.Response.BAD_REQUEST,'Message',e)
-    
+
     return resp
 
 def updatePerson(current_user, person):
@@ -107,7 +107,7 @@ def updatePerson(current_user, person):
         if hasattr(person,'password'):
             if not person.check_password(person.password):
                 person.set_password(person.password)
-            
+
         current_user = utils.synchronize_objects(current_user, person)
         current_user.save()
         resp = models.Response(models.Response.ALL_OK,'Person',current_user)

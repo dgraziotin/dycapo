@@ -62,7 +62,7 @@ class Person(authmodels.User):
         'position',
         'locations',
     ]
-    
+
     def get_recent_locations(self, max_results=10):
         """
         Returns the last n locations of a Person. If the person is participating

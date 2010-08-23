@@ -534,7 +534,7 @@ def finishTrip(trip, ** kwargs):
                                server.models.Response.PROTOCOL_ERROR,
                                "boolean", False)
         return utils.to_xmlrpc(resp)
-    
+
     driver = utils.get_xmlrpc_user(kwargs)
     response = server.driver.finishTrip(trip, driver)
     return utils.to_xmlrpc(response)

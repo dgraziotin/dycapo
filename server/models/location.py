@@ -210,7 +210,7 @@ class Location(models.Model):
         if (    (not self.street or not self.town or not self.postcode)
                 and not self.georss_point):
             raise django.core.exceptions.ValidationError('Give either address details or georss_point')
-    
+
     def save(self, * args, ** kwargs):
         """
         Ensures integrity

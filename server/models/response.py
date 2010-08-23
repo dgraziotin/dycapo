@@ -32,7 +32,7 @@ class Response(Exception):
     NOT_FOUND = piston.rc.NOT_FOUND.status_code
     BAD_REQUEST = piston.rc.BAD_REQUEST.status_code
     DUPLICATE_ENTRY = piston.rc.DUPLICATE_ENTRY.status_code
-    
+
     PROTOCOL_ERROR = "Please give all required parameters."
     TRIP_INSERTED = "Trip successfully inserted."
     TRIP_STARTED = "Trip successfully started."
@@ -65,19 +65,19 @@ class Response(Exception):
     PERSON_FOUND = "Person(s) found"
     PERSON_DELETED_REQUESTED_RIDE = "Person deleted the ride requested."
     LOCATION_NOT_FOUND = "Location not available"
-    
+
     code = -1
     type = ""
     value = {}
-    
+
     def __init__(self, code, type, value):
         self.code = code
         self.type = type
         if self.type=='Message':
             if isinstance(value, django.core.exceptions.ValidationError):
-                    self.value = value.message_dict
-                    if [item[1][0] for item in self.value.items() if "already exists" in item[1][0]]:
-                        self.code = self.DUPLICATE_ENTRY
+                self.value = value.message_dict
+                if [item[1][0] for item in self.value.items() if "already exists" in item[1][0]]:
+                    self.code = self.DUPLICATE_ENTRY
             elif isinstance(value, list):
                 self.value = value[0].message_dict
                 self.value['message'] = str(value[1])
@@ -87,10 +87,10 @@ class Response(Exception):
                 }
         else:
             self.value = value
-            
+
     def to_xmlrpc(self):
         return self.__dict__
-    
+
     def __str__(self):
         return repr(self.__dict__)
 

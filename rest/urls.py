@@ -24,8 +24,8 @@ trip_handler = Resource(TripHandler)
 participation_handler = Resource(ParticipationHandler)
 
 urlpatterns = patterns('',
-   url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),                    
-   url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),                    
+   url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
+   url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
    url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
    url(r'^trips/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
    url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
