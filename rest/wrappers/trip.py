@@ -8,7 +8,7 @@ from piston.utils import require_mime
 import django.core.urlresolvers
 
 class TripHandler(BaseHandler):
-    allowed_methods = ['GET','POST','DELETE']
+    allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
     fields = ('id', 'published', 'updated', 'expires', 'author', 'locations',
               'mode', 'preferences', 'active')
