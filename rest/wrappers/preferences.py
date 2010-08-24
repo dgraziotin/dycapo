@@ -8,11 +8,23 @@ from piston.utils import require_mime
 import django.core.urlresolvers
 
 class PreferencesHandler(BaseHandler):
-    #allowed_methods = ['GET','POST','PUT']
+    allowed_methods = ['GET']
     model = server.models.Preferences
-    exclude = ('_state', 'id')
-    """
+    exclude = ('_state')
+    
+    def read(self, request, id=None):
+        user = rest.utils.get_rest_user(request)
+        try:
+            if id:
+                preferences = server.models.Prefences.objects.get(id=id)
+                return location
+            else:
+                return server.models.Preferences.objects.all()
+        except server.models.Person.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except server.models.Location.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        
     @classmethod
     def resource_uri(*args, **kwargs):
-        return ('person_handler', ['username',])
-    """
+        return ('preferences_handler', ['id',])

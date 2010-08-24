@@ -10,8 +10,19 @@ import django.core.urlresolvers
 class TripHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
-    fields = ('id', 'published', 'updated', 'expires', 'author', 'locations',
-              'mode', 'preferences', 'active')
+    fields = ('id', 'published', 'updated', 'expires', 
+              ('author',('username','gender','resource_uri')), 
+              ('locations',('point','street','town','postcode','georss_point','offset','leaves')),
+              ('mode',('kind','capacity','vacancy','make','model')), 
+              ('preferences'),)
+    
+
+    @classmethod
+    def locations(cls, trip):
+        locations = trip.locations.all()
+        for location in locations:
+            location.resource_uri = django.core.urlresolvers.reverse('location_handler',args=[location.id])
+        return locations
 
     def read(self, request, id=None):
         if not id:

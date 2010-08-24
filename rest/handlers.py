@@ -10,5 +10,5 @@ import django.core.urlresolvers
 from wrappers.person import PersonHandler
 from wrappers.participation import ParticipationHandler
 from wrappers.preferences import PreferencesHandler
-from wrappers.location import LocationHandler
+from wrappers.location import LocationHandler, LocationPersonHandler
 from wrappers.trip import TripHandler
