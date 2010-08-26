@@ -106,7 +106,7 @@ class Modality():
     vacancy = 0
     cost = 0
     #year = 0
-    model = ''
+    model_name = ''
 
 class Preferences():
     age = '18-30'

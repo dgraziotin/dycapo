@@ -26,7 +26,7 @@ def insertTrip(trip, author, source, destination, modality, preferences):
     vacancy = modality.vacancy
     modality, created = models.Modality.objects.get_or_create(person=author,
                                                  make=modality.make,
-                                                 model=modality.model,
+                                                 model_name=modality.model_name,
                                                  capacity=modality.capacity,
                                                  kind=modality.kind)
     modality.vacancy = vacancy

@@ -36,7 +36,7 @@ class Modality(models.Model):
     capacity = models.PositiveIntegerField(blank=False, null=False, default=0)
     vacancy = models.IntegerField(blank=False, null=False, default=0)
     make = models.CharField(max_length=255, blank=True)
-    model = models.CharField(max_length=255, blank=True)
+    model_name = models.CharField(max_length=255, blank=True)
     year = models.PositiveIntegerField(blank=True, null=False, default=0)
     color = models.CharField(max_length=255, blank=True)
     lic = models.CharField(max_length=255, blank=True)
@@ -45,8 +45,8 @@ class Modality(models.Model):
     href = models.URLField(blank=True, null=False)
 
     def save(self, * args, ** kwargs):
-        if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model:
-            raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
+        if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model_name:
+            raise IntegrityError('Attributes kind, capacity, vacancy, make, model_name MUST be given.')
         super(Modality, self).save(*args, **kwargs)
 
 

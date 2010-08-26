@@ -12,9 +12,9 @@ class TripHandler(BaseHandler):
     model = server.models.Trip
     fields = ('href','id', 'published', 'updated', 'expires', 
               ('author',('username','gender','href')), 
-              ('locations',('point','street','town','postcode','georss_point','offset','leaves')),
-              ('modality',('kind','capacity','vacancy','make','model')), 
-              ('preferences'))
+              ('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),
+              ('modality'), 
+              ('preferences',('nonsmoking','gender','ride','drive','age','age')))
     
         
     @classmethod

@@ -81,7 +81,7 @@ class DriverTest(Thread):
         modality.cost = 0
         modality.lic = '1234f434'
         modality.make = 'ford'
-        modality.model = 'fiesta'
+        modality.model_name = 'fiesta'
         #modality.year = 2003
         modality.kind = 'auto'
 

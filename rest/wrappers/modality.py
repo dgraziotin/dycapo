@@ -10,13 +10,7 @@ import django.core.urlresolvers
 class ModalityHandler(BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Modality
-    fields = ('id')
-    """fields = ("nonsmoking",
-        "gender",
-        "ride",
-        "drive",
-        "id",
-        "age","href")"""
+    exclude = ('state')
     
     def read(self, request, id=None):
         user = rest.utils.get_rest_user(request)
