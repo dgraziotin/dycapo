@@ -21,7 +21,7 @@ This module holds the Trip model
 from django.db import models, IntegrityError
 import person
 import location
-import mode as modulemode
+import modality as modulemodality
 import preferences as modulepreferences
 import participation as moduleparticipation
 import participation
@@ -38,18 +38,19 @@ class Trip(models.Model):
         'updated',
         'expires',
         'locations',
-        'mode',
+        'modality',
         'participation',
     ]
-    published = models.DateTimeField(auto_now_add=True, blank=False, null=True)
-    updated = models.DateTimeField(auto_now=True, blank=False, null=True)
+    published = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    updated = models.DateTimeField(auto_now=True, blank=False, null=False)
     expires = models.DateTimeField(blank=False, null=True, db_index=True)
     active = models.BooleanField(default=False, db_index=True)
-    author = models.ForeignKey('Person', related_name='author', blank=False, null=True)
+    author = models.ForeignKey('Person', related_name='author', blank=False, null=False)
     locations = models.ManyToManyField(location.Location, blank=False)
-    mode = models.ForeignKey(modulemode.Mode, blank=False, null=True)
-    preferences = models.ForeignKey(modulepreferences.Preferences, null=True)
+    modality = models.ForeignKey(modulemodality.Modality, blank=False, null=False)
+    preferences = models.ForeignKey(modulepreferences.Preferences, null=False)
     participation = models.ManyToManyField('Person', through='Participation', related_name='participation')
+    href = models.URLField(blank=True, null=False)
 
     def __repr__(self):
         return str(self.id)
@@ -69,17 +70,17 @@ class Trip(models.Model):
         Checks how many seats are still available in car and updates the attribute consistently
         """
         participations_for_trip = self.get_participations().exclude(role='driver').filter(started=True).filter(finished=False).count()
-        vacancy = self.mode.capacity - participations_for_trip
-        if self.mode.vacancy!=vacancy:
-            self.mode.vacancy=vacancy
-            self.mode.save()
+        vacancy = self.modality.capacity - participations_for_trip
+        if self.modality.vacancy!=vacancy:
+            self.modality.vacancy=vacancy
+            self.modality.save()
 
     def has_vacancy(self):
         """
         Returns True if there are emtpy seats available
         """
         self.update_vacancy()
-        if self.mode.vacancy > 0:
+        if self.modality.vacancy > 0:
             return True
         return False
 
@@ -88,7 +89,7 @@ class Trip(models.Model):
         """
         Ensures integrity.
         """
-        if not self.expires or not self.mode or not self.preferences or not self.author:
+        if not self.expires or not self.modality or not self.preferences or not self.author:
             raise IntegrityError('Trip objects MUST have expires and content attributes.')
         super(Trip, self).save(*args, ** kwargs) # Call the "real" save() method.
 
@@ -114,7 +115,7 @@ class Trip(models.Model):
             'published': self.published,
             'updated': self.updated,
             'expires': self.expires,
-            'mode': self.mode.to_xmlrpc(),
+            'modality': self.modality.to_xmlrpc(),
             'preferences': self.preferences.to_xmlrpc(),
             'locations': locations_dict,
             'author': self.author.to_xmlrpc(),

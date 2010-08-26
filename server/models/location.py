@@ -53,23 +53,24 @@ class Location(models.Model):
     country = models.CharField(max_length=2, blank=True)
     region = models.CharField(max_length=255, blank=True)
     town = models.CharField(max_length=255, blank=True)
-    postcode = models.PositiveIntegerField(blank=True, null=True, default=0)
+    postcode = models.PositiveIntegerField(blank=True, null=False, default=0)
     subregion = models.CharField(max_length=255, blank=True)
     georss_point = models.CharField(max_length=255, blank=True, db_index=True)
     """
     georss_pont_latitude and georss_point_longitude
     should be just used internally
     """
-    georss_point_latitude = models.FloatField(null=True, default=0)
-    georss_point_longitude = models.FloatField(null=True, default=0)
+    georss_point_latitude = models.FloatField(null=False, default=0)
+    georss_point_longitude = models.FloatField(null=False, default=0)
     """
     The following should be members of a separate Date-Time class but are
     included here for simplicity
     """
-    offset = models.PositiveIntegerField(blank=True, null=True, default=0)
+    offset = models.PositiveIntegerField(blank=True, null=False, default=0)
     recurs = models.CharField(max_length=255, blank=True)
     days = models.CharField(max_length=255, choices=RECURS_CHOICES, blank=True)
-    leaves = models.DateTimeField(blank=True, null=True)
+    leaves = models.DateTimeField(blank=True, null=False)
+    href = models.URLField(blank=True, null=False)
     
     def distance(self, location):
         """

@@ -15,7 +15,7 @@
 """
 
 """
-This module holds the Mode model
+This module holds the Modality model
 """
 
 from django.db import models, IntegrityError
@@ -27,26 +27,27 @@ MODE_CHOICES = (
     (u'bus', u'Bus'),
 )
 
-class Mode(models.Model):
+class Modality(models.Model):
     """
-    Represents additional information about the mode of transportation being used.
+    Represents additional information about the modality of transportation being used.
     See `OpenTrip_Core#Mode_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs>`_ for more info.
     """
-    kind = models.CharField(max_length=255, choices=MODE_CHOICES, blank=False)
-    capacity = models.PositiveIntegerField(blank=False, null=True, default=0)
-    vacancy = models.IntegerField(blank=False, null=True, default=0)
+    kind = models.CharField(max_length=255, choices=MODE_CHOICES, blank=False, null=False, default=MODE_CHOICES[0][0])
+    capacity = models.PositiveIntegerField(blank=False, null=False, default=0)
+    vacancy = models.IntegerField(blank=False, null=False, default=0)
     make = models.CharField(max_length=255, blank=True)
     model = models.CharField(max_length=255, blank=True)
-    year = models.PositiveIntegerField(blank=True, null=True, default=0)
+    year = models.PositiveIntegerField(blank=True, null=False, default=0)
     color = models.CharField(max_length=255, blank=True)
     lic = models.CharField(max_length=255, blank=True)
-    cost = models.FloatField(blank=True, null=True, default=0.00)
+    cost = models.FloatField(blank=True, null=False, default=0.00)
     person = models.ForeignKey('Person', blank=True, null=True)
+    href = models.URLField(blank=True, null=False)
 
     def save(self, * args, ** kwargs):
         if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model:
             raise IntegrityError('Attributes kind, capacity, vacancy, make, model MUST be given.')
-        super(Mode, self).save(*args, **kwargs)
+        super(Modality, self).save(*args, **kwargs)
 
 
     def to_xmlrpc(self):

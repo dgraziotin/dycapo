@@ -10,11 +10,7 @@ import django.core.urlresolvers
 class PersonHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Person
-    fields = ('username','gender','email','phone',('location'))
-    
-    @classmethod
-    def location(cls, person):
-        return {'resource_uri': django.core.urlresolvers.reverse('location_person_handler',args=[person.username])}
+    fields = ('username','gender','email','phone','position','href')
 
     def read(self, request, username=None):
         current_user = rest.utils.get_rest_user(request)
@@ -24,7 +20,6 @@ class PersonHandler(BaseHandler):
         else:
             try:
                 person = server.models.Person.objects.get(username=username)
-                person.resource_location_uri = django.core.urlresolvers.reverse('location_person_handler',args=[person.username])
                 return person
             except server.models.Person.DoesNotExist:
                 return piston.utils.rc.NOT_FOUND
@@ -33,6 +28,9 @@ class PersonHandler(BaseHandler):
         attrs = self.flatten_dict(request.data)
         person = server.models.Person(**attrs)
         result = server.common.register(person)
+        if result.type == "Person":
+            result.value.href = rest.utils.get_href(request,'person_handler',[result.value.username])
+            result.value.save()
         return rest.utils.extract_result_from_response(result)
 
     def update(self, request, username=None):
@@ -50,8 +48,4 @@ class PersonHandler(BaseHandler):
             return rc
         result = server.common.updatePerson(current_user, person)
         return rest.utils.extract_result_from_response(result)
-
-    @classmethod
-    def resource_uri(*args, **kwargs):
-        return ('person_handler', ['username',])
 

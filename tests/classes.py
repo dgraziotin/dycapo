@@ -30,15 +30,15 @@ class Trip():
     def __init__(self,expires=utils.now):
         self.expires = expires
         self.preferences = None
-        self.mode = None
+        self.modality = None
         self.author = None
         self.locations = None
 
     def to_xmlrpc(self):
-        if not self.mode:
-            mode = {}
+        if not self.modality:
+            modality = {}
         else:
-            mode = self.mode.__dict__
+            modality = self.modality.__dict__
         if not self.author:
             author = {}
         else:
@@ -56,12 +56,12 @@ class Trip():
             "expires" : self.expires,
             "author" : author,
             "preferences" : preferences,
-            "mode" : mode,
+            "modality" : modality,
             "locations": locations
         }
 
 
-class Mode():
+class Modality():
     def __init__(self,kind='auto',capacity=4,lic='',color='',make='Ford',vacancy=4,cost=0,model='Fiesta'):
         self.kind = kind
         self.capacity = capacity
@@ -155,7 +155,7 @@ class Driver(Person):
     def insert_trip(self):
         source = Location(georss_point=self.position.georss_point,point='orig')
         destination = self.destination
-        mode = Mode()
+        modality = Modality()
         preferences = Preferences()
         trip = Trip()
         trip.expires = utils.nowplusdays(3)
@@ -163,20 +163,21 @@ class Driver(Person):
         print "#" * 80
         print self.username + ": SAVING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.insertTrip(trip.__dict__,mode.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
+        response = self.client.dycapo.insertTrip(trip.__dict__,modality.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)
+        print response
         return response
 
     def insert_trip_exp(self):
         source = Location(georss_point=self.position.georss_point,point='orig')
         destination = self.destination
-        mode = Mode()
+        modality = Modality()
         preferences = Preferences()
         trip = Trip()
         trip.expires = utils.nowplusdays(3)
-        trip.mode = mode
+        trip.modality = modality
         trip.preferences = preferences
         trip.locations = [source, destination]
         class person():
@@ -193,6 +194,7 @@ class Driver(Person):
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         self.trip = utils.extract_response(response)
+        print response
         return response
 
     def start_trip(self,trip=None):

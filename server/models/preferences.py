@@ -39,6 +39,7 @@ class Preferences(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     drive = models.BooleanField(default=False)
     ride = models.BooleanField(default=False)
+    href = models.URLField(blank=True, null=False)
 
     def save(self, * args, ** kwargs):
         """

@@ -26,7 +26,7 @@ class DriverTest(Thread):
     of seconds (0 to 20) before inserting the Trip.
     When the object is initialized, a random source and destination are created using
     one value in [1.00,2.00,3.00] (georss_point).
-    This test creates a fixed Trip Mode. The trip created is not started, and expires in 3 days.
+    This test creates a fixed Trip Modality. The trip created is not started, and expires in 3 days.
     After the insertion of the Trip, the Driver waits a random value
     of seconds (0 to 20) before starting the Trip.
     If the object is instantiated with clean_responses = True, then the Trip is deleted at the end of
@@ -54,7 +54,7 @@ class DriverTest(Thread):
     def insert_trip(self):
         source = common_classes_and_methods.Location()
         destination = common_classes_and_methods.Location()
-        mode = common_classes_and_methods.Mode()
+        modality = common_classes_and_methods.Modality()
         preferences = common_classes_and_methods.Preferences()
         trip = common_classes_and_methods.Trip()
         points = [1.00,2.00,3.00]
@@ -75,15 +75,15 @@ class DriverTest(Thread):
         destination.point="dest"
         destination.leaves = common_classes_and_methods.nowplusminutes(120)
 
-        mode.capacity = 3
-        mode.vacancy = 3
-        mode.color = 'blue'
-        mode.cost = 0
-        mode.lic = '1234f434'
-        mode.make = 'ford'
-        mode.model = 'fiesta'
-        #mode.year = 2003
-        mode.kind = 'auto'
+        modality.capacity = 3
+        modality.vacancy = 3
+        modality.color = 'blue'
+        modality.cost = 0
+        modality.lic = '1234f434'
+        modality.make = 'ford'
+        modality.model = 'fiesta'
+        #modality.year = 2003
+        modality.kind = 'auto'
 
         preferences.age = '18-40'
         preferences.nonsmoking = False
@@ -94,7 +94,7 @@ class DriverTest(Thread):
         print "#" * 80
         print self.username + ": SAVING TRIP..."
         print "#" * 80
-        response = self.client.dycapo.add_trip(trip.__dict__,mode.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
+        response = self.client.dycapo.add_trip(trip.__dict__,modality.__dict__,preferences.__dict__,source.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)

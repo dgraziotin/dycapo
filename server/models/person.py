@@ -43,16 +43,17 @@ class Person(authmodels.User):
     # username from Django
     # password from Django
     uri = models.CharField(max_length=200, blank=True)
-    phone = models.CharField(max_length=200, blank=False, null=True, unique=True)
+    phone = models.CharField(max_length=200, blank=False, null=False, unique=True)
     position = models.ForeignKey(location.Location, blank=True, null=True)
-    age = models.PositiveIntegerField(null=True, default=0)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=True)
+    age = models.PositiveIntegerField(null=False, default=0)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=False)
     smoker = models.BooleanField(default=False)
     blind = models.BooleanField(default=False)
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
     locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True, db_index=True) # MUST
-
+    href = models.URLField(blank=True, null=False)
+    
     cannot_update = [
         'first_name',
         'last_name',

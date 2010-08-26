@@ -10,18 +10,16 @@ import django.core.urlresolvers
 class TripHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
-    fields = ('id', 'published', 'updated', 'expires', 
-              ('author',('username','gender','resource_uri')), 
+    fields = ('href','id', 'published', 'updated', 'expires', 
+              ('author',('username','gender','href')), 
               ('locations',('point','street','town','postcode','georss_point','offset','leaves')),
-              ('mode',('kind','capacity','vacancy','make','model')), 
-              ('preferences'),)
+              ('modality',('kind','capacity','vacancy','make','model')), 
+              ('preferences'))
     
-
+        
     @classmethod
     def locations(cls, trip):
         locations = trip.locations.all()
-        for location in locations:
-            location.resource_uri = django.core.urlresolvers.reverse('location_handler',args=[location.id])
         return locations
 
     def read(self, request, id=None):
@@ -48,10 +46,10 @@ class TripHandler(BaseHandler):
         dict_destination = rest.utils.clean_ids(dict_destination)
         destination = rest.utils.populate_object_from_dictionary(destination, dict_destination)
 
-        mode = server.models.Mode()
-        dict_mode = rest.utils.clean_ids(data['mode'])
-        mode = rest.utils.populate_object_from_dictionary(mode, dict_mode)
-        mode.vacancy = data['mode']['vacancy']
+        modality = server.models.Modality()
+        dict_modality = rest.utils.clean_ids(data['modality'])
+        modality = rest.utils.populate_object_from_dictionary(modality, dict_modality)
+        modality.vacancy = data['modality']['vacancy']
 
         preferences = server.models.Preferences()
         dict_preferences = rest.utils.clean_ids(data['preferences'])
@@ -61,10 +59,19 @@ class TripHandler(BaseHandler):
         dict_trip = rest.utils.clean_ids(data)
         trip = rest.utils.populate_object_from_dictionary(trip, dict_trip)
 
-        author = rest.utils.get_rest_user(request)
-        result = server.driver.insertTrip(trip, author, source, destination, mode, preferences)
+        author = rest.utils.get_rest_user(request)    
+        result = server.driver.insertTrip(trip, author, source, destination, modality, preferences)
         if result.code == server.models.Response.CREATED:
-            trip = server.models.Trip.objects.get(id=result.value['id'])
+            id = result.value.id
+            trip = server.models.Trip.objects.get(id=id)
+            trip.href = rest.utils.get_href(request, 'trip_handler', [trip.id])
+            trip.preferences.href = rest.utils.get_href(request, 'preferences_handler',[trip.preferences.id,])
+            
+            #trip.modality = rest.utils.inflate_href(request, trip.preferences, 'preferences_handler',[trip.preferences.id,])
+            locations = trip.locations.all()
+            [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[item.id])) for item in locations]
+            [item.save() for item in locations]
+            trip.save()
             return trip
         return result.to_xmlrpc() #rest.utils.extract_result_from_response(result)
 
@@ -100,7 +107,3 @@ class TripHandler(BaseHandler):
             rc = piston.utils.rc.BAD_REQUEST
             rc.write(str(e))
             return rc
-
-    @classmethod
-    def resource_uri(*args, **kwargs):
-        return ('trip_handler', ['id',])

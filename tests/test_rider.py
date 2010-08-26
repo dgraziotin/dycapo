@@ -57,9 +57,9 @@ class TestRider():
                 self.trip = classes.Trip()
             trip = self.trip
             trip.author = ""
-            trip.mode = ""
+            trip.modality = ""
             trip.preferences = ""
-            trip.mode = ""
+            trip.modality = ""
             trip.locations = []
         response = self.rider.request_ride(trip)
         assert response['code'] == response_codes.BAD_REQUEST

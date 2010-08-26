@@ -15,7 +15,7 @@ class TestXMLRPCDispatcher(unittest.TestCase):
             if kwargs.get('c', None) is not None:
                 return True
             return False
-
+        
         self.dispatcher = XMLRPCDispatcher()
         self.dispatcher.register_function(kwargstest, 'kwargstest')
 
@@ -24,10 +24,10 @@ class TestXMLRPCDispatcher(unittest.TestCase):
         ret = self.dispatcher.dispatch(xml)
         out, name = xmlrpclib.loads(ret)
         self.assertFalse(out[0])
-
+        
         ret = self.dispatcher.dispatch(xml, c=1)
         out, name = xmlrpclib.loads(ret)
         self.assertTrue(out[0])
-
+        
 if __name__ == '__main__':
     unittest.main()

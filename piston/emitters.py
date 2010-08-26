@@ -172,7 +172,7 @@ class Emitter(object):
                     if not get_fields:
                         get_fields = set([ f.attname.replace("_id", "", 1)
                             for f in data._meta.fields + data._meta.virtual_fields])
-
+                    
                     if hasattr(mapped, 'extra_fields'):
                         get_fields.update(mapped.extra_fields)
 
@@ -231,7 +231,7 @@ class Emitter(object):
 
                     else:
                         maybe = getattr(data, maybe_field, None)
-                        if maybe:
+                        if maybe is not None:
                             if callable(maybe):
                                 if len(inspect.getargspec(maybe)[0]) <= 1:
                                     ret[maybe_field] = _any(maybe())

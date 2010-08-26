@@ -19,7 +19,7 @@ import models
 
 admin.site.register(models.Person)
 admin.site.register(models.Location)
-admin.site.register(models.Mode)
+admin.site.register(models.Modality)
 admin.site.register(models.Preferences)
 admin.site.register(models.Trip)
 admin.site.register(models.Participation)

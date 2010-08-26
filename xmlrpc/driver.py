@@ -59,7 +59,7 @@ def insertTrip(trip, ** kwargs):
     +------------------+-------------------------+-----------------------------+
     |                  | content                 | struct (Many)              |
     +------------------+-------------------------+-----------------------------+
-    | trip_.content    | mode                    | struct (Mode_)              |
+    | trip_.content    | modality                    | struct (Mode_)              |
     +------------------+-------------------------+-----------------------------+
     |                  | preferences                   | struct (Prefs_)             |
     +------------------+-------------------------+-----------------------------+
@@ -96,7 +96,7 @@ def insertTrip(trip, ** kwargs):
 
     try:
         dict_trip = utils.clean_ids(trip)
-        dict_mode = utils.clean_ids(trip["mode"])
+        dict_modality = utils.clean_ids(trip["modality"])
         dict_preferences = utils.clean_ids(trip["preferences"])
         array_locations = trip["locations"]
 
@@ -115,9 +115,9 @@ def insertTrip(trip, ** kwargs):
     dict_destination = utils.get_location_from_array(array_locations,"dest")
     destination = utils.populate_object_from_dictionary(destination, dict_destination)
 
-    mode = server.models.Mode()
-    mode = utils.populate_object_from_dictionary(mode, dict_mode)
-    mode.vacancy = dict_mode['vacancy']
+    modality = server.models.Modality()
+    modality = utils.populate_object_from_dictionary(modality, dict_modality)
+    modality.vacancy = dict_modality['vacancy']
 
     preferences = server.models.Preferences()
     preferences = utils.populate_object_from_dictionary(preferences, dict_preferences)
@@ -125,7 +125,7 @@ def insertTrip(trip, ** kwargs):
     trip = server.models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
 
-    response = server.driver.insertTrip(trip, author, source, destination, mode, preferences)
+    response = server.driver.insertTrip(trip, author, source, destination, modality, preferences)
     return utils.to_xmlrpc(response)
 
 @rpc4django.rpcmethod(name='dycapo.startTrip',

@@ -11,7 +11,7 @@ import re
 class ParticipationHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Participation
-    fields = ('person','status')
+    fields = ('href','person','status')
 
     def read(self, request, trip_id=None, username=None):
         if username:
@@ -46,8 +46,10 @@ class ParticipationHandler(BaseHandler):
                         server.models.Response.BAD_REQUEST,
                         'Message',
                          {'status': [u'This field is required and its value must be request.']})
-
-                return rest.utils.extract_result_from_response(result)
+            if hasattr(result.value,'person'):
+                result.value.href = rest.utils.get_href(request, 'participation_handler', [result.value.person.username])
+                result.value.save()
+            return rest.utils.extract_result_from_response(result)
 
         except server.models.Trip.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
@@ -143,7 +145,3 @@ class ParticipationHandler(BaseHandler):
                      e)
 
             return rest.utils.extract_result_from_response(result)
-
-    @classmethod
-    def resource_uri(*args, **kwargs):
-        return ('participation_handler', ['trip_id','person'])

@@ -7,23 +7,24 @@ import rest.utils
 from piston.utils import require_mime
 import django.core.urlresolvers
 
-class PreferencesHandler(BaseHandler):
+class ModalityHandler(BaseHandler):
     allowed_methods = ['GET']
-    model = server.models.Preferences
-    fields = ("nonsmoking",
+    model = server.models.Modality
+    fields = ('id')
+    """fields = ("nonsmoking",
         "gender",
         "ride",
         "drive",
         "id",
-        "age","href")
+        "age","href")"""
     
     def read(self, request, id=None):
         user = rest.utils.get_rest_user(request)
         try:
             if id:
-                preferences = server.models.Preferences.objects.get(id=id)
-                return preferences
+                modality = server.models.Modality.objects.get(id=id)
+                return modality
             else:
-                return server.models.Preferences.objects.all()
-        except server.models.Preferences.DoesNotExist:
+                return server.models.Modality.objects.all()
+        except server.models.Modality.DoesNotExist:
             return piston.utils.rc.NOT_FOUND

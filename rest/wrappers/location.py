@@ -11,7 +11,7 @@ import re
 class LocationHandler(BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Location
-    fields = ("id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
+    fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
     "recurs","georss_point")
 
     def read(self, request, username=None, id=None):
@@ -23,24 +23,17 @@ class LocationHandler(BaseHandler):
             if username:
                 person = server.models.Person.objects.get(username=username)
                 result = server.common.getPosition(user,person)
-                if result.type=='Location':
-                    result.value.username = username
-                    result.value.resource_uri = django.core.urlresolvers.reverse('location_person_handler',args=[person.username])
                 return rest.utils.extract_result_from_response(result)
             return server.models.Location.objects.all()
         except server.models.Person.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         except server.models.Location.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
-    
-    @classmethod
-    def resource_uri(self):
-        return ('location_handler',['id',])
             
 class LocationPersonHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Location
-    fields = ("id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
+    fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
     "recurs","georss_point")
     
     def read(self, request, username=None, id=None):
@@ -52,9 +45,6 @@ class LocationPersonHandler(BaseHandler):
             if username:
                 person = server.models.Person.objects.get(username=username)
                 result = server.common.getPosition(user,person)
-                if result.type=='Location':
-                    result.value.username = username
-                    result.value.resource_uri = django.core.urlresolvers.reverse('location_person_handler',args=[person.username])
                 return rest.utils.extract_result_from_response(result)
             return server.models.Location.objects.all()
         except server.models.Person.DoesNotExist:
@@ -74,14 +64,13 @@ class LocationPersonHandler(BaseHandler):
         except server.models.Person.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         result = server.common.setPosition(user, location)
+        if result.type == "Location":
+            result.value.href = rest.utils.get_href(request, "location_person_handler", [user.username])
+            result.value.save()
         return rest.utils.extract_result_from_response(result)
     
     def update(self, request, username):
         return self.create(request, username)
     
-    @classmethod
-    def resource_uri(self):
-        return ('location_person_handler',['username',])
-            
                        
         

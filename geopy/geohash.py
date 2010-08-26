@@ -34,7 +34,7 @@ class Geohash(object):
                         long_max = longitude
                     longitude = (long_min + long_max) / 2.
                 odd_bit = not odd_bit
-            bytes.append(byte)
+            bytes.append(byte) 
         return ''.join([self.ENCODE_MAP[byte] for byte in bytes])
 
     def decode(self, string):

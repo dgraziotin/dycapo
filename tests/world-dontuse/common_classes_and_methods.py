@@ -97,7 +97,7 @@ class Trip():
     content = ''
 
 
-class Mode():
+class Modality():
     kind = ''
     capacity = 0
     lic = ''

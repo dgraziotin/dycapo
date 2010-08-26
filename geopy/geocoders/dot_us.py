@@ -8,15 +8,15 @@ from geopy import util
 class GeocoderDotUS(Geocoder):
     def __init__(self, username=None, password=None, format_string='%s'):
         super(GeocoderDotUS, self).__init__(format_string=format_string)
-
+        
         if username and password is None:
             password = getpass.getpass(
                 "geocoder.us password for %r: " % username
             )
-
+        
         self.username = username
         self.__password = password
-
+    
     def get_url(self, string=None):
         username = self.username
         password = self.__password
@@ -26,9 +26,9 @@ class GeocoderDotUS(Geocoder):
         else:
             auth = ''
             resource = 'service/xmlrpc/'
-
+        
         return 'http://%sgeocoder.us/%s' % (auth, resource)
-
+    
     def geocode(self, string, **kwargs):
         locations = []
         server = xmlrpclib.ServerProxy(self.url)
@@ -44,7 +44,7 @@ class GeocoderDotUS(Geocoder):
             location = Location(name, point, dict(result))
             locations.append(location)
         return locations
-
+    
     def _format_name(self, result):
         address = [
             result.get('number'),
@@ -56,7 +56,7 @@ class GeocoderDotUS(Geocoder):
         city = result.get('city')
         state = result.get('state')
         zip_code = result.get('zip')
-
+        
         return util.join_filter(", ", [
             util.join_filter(" ", address),
             city,

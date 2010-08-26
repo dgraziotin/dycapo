@@ -18,7 +18,7 @@ class SemanticMediaWiki(Geocoder):
         self.relations = relations
         self.prefer_semantic = prefer_semantic
         self.transform_string = transform_string
-
+    
     def get_url(self, string):
         return self.format_url % self.transform_string(string)
 
@@ -27,7 +27,7 @@ class SemanticMediaWiki(Geocoder):
         soup = BeautifulSoup(page)
         link = soup.head.find('link', rel='alternate', type=mime_type)
         return link and link['href'] or None
-
+    
     def parse_rdf_things(self, data):
         dom = xml.dom.minidom.parseString(data)
         thing_map = {}
@@ -37,9 +37,9 @@ class SemanticMediaWiki(Geocoder):
             name = thing.attributes['rdf:about'].value
             articles = thing.getElementsByTagName('smw:hasArticle')
             things[name] = articles[0].attributes['rdf:resource'].value
-
+        
         return (things, thing)
-
+    
     def transform_semantic(self, string):
         """Normalize semantic attribute and relation names by replacing spaces
         with underscores and capitalizing the result."""
@@ -48,13 +48,13 @@ class SemanticMediaWiki(Geocoder):
     def get_relations(self, thing, relations=None):
         if relations is None:
             relations = self.relations
-
+        
         for relation in relations:
             relation = self.transform_semantic(relation)
             for node in thing.getElementsByTagName('relation:' + relation):
                 resource = node.attributes['rdf:resource'].value
                 yield (relation, resource)
-
+    
     def get_attributes(self, thing, attributes=None):
         if attributes is None:
             attributes = self.attributes
@@ -64,10 +64,10 @@ class SemanticMediaWiki(Geocoder):
             for node in thing.getElementsByTagName('attribute:' + attribute):
                 value = node.firstChild.nodeValue.strip()
                 yield (attribute, value)
-
+    
     def get_thing_label(self, thing):
         return util.get_first_text(thing, 'rdfs:label')
-
+    
     def geocode_url(self, url, attempted=None):
         if attempted is None:
             attempted = set()

@@ -21,25 +21,25 @@ import models
 import rpc4django
 import utils
 
-def insertTrip(trip, author, source, destination, mode, preferences):
+def insertTrip(trip, author, source, destination, modality, preferences):
 
-    vacancy = mode.vacancy
-    mode, created = models.Mode.objects.get_or_create(person=author,
-                                                 make=mode.make,
-                                                 model=mode.model,
-                                                 capacity=mode.capacity,
-                                                 kind=mode.kind)
-    mode.vacancy = vacancy
+    vacancy = modality.vacancy
+    modality, created = models.Modality.objects.get_or_create(person=author,
+                                                 make=modality.make,
+                                                 model=modality.model,
+                                                 capacity=modality.capacity,
+                                                 kind=modality.kind)
+    modality.vacancy = vacancy
 
     try:
         source.full_clean()
         destination.full_clean()
-        mode.full_clean()
+        modality.full_clean()
         preferences.full_clean()
 
         source.save()
         destination.save()
-        mode.save()
+        modality.save()
         preferences.save()
     except django.core.exceptions.ValidationError, e:
         resp = models.Response(models.Response.BAD_REQUEST,
@@ -51,7 +51,7 @@ def insertTrip(trip, author, source, destination, mode, preferences):
         return resp
 
     trip.author = author
-    trip.mode = mode
+    trip.modality = modality
     trip.preferences = preferences
 
 

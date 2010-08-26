@@ -16,7 +16,7 @@
 
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler
+from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler, ModalityHandler
 
 person_handler = Resource(PersonHandler)
 location_handler = Resource(LocationHandler)
@@ -24,11 +24,14 @@ location_person_handler = Resource(LocationPersonHandler)
 trip_handler = Resource(TripHandler)
 participation_handler = Resource(ParticipationHandler)
 preferences_handler = Resource(PreferencesHandler)
+modality_handler = Resource(ModalityHandler)
 
 urlpatterns = patterns('',
     url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
     url(r'^persons/(?P<username>\w+)/location/$', location_person_handler, { 'emitter_format': 'json',}, name='location_person_handler'),
     url(r'^persons/$', person_handler, name='person_handler'),
+    url(r'^modality/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
+    url(r'^modality/(?P<id>\w+)/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
     url(r'^preferences/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
     url(r'^preferences/(?P<id>\w+)/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
     url(r'^locations/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
