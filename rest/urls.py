@@ -17,6 +17,12 @@
 from django.conf.urls.defaults import *
 from piston.resource import Resource
 from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler, ModalityHandler
+#from apache.authentication import HttpBasicSimple
+from server.models import Person
+from django.contrib.auth import authenticate
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate
+import django.contrib.auth
 
 person_handler = Resource(PersonHandler)
 location_handler = Resource(LocationHandler)

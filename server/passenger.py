@@ -34,15 +34,15 @@ def searchRide(source, destination, passenger):
                                "Trip", passenger_active_participation.trip)
         return resp
 
-    if passenger.position.georss_point != source.georss_point:
-        passenger.position = source
+    if passenger.location.georss_point != source.georss_point:
+        passenger.location = source
         try:
-            passenger.position.full_clean()
+            passenger.location.full_clean()
         except django.core.exceptions.ValidationError, e:
             resp = models.Response(models.Response.BAD_REQUEST,
                                "Message", e)
             return resp
-        passenger.position.save()
+        passenger.location.save()
 
     trips = matching.search_ride(destination,passenger)
 
@@ -69,8 +69,8 @@ def requestRide(trip, passenger):
                                          requested_timestamp =
                                          datetime.datetime.now())
 
-    if passenger.position:
-        participation.requested_position_id = passenger.position_id
+    if passenger.location:
+        participation.requested_position_id = passenger.location_id
     try:
         participation.save()
         resp = models.Response(models.Response.CREATED,
@@ -117,8 +117,8 @@ def cancelRide(trip, passenger):
     passenger_participation.requested_deleted = True
     passenger_participation.requested_deleted_timestamp = datetime.datetime.now()
 
-    if passenger.position:
-        passenger_participation.requested_deleted_position_id = passenger.position_id
+    if passenger.location:
+        passenger_participation.requested_deleted_position_id = passenger.location_id
     try:
         passenger_participation.save()
         resp = models.Response(models.Response.DELETED,
@@ -148,7 +148,7 @@ def startRide(trip, passenger):
                       .get(person=passenger)
         participation.started = True
         participation.started_timestamp = datetime.datetime.now()
-        participation.started_position_id = passenger.position_id
+        participation.started_position_id = passenger.location_id
         participation.save()
     except Exception, e:
         resp = models.Response(models.Response.BAD_REQUEST,
@@ -178,7 +178,7 @@ def finishRide(trip, passenger):
                   .get(person=passenger)
     participation.finished = True
     participation.finished_timestamp = datetime.datetime.now()
-    participation.finished_position_id = passenger.position_id
+    participation.finished_position_id = passenger.location_id
     participation.save()
     resp = models.Response(models.Response.ALL_OK,
                                "Message", models.Response.RIDE_STARTED)

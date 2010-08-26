@@ -10,7 +10,7 @@ import django.core.urlresolvers
 class ModalityHandler(BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Modality
-    exclude = ('state')
+    exclude = ('_state','person')
     
     def read(self, request, id=None):
         user = rest.utils.get_rest_user(request)

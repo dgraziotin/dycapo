@@ -36,7 +36,7 @@ def setPosition(current_user, position):
                                "Message", e)
         return resp
 
-    current_user.position_id = position.id
+    current_user.location_id = position.id
     current_user.locations.add(position)
 
     if current_user.is_participating():
@@ -53,7 +53,7 @@ def getPosition(current_user, person):
     if person.id == current_user.id:
         resp = models.Response(models.Response.ALL_OK,
                                'Location',
-                               person.position)
+                               person.location)
         return resp
 
     person_participation = person.get_requested_participation()
@@ -74,14 +74,14 @@ def getPosition(current_user, person):
                                    'Message', models.Response.PERSON_DELETED_REQUESTED_RIDE)
             return resp
 
-    if not person.position:
+    if not person.location:
         resp = models.Response(models.Response.NOT_FOUND,
                                'Message', models.Response.LOCATION_NOT_FOUND)
         return resp
     else:
         resp = models.Response(models.Response.ALL_OK,
                                'Location',
-                               person.position)
+                               person.location)
         return resp
 
 def register(person):

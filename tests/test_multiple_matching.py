@@ -42,44 +42,44 @@ class TestMultipleMatching():
 
 
     def setup_method(self,method):
-        self.driver.position = classes.Location(georss_point=self.driver_position)
+        self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
-        self.rider5.position = classes.Location(georss_point=self.rider_position)
+        self.rider5.location = classes.Location(georss_point=self.rider_position)
         self.rider5.destination = classes.Location(georss_point=self.rider_destination,point='dest')
-        self.rider6.position = classes.Location(georss_point=self.rider_position)
+        self.rider6.location = classes.Location(georss_point=self.rider_position)
         self.rider6.destination = classes.Location(georss_point=self.rider_destination,point='dest')
 
         for rider in self.riders:
-            rider.position = classes.Location(georss_point=self.rider_position)
+            rider.location = classes.Location(georss_point=self.rider_position)
             rider.destination = classes.Location(georss_point=self.rider_destination,point='dest')
 
     def test_position(self):
         response = self.driver.update_position()
         assert response['code'] == response_codes.CREATED
         response = self.driver.get_position()
-        assert response['value']['georss_point'] == self.driver.position.georss_point
-        self.driver.position = response['value']
+        assert response['value']['georss_point'] == self.driver.location.georss_point
+        self.driver.location = response['value']
 
         response = self.rider5.update_position()
         assert response['code'] == response_codes.CREATED
         response = self.rider5.get_position()
-        assert response['value']['georss_point'] == self.rider5.position.georss_point
-        self.rider5.position = response['value']
+        assert response['value']['georss_point'] == self.rider5.location.georss_point
+        self.rider5.location = response['value']
 
 
-        response = self.rider6.update_position(location=self.rider6.position)
+        response = self.rider6.update_position(location=self.rider6.location)
         assert response['code'] == response_codes.CREATED
         response = self.rider6.get_position()
-        assert response['value']['georss_point'] == self.rider6.position.georss_point
-        self.rider6.position = response['value']
+        assert response['value']['georss_point'] == self.rider6.location.georss_point
+        self.rider6.location = response['value']
 
 
         for rider in self.riders:
             response = rider.update_position()
             assert response['code'] == response_codes.CREATED
             response = rider.get_position()
-            assert response['value']['georss_point'] == rider.position.georss_point
-            rider.position = response['value']
+            assert response['value']['georss_point'] == rider.location.georss_point
+            rider.location = response['value']
 
     def test_insert_trip_exp(self):
         response = self.driver.insert_trip_exp()
@@ -90,7 +90,7 @@ class TestMultipleMatching():
 
     def test_search_trip_before_start(self):
         for rider in self.riders:
-            response = rider.search_ride(rider.position,rider.destination)
+            response = rider.search_ride(rider.location,rider.destination)
             assert response['code'] == response_codes.NOT_FOUND
 
     def test_start_trip(self):
@@ -100,18 +100,18 @@ class TestMultipleMatching():
 
     def test_search_trip_after_start(self):
         for rider in self.riders:
-            response = rider.search_ride(rider.position,rider.destination)
+            response = rider.search_ride(rider.location,rider.destination)
             assert response['code'] == response_codes.ALL_OK
             rider.trip = response['value'][0]
 
     def test_search_trip_driver_closest_to_destination(self):
         driver_position = '46.500730 11.345070'
-        self.driver.position = classes.Location(georss_point=driver_position,point='posi')
+        self.driver.location = classes.Location(georss_point=driver_position,point='posi')
         self.driver.update_position()
 
-        response = self.rider1.search_ride(self.rider1.position,self.rider1.destination)
+        response = self.rider1.search_ride(self.rider1.location,self.rider1.destination)
         assert response['code'] == response_codes.NOT_FOUND
-        self.driver.position = classes.Location(georss_point=self.driver_position)
+        self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.update_position()
 
     def test_check_ride_requests_before_request(self):
@@ -152,14 +152,14 @@ class TestMultipleMatching():
             assert response['code'] == response_codes.ALL_OK
 
     def test_search_trip_no_vacany(self):
-        response = self.rider5.search_ride(self.rider5.position,self.rider5.destination)
+        response = self.rider5.search_ride(self.rider5.location,self.rider5.destination)
         assert response['code'] == response_codes.NOT_FOUND
 
     def test_search_trip_vacany(self):
         response = self.rider4.finish_ride(self.rider4.trip)
         assert response['code'] == response_codes.ALL_OK
 
-        response = self.rider5.search_ride(self.rider5.position,self.rider5.destination)
+        response = self.rider5.search_ride(self.rider5.location,self.rider5.destination)
         assert response['code'] == response_codes.ALL_OK
 
         self.rider5.trip = response['value'][0]
@@ -188,7 +188,7 @@ class TestMultipleMatching():
 
 
     def test_search_trip_rider6(self):
-        response = self.rider6.search_ride(self.rider6.position,self.rider6.destination)
+        response = self.rider6.search_ride(self.rider6.location,self.rider6.destination)
         assert response['code'] == response_codes.ALL_OK
         self.rider6.trip = response['value'][0]
 

@@ -88,9 +88,9 @@ class Response(object):
         self.value = value
 
 class Person():
-    def __init__(self,username,password,domain,position=Location(),destination=Location(),clean_responses=True):
+    def __init__(self,username,password,domain,location=Location(),destination=Location(),clean_responses=True):
         self.clean_responses = clean_responses
-        self.position = position
+        self.location = location
         self.destination = destination
         self.username = username
         self.password = password
@@ -107,7 +107,7 @@ class Person():
         print self.username + ": REGISTERING TO THE SYSTEM..."
         print "#" * 80
         if not location:
-            location = self.position
+            location = self.location
         response = self.client.dycapo.register()
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
@@ -118,7 +118,7 @@ class Person():
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
         if not location:
-            location = self.position
+            location = self.location
         response = self.client.dycapo.setPosition(location)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
@@ -135,8 +135,8 @@ class Person():
         person = {'username':person.username}
         response = self.client.dycapo.getPosition(person)
         if not type(response['value']) is type(True):
-            self.position = Location()
-            self.position.__dict__.update(response['value'])
+            self.location = Location()
+            self.location.__dict__.update(response['value'])
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return response
@@ -153,13 +153,13 @@ class Person():
 
 class Driver(Person):
     def insert_trip(self):
-        source = Location(georss_point=self.position.georss_point,point='orig')
+        source = Location(georss_point=self.location.georss_point,point='orig')
         destination = self.destination
         modality = Modality()
         preferences = Preferences()
         trip = Trip()
         trip.expires = utils.nowplusdays(3)
-        print "initializing Trip from " + self.position.georss_point + " to " + self.destination.georss_point
+        print "initializing Trip from " + self.location.georss_point + " to " + self.destination.georss_point
         print "#" * 80
         print self.username + ": SAVING TRIP..."
         print "#" * 80
@@ -171,7 +171,7 @@ class Driver(Person):
         return response
 
     def insert_trip_exp(self):
-        source = Location(georss_point=self.position.georss_point,point='orig')
+        source = Location(georss_point=self.location.georss_point,point='orig')
         destination = self.destination
         modality = Modality()
         preferences = Preferences()
@@ -185,7 +185,7 @@ class Driver(Person):
         author = person()
         author.username = self.username
         trip.author = author
-        print "initializing Trip from " + self.position.georss_point + " to " + self.destination.georss_point
+        print "initializing Trip from " + self.location.georss_point + " to " + self.destination.georss_point
         print "trip: " + str(trip.to_xmlrpc())
         print "#" * 80
         print self.username + ": SAVING TRIP EXP..."
@@ -238,15 +238,15 @@ class Driver(Person):
         return response
 
 class Rider(Person):
-    def search_ride(self,position=None,destination=None):
-        if not position:
-            position = self.position
+    def search_ride(self,location=None,destination=None):
+        if not location:
+            location = self.location
         if not destination:
             destination = self.destination
         print "*" * 80
-        print self.username + ": SEARCHING FOR A RIDE from " + position.georss_point + " to " + destination.georss_point
+        print self.username + ": SEARCHING FOR A RIDE from " + location.georss_point + " to " + destination.georss_point
         print "*" * 80
-        response = self.client.dycapo.searchRide(position.__dict__,destination.__dict__)
+        response = self.client.dycapo.searchRide(location.__dict__,destination.__dict__)
         print "Dycapo Response: \n" + str(response)
         print "*" * 80
         return response

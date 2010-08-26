@@ -53,16 +53,16 @@ def search_ride(location,rider):
             break
 
         destination = trip.get_destination()
-        rider_distance_from_destination = rider.position.distance(destination)
+        rider_distance_from_destination = rider.location.distance(destination)
 
-        driver_distance_from_destination = trip.author.position.distance(
+        driver_distance_from_destination = trip.author.location.distance(
             destination)
 
         if driver_distance_from_destination < rider_distance_from_destination:
             trips = trips.exclude(id=trip.id)
             break
 
-        if get_proximity_factor(trip.author, rider.position) < -2:
+        if get_proximity_factor(trip.author, rider.location) < -2:
             trips = trips.exclude(id=trip.id)
             break
 

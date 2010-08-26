@@ -26,7 +26,7 @@ import django.contrib.auth.models
 @rpc4django.rpcmethod(name='dycapo.setPosition',
                       signature=['Response', 'Location'],
                       permission='server.can_xmlrpc')
-def setPosition(position, ** kwargs):
+def setPosition(location, ** kwargs):
     """
     Description
     ===========
@@ -92,7 +92,7 @@ def setPosition(position, ** kwargs):
     * POST https://domain.ext/persons/<username>/position
 
     """
-    dict_position = position
+    dict_position = location
     position = server.models.Location()
     position = utils.populate_object_from_dictionary(position, dict_position)
     current_user = utils.get_xmlrpc_user(kwargs)

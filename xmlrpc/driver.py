@@ -354,7 +354,7 @@ def acceptRide(trip, person, ** kwargs):
         return utils.to_xmlrpc(resp)
 
     try:
-        passenger = server.models.Person.objects.only("id","position").get(
+        passenger = server.models.Person.objects.only("id","location").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
         resp = server.models.Response(server.models.Response.NOT_FOUND,
@@ -447,7 +447,7 @@ def refuseRide(trip, person, ** kwargs):
         return utils.to_xmlrpc(resp)
 
     try:
-        passenger = server.models.Person.objects.only("id","position").get(
+        passenger = server.models.Person.objects.only("id","location").get(
             username=person_dict['username'])
     except server.models.Person.DoesNotExist:
         resp = server.models.Response(server.models.Response.NOT_FOUND,

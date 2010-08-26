@@ -44,14 +44,14 @@ class Person(authmodels.User):
     # password from Django
     uri = models.CharField(max_length=200, blank=True)
     phone = models.CharField(max_length=200, blank=False, null=False, unique=True)
-    position = models.ForeignKey(location.Location, blank=True, null=True)
+    location = models.ForeignKey(location.Location, blank=True, null=True)
     age = models.PositiveIntegerField(null=False, default=0)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, null=False)
     smoker = models.BooleanField(default=False)
     blind = models.BooleanField(default=False)
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
-    locations = models.ManyToManyField(location.Location, related_name="person_locations", blank=True, null=True, db_index=True) # MUST
+    locations = models.ManyToManyField('Location', related_name="person_locations", blank=True, null=True, db_index=True) # MUST
     href = models.URLField(blank=True, null=False)
     
     cannot_update = [
@@ -60,7 +60,7 @@ class Person(authmodels.User):
         'last_login',
         'date_joined',
         'username',
-        'position',
+        'location',
         'locations',
     ]
 
@@ -121,7 +121,7 @@ class Person(authmodels.User):
     def __unicode__(self):
         return self.username
 
-    def to_xmlrpc(self,position=False):
+    def to_xmlrpc(self,location=False):
         """
         Returns a Python dict that contains just the attributes we want to expose
         in out XML-RPC methods
@@ -129,8 +129,8 @@ class Person(authmodels.User):
         person_dict = {
             'username': self.username
         }
-        if position:
-            person_dict['position'] = self.position.to_xmlrpc()
+        if location:
+            person_dict['location'] = self.location.to_xmlrpc()
         return person_dict
 
     class Meta:

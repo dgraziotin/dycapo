@@ -33,16 +33,16 @@ class RiderTest(Thread):
     client = ''
     fixed_destination = None
     username = ""
-    position = ''
+    location = ''
 
     def __init__(self,username,password,domain,fixed_destination):
         Thread.__init__(self)
         self.client = common_classes_and_methods.get_client(username,password,domain)
         self.fixed_destination = fixed_destination
         self.username = username
-        self.position = common_classes_and_methods.Location()
-        self.position.georss_point="33.3 66.6"
-        self.position.leaves = common_classes_and_methods.now()
+        self.location = common_classes_and_methods.Location()
+        self.location.georss_point="33.3 66.6"
+        self.location.leaves = common_classes_and_methods.now()
 
     def search_ride(self):
         source = common_classes_and_methods.Location()
@@ -90,11 +90,11 @@ class RiderTest(Thread):
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
         if georss_point:
-            self.position.georss_point = georss_point
-            self.position.street = ''
-            self.position.postcode = ''
-            self.position.point = 'posi'
-        response = self.client.dycapo.update_position(self.position)
+            self.location.georss_point = georss_point
+            self.location.street = ''
+            self.location.postcode = ''
+            self.location.point = 'posi'
+        response = self.client.dycapo.update_position(self.location)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)

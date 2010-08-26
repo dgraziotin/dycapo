@@ -30,13 +30,13 @@ class TestRider():
 
 
     def setup_method(self,method):
-        self.driver.position = classes.Location(georss_point=self.driver_position)
+        self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
-        self.rider.position = classes.Location(georss_point=self.rider_position)
+        self.rider.location = classes.Location(georss_point=self.rider_position)
         self.rider.destination = classes.Location(georss_point=self.rider_destination,point='dest')
 
     def test_position(self):
-        old_position = self.rider.position
+        old_position = self.rider.location
         new_position = classes.Location(georss_point='46.000 11.000')
         self.rider.update_position(location=new_position)
         response = self.rider.get_position()
@@ -48,7 +48,7 @@ class TestRider():
         assert response['value']['georss_point'] != new_position.georss_point
 
     def test_search_trip(self):
-        response = self.rider.search_ride(self.rider.position,self.rider.destination)
+        response = self.rider.search_ride(self.rider.location,self.rider.destination)
         assert response['code'] == response_codes.NOT_FOUND
 
     def test_request_ride(self,trip=None):

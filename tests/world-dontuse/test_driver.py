@@ -39,7 +39,7 @@ class DriverTest(Thread):
     clean_responses = True
     fixed_destination = None
     username = ''
-    position = ''
+    location = ''
 
     def __init__(self,username,password,domain,fixed_destination,clean_responses):
         Thread.__init__(self)
@@ -47,9 +47,9 @@ class DriverTest(Thread):
         self.clean_responses = clean_responses
         self.fixed_destination = fixed_destination
         self.username = username
-        self.position = common_classes_and_methods.Location()
-        self.position.georss_point='45.96304996635425, 11.106381118297577'#"46.462822799999998, 11.3343092"
-        self.position.leaves = common_classes_and_methods.now()
+        self.location = common_classes_and_methods.Location()
+        self.location.georss_point='45.96304996635425, 11.106381118297577'#"46.462822799999998, 11.3343092"
+        self.location.leaves = common_classes_and_methods.now()
 
     def insert_trip(self):
         source = common_classes_and_methods.Location()
@@ -130,7 +130,7 @@ class DriverTest(Thread):
         print "#" * 80
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
-        response = self.client.dycapo.update_position(self.position)
+        response = self.client.dycapo.update_position(self.location)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)
@@ -140,11 +140,11 @@ class DriverTest(Thread):
         print self.username + ": UPDATING POSITION..."
         print "#" * 80
         if georss_point:
-            self.position.georss_point = georss_point
-            self.position.street = ''
-            self.position.postcode = ''
-            self.position.point = 'posi'
-        response = self.client.dycapo.update_position(self.position)
+            self.location.georss_point = georss_point
+            self.location.street = ''
+            self.location.postcode = ''
+            self.location.point = 'posi'
+        response = self.client.dycapo.update_position(self.location)
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return common_classes_and_methods.extract_response(response)

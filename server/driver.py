@@ -92,7 +92,7 @@ def startTrip(trip, driver):
     participation.started = True
     participation.started_timestamp = datetime.datetime.now()
     try:
-        participation.started_position_id = driver.position_id
+        participation.started_position_id = driver.location_id
     except models.Location.DoesNotExist:
         participation.started_position = None
     participation.save()
@@ -136,7 +136,7 @@ def acceptRide(trip, driver, passenger):
         passenger_participation.accepted = True
         passenger_participation.accepted_timestamp = datetime.datetime.now()
         try:
-            passenger_participation.accepted_position_id = passenger.position_id
+            passenger_participation.accepted_position_id = passenger.location_id
         except models.Location.DoesNotExist:
             passenger_participation.accepted_position = None
 
@@ -163,7 +163,7 @@ def refuseRide(trip, passenger):
     passenger_participation.refused = True
     passenger_participation.refused_timestamp = datetime.datetime.now()
     try:
-        passenger_participation.refused_position_id = passenger.position_id
+        passenger_participation.refused_position_id = passenger.location_id
     except models.Location.DoesNotExist:
         passenger_participation.accepted_position = None
 

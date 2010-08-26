@@ -35,13 +35,13 @@ class TestDriver():
 
 
     def setup_method(self,method):
-        self.driver.position = classes.Location(georss_point=self.driver_position)
+        self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.destination = classes.Location(georss_point=self.driver_destination,point='dest')
-        self.rider.position = classes.Location(georss_point=self.rider_position)
+        self.rider.location = classes.Location(georss_point=self.rider_position)
         self.rider.destination = classes.Location(georss_point=self.rider_destination,point='dest')
 
     def test_position(self):
-        old_position = self.driver.position
+        old_position = self.driver.location
         new_position = classes.Location(georss_point='46.000 11.000')
         self.driver.update_position(location=new_position)
         response = self.driver.get_position()

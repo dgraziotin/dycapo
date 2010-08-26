@@ -10,8 +10,12 @@ import django.core.urlresolvers
 class PersonHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Person
-    fields = ('username','gender','email','phone','position','href')
+    fields = ('username','gender','email','phone',('location',('town')),'href')
 
+    @classmethod
+    def location(self, person):
+        return person.location
+    
     def read(self, request, username=None):
         current_user = rest.utils.get_rest_user(request)
         if not username:
