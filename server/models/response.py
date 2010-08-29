@@ -22,8 +22,8 @@ import django.core.exceptions
 
 class Response(Exception):
     """
-    This is an envelope that standardizes the response of Dycapo.
-    see http://dycapo.org/Protocol#Response
+    This is an envelope that standardizes the response of Dycapo. It was first developed
+    for XML-RPC, know it is used internally
     """
     ALL_OK = piston.rc.ALL_OK.status_code
     CREATED = piston.rc.CREATED.status_code
@@ -59,6 +59,7 @@ class Response(Exception):
     POSITION_FOUND = "Position found"
     PERSON_PROTOCOL_ERROR = "Please give all the required attribute"
     PERSON_NOT_FOUND = "Person(s) not found."
+    PERSON_NOT_FOUND = "Person(s) not authorized."
     PERSON_PASSWORD_CHANGED = "Password successfully changed"
     PERSON_REGISTERED = "Person succesfully registered."
     PERSON_ALREADY_REGISTERED = "Person already registered."

@@ -13,23 +13,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-"""
-Collects all REST handlers contained in wrappers defined in wrappers package,
-letting Piston know about their existance
-"""
 from piston.handler import BaseHandler
 import piston.utils
 import server.models
 import server.utils
 import server.common
-import utils
+import rest.utils
 from piston.utils import require_mime
 import django.core.urlresolvers
 
-from wrappers.person import PersonHandler
-from wrappers.participation import ParticipationHandler
-from wrappers.preferences import PreferencesHandler
-from wrappers.modality import ModalityHandler
-from wrappers.location import LocationHandler, LocationPersonHandler
-from wrappers.trip import TripHandler
-from wrappers.api import ApiHandler
+class ApiHandler(BaseHandler):
+    allowed_methods = ['GET']
+    fields = ("persons",
+        "trips",
+        )
+    
+    def read(self, request):
+        persons = {}
+        persons['href'] = rest.utils.get_href(request,'person_handler',[])
+        trips = {}
+        trips['href'] = rest.utils.get_href(request,'trip_handler',[])
+        api = {}
+        api['persons'] = persons
+        api['trips'] = trips
+        return api

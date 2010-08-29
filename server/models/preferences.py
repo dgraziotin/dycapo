@@ -30,7 +30,7 @@ GENDER_CHOICES = (
 class Preferences(models.Model):
     """
     Stores the preferences of a Trip set by the Person who creates it.
-    See `OpenTrip_Core#Preference_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Preference_Constructs>`_ for more info.
+    See  See `Preferences <http://dycapo.org/Protocol#Preferences>`_ for more info.
     We kept drive and ride attributes just for compatibility reasons: in OpenTrip Dynamic just a driver should be
     the author of a Trip.
     """

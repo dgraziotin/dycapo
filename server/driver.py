@@ -13,16 +13,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-"""
-This module holds all the XML-RPC methods that a Driver needs.
-"""
+
+"""This module holds all the methods that a Driver needs."""
+
 import datetime
 import models
 import rpc4django
 import utils
 
 def insertTrip(trip, author, source, destination, modality, preferences):
-
+    """
+    Inserts a trip in the system. It may be either started or not. It also
+    checks the validity of each object supplied
+    """
     vacancy = modality.vacancy
     modality, created = models.Modality.objects.get_or_create(person=author,
                                                  make=modality.make,
@@ -81,16 +84,24 @@ def insertTrip(trip, author, source, destination, modality, preferences):
     return resp
 
 def startTrip(trip, driver):
-
+    """
+    Sets a Trip as started. 
+    """
     participation = models.Participation.objects.get(trip=trip.id, role='driver')
 
     if participation.started:
         resp = models.Response(models.Response.DUPLICATE_ENTRY,
                                "Message", models.Response.TRIP_ALREADY_STARTED)
         return resp
+    
+    if trip.author != driver:
+        resp = models.Response(models.Response.FORBIDDEN,
+                               "Message", models.Response.PERSON_NOT_AUTHORIZED)
+        return resp
 
     participation.started = True
     participation.started_timestamp = datetime.datetime.now()
+    
     try:
         participation.started_position_id = driver.location_id
     except models.Location.DoesNotExist:
@@ -104,6 +115,14 @@ def startTrip(trip, driver):
     return resp
 
 def getRides(trip, driver):
+    """
+    Returns all pending ride requests for a trip
+    """
+    if trip.author != driver:
+        resp = models.Response(models.Response.FORBIDDEN,
+                               "Message", models.Response.PERSON_NOT_AUTHORIZED)
+        return resp
+    
     participations_for_trip = (models.Participation.objects.filter(trip=trip.id)
                                .exclude(person=driver)
                                .filter(started=False)
@@ -125,6 +144,9 @@ def getRides(trip, driver):
 
 
 def acceptRide(trip, driver, passenger):
+    """
+    Accept a ride request of a passenger
+    """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
@@ -151,6 +173,9 @@ def acceptRide(trip, driver, passenger):
 
 
 def refuseRide(trip, passenger):
+    """
+    Refuse a ride request of a passenger
+    """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
@@ -174,8 +199,10 @@ def refuseRide(trip, passenger):
 
 
 
-
 def finishTrip(trip, driver):
+    """
+    Sets a Trip as finished.
+    """
     if driver.is_participating():
         participation = driver.get_active_participation()
         participation.finished = True

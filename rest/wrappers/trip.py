@@ -1,4 +1,23 @@
-from piston.handler import BaseHandler
+"""
+   Copyright 2010 Daniel Graziotin <daniel.graziotin@acm.org>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+"""
+Wraps `Trip<http://dycapo.org/Protocol#Trip/>`_ objects in a
+RESTful way. 
+"""
+from piston.handler import BaseHandler, AnonymousBaseHandler
 import piston.utils
 import server.models
 import server.utils
@@ -7,16 +26,36 @@ import rest.utils
 from piston.utils import require_mime
 import django.core.urlresolvers
 
+class AnonymousTripHandler(AnonymousBaseHandler):
+    allowed_methods = ['GET']
+    model = server.models.Trip
+    fields = ('author','href',('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),)
+    
+    def read(self, request, id=None):
+        if id:
+            return piston.utils.rc.FORBIDDEN
+        trips = server.models.Trip.objects.filter(active=True)
+        return trips
+
+    
 class TripHandler(BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
     fields = ('href','id', 'published', 'updated', 'expires', 
               ('author',('username','gender','href')), 
               ('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),
-              ('modality'), 
-              ('preferences',('nonsmoking','gender','ride','drive','age','age')))
+              ('modality',('kind','capacity','vacancy','make','model_name','href')), 
+              ('preferences',('fake','href')),
+              'participations')
     
-        
+    anonymous = AnonymousTripHandler
+    
+    @classmethod
+    def participations(cls,trip):
+        participation = {}
+        participation['href'] = trip.href + 'participations/'
+        return participation
+    
     @classmethod
     def locations(cls, trip):
         locations = trip.locations.all()
@@ -66,12 +105,13 @@ class TripHandler(BaseHandler):
             trip = server.models.Trip.objects.get(id=id)
             trip.href = rest.utils.get_href(request, 'trip_handler', [trip.id])
             trip.preferences.href = rest.utils.get_href(request, 'preferences_handler',[trip.preferences.id,])
-            
-            #trip.modality = rest.utils.inflate_href(request, trip.preferences, 'preferences_handler',[trip.preferences.id,])
+            trip.modality = rest.utils.inflate_href(request, trip.mode, 'modality_handler',[trip.modality.id,])
             locations = trip.locations.all()
             [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[item.id])) for item in locations]
             [item.save() for item in locations]
             trip.save()
+            if trip.active:
+                server.driver.startTrip(trip, author)
             return trip
         return result.to_xmlrpc() #rest.utils.extract_result_from_response(result)
 

@@ -94,15 +94,3 @@ def location_proximity_factor(distances):
     """
     return sum([cmp(distances[i], distances[i + 1])
                  for i in xrange(len(distances)-1)])
-
-
-#def location_distance_factor(distance1, distance2):
-    #"""
-    #Given two distances, returns 1 if the first distance is greater than
-    #the second one.
-    #Returns -1 if the first distance is less than the second one.
-    #Returns 0 if they are equal.
-    #"""
-    #if distance1 > distance2: return 1
-    #if distance1 < distance2: return -1
-    #return 0

@@ -15,7 +15,7 @@
 """
 
 """
-This module holds all the XML-RPC methods that a passenger needs.
+This module holds all the methods that a passenger needs.
 """
 import datetime
 import geopy
@@ -27,7 +27,10 @@ import django.db
 
 
 def searchRide(source, destination, passenger):
-
+    """
+    Given a source, a destination and the passenger, it searches for
+    a suitable ride.
+    """
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
         resp = models.Response(models.Response.FORBIDDEN,
@@ -54,6 +57,9 @@ def searchRide(source, destination, passenger):
                            "Trip[]", trips)
 
 def requestRide(trip, passenger):
+    """
+    Sends a request for a ride to the Trip author
+    """
     passenger_active_participation = passenger.get_active_participation()
     trip_participations = trip.get_participations().exclude(role='driver')
 
@@ -81,6 +87,9 @@ def requestRide(trip, passenger):
     return resp
 
 def statusRide(trip, passenger):
+    """
+    Sends a request for a ride to the Trip author
+    """
     passenger_active_participation = passenger.get_active_participation()
     if passenger_active_participation:
         resp = models.Response(models.Response.FORBIDDEN,
@@ -96,7 +105,6 @@ def statusRide(trip, passenger):
                                "Message", models.Response.PERSON_NOT_FOUND)
 
     if passenger_participation.accepted:
-        #TODO: return author's position
         resp = models.Response(models.Response.ALL_OK,
                                "Person", trip.author)
     else:
@@ -106,6 +114,9 @@ def statusRide(trip, passenger):
 
 
 def cancelRide(trip, passenger):
+    """
+    Deletes a ride previously requested
+    """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
                                                                person=passenger.id)
@@ -129,6 +140,10 @@ def cancelRide(trip, passenger):
     return resp
 
 def startRide(trip, passenger):
+    """
+    Let the system know that a ride succesfully started, i.e. the Driver
+    has arrived to pick the passenger
+    """
     try:
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 
@@ -159,6 +174,10 @@ def startRide(trip, passenger):
     return resp
 
 def finishRide(trip, passenger):
+    """
+    Let the system know that a ride succesfully finished, i.e. the Passenger
+    has arrived to destination
+    """
     try:
         is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
 

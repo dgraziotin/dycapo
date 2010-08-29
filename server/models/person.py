@@ -30,7 +30,7 @@ GENDER_CHOICES = (
 
 class Person(authmodels.User):
     """
-    Represents a Person as described on `OpenTrip_Core Person_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Person_Constructs>`_.
+    Represents a Person as described on  See `Person <http://dycapo.org/Protocol#Person>`_.
     It's a subclass of django.contrib.auth.models.User. I use the technique described on
     `this blog <http://steps.ucdavis.edu/People/jbremson/extending-the-user-model-in-django>`_  to get Person objects
     instead of User objects when requesting a user.
@@ -51,7 +51,7 @@ class Person(authmodels.User):
     blind = models.BooleanField(default=False)
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
-    locations = models.ManyToManyField('Location', related_name="person_locations", blank=True, null=True, db_index=True) # MUST
+    locations = models.ManyToManyField('Location', related_name="person_locations", blank=True, null=True, db_index=True)
     href = models.URLField(blank=True, null=False)
     
     cannot_update = [

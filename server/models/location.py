@@ -42,8 +42,8 @@ RECURS_CHOICES = (
 class Location(models.Model):
     """
     Represents a single location.
-    See `OpenTrip_Core#Location_Constructs
-    <http://opentrip.info/wiki/OpenTrip_Core#Location_Constructs>`_
+    See `Location
+    <http://dycapo.org/Protocol#Location>`_
     for more info.
     """
     label = models.CharField(max_length=255, blank=True)

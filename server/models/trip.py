@@ -28,10 +28,7 @@ import participation
 
 class Trip(models.Model):
     """
-    Represents a Trip.
-    See `OpenTrip_Core#Entry_Elements <http://opentrip.info/wiki/OpenTrip_Core#Entry_Elements>`_ for more info.
-    atom:id, atom:title, atom:link are not present in the models of DyCapo. They should be returned
-    in case of an export of a Trip in OpenTrip Feed format.
+    Represents a Trip. See `Trip <http://dycapo.org/Protocol#Trip>`_ for more info.
     """
     cannot_update = [
         'published',

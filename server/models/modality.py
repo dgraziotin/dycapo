@@ -30,7 +30,7 @@ MODE_CHOICES = (
 class Modality(models.Model):
     """
     Represents additional information about the modality of transportation being used.
-    See `OpenTrip_Core#Mode_Constructs <http://opentrip.info/wiki/OpenTrip_Core#Mode_Constructs>`_ for more info.
+    See  See `Modality <http://dycapo.org/Protocol#Modality>`_ for more info.
     """
     kind = models.CharField(max_length=255, choices=MODE_CHOICES, blank=False, null=False, default=MODE_CHOICES[0][0])
     capacity = models.PositiveIntegerField(blank=False, null=False, default=0)

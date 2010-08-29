@@ -16,35 +16,36 @@
 
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler, ModalityHandler
-#from apache.authentication import HttpBasicSimple
-from server.models import Person
-from django.contrib.auth import authenticate
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate
-import django.contrib.auth
+from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler, ModalityHandler, ApiHandler
 
-person_handler = Resource(PersonHandler)
-location_handler = Resource(LocationHandler)
-location_person_handler = Resource(LocationPersonHandler)
-trip_handler = Resource(TripHandler)
-participation_handler = Resource(ParticipationHandler)
-preferences_handler = Resource(PreferencesHandler)
-modality_handler = Resource(ModalityHandler)
+from authentication import HttpBasicAuthentication
+
+auth = HttpBasicAuthentication()
+ad = { 'authentication': auth }
+
+person_handler = Resource(handler=PersonHandler,**ad)
+location_handler = Resource(handler=LocationHandler,**ad)
+location_person_handler = Resource(handler=LocationPersonHandler,**ad)
+trip_handler = Resource(handler=TripHandler,**ad)
+participation_handler = Resource(handler=ParticipationHandler,**ad)
+preferences_handler = Resource(handler=PreferencesHandler,**ad)
+modality_handler = Resource(handler=ModalityHandler,**ad)
+api_handler = Resource(handler=ApiHandler)
 
 urlpatterns = patterns('',
+    url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
     url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
     url(r'^persons/(?P<username>\w+)/location/$', location_person_handler, { 'emitter_format': 'json',}, name='location_person_handler'),
     url(r'^persons/$', person_handler, name='person_handler'),
-    url(r'^modality/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
-    url(r'^modality/(?P<id>\w+)/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
+    url(r'^modalities/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
+    url(r'^modalities/(?P<id>\w+)/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
     url(r'^preferences/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
     url(r'^preferences/(?P<id>\w+)/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
     url(r'^locations/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
     url(r'^locations/(?P<id>\w+)/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
-    url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
-    url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
-    url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
     url(r'^trips/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
+    url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
+    url(r'^$', api_handler, { 'emitter_format': 'json',}, name='api_handler'),
     
 )

@@ -55,6 +55,9 @@ We provide a testing framework, located under tests/.
 We are using py.test <http://codespeak.net/py/dist/test/>.
 To run all tests, simply run run_tests.py
 
+If you want to align all the objects created by XML-RPC tests,
+please use manage.py restifymodels
+
 ACKNOWLEDGEMENT
 ***************
 Thanks to the whole the SoNet group that supported me with hints and fun during

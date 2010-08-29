@@ -31,11 +31,11 @@ ROLE_CHOICES = (
 
 class Participation(models.Model):
     """
-    Describes the participation of a Person in a Trip.
-    This is an OpenTrip extension and should be considered as a proposal for OpenTrip Dynamic.
-    It is currently used internally in Dycapo
+    Describes the participation of a Person in a Trip. See  `Participation
+    <http://dycapo.org/Protocol#Participation>`_ for more information. This is
+    mostly used internally, only "status" is exposed to the public.
     """
-
+    
     _status = {
         "request" : ("request",1),
         "accept" : ("accept", 2),

@@ -33,6 +33,9 @@ RPC4DJANGO_RESTRICT_REST = False
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# NO ending slash!
+DYCAPO_URL = 'http://127.0.0.1'
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )

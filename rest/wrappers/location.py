@@ -1,3 +1,22 @@
+"""
+   Copyright 2010 Daniel Graziotin <daniel.graziotin@acm.org>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+"""
+Wraps `Location<http://dycapo.org/Protocol#Location/>`_ objects in a
+RESTful way. 
+"""
 from piston.handler import BaseHandler
 import piston.utils
 import server.models
@@ -7,12 +26,28 @@ import rest.utils
 from piston.utils import require_mime
 import django.core.urlresolvers
 import re
-    
+
+class LocationAnonymousHandler(BaseHandler):
+    allowed_methods = ['GET']
+    model = server.models.Location
+    fields = ('point','street','town','postcode','georss_point','offset','leaves','href')
+
+    def read(self, request, username=None, id=None):
+        if id:
+            try:
+                location = server.models.Location.objects.get(id=id)
+                return location
+            except server.models.Location.DoesNotExist:
+                return piston.utils.rc.NOT_FOUND
+        else:
+            return piston.utils.rc.FORBIDDEN
+        
 class LocationHandler(BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Location
     fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
     "recurs","georss_point")
+    anonymous = LocationAnonymousHandler
 
     def read(self, request, username=None, id=None):
         user = rest.utils.get_rest_user(request)

@@ -14,7 +14,7 @@
    limitations under the License.
 """
 
-""" This module holds all the XML-RPC methods that a driver
+""" This module holds all the methods that a driver
 and a passenger have in common """
 
 import models
@@ -24,6 +24,11 @@ import django.core.exceptions
 import django.db
 
 def setPosition(current_user, position):
+    """
+    Verifies the validity of the Location object then links it to
+    the given Person, as current Person position and/or Participation
+    location
+    """
     try:
         position.full_clean()
         position.save()
@@ -50,6 +55,10 @@ def setPosition(current_user, position):
     return resp
 
 def getPosition(current_user, person):
+    """
+    Verifies the permissions of both users given, then eventually returns
+    the location of the Person
+    """
     if person.id == current_user.id:
         resp = models.Response(models.Response.ALL_OK,
                                'Location',
@@ -85,6 +94,9 @@ def getPosition(current_user, person):
         return resp
 
 def register(person):
+    """
+    Registers a Person to the system.
+    """
     try:
         person.set_password(person.password)
         person.full_clean()
@@ -103,6 +115,9 @@ def register(person):
     return resp
 
 def updatePerson(current_user, person):
+    """
+    Updates current_user Person with the attributes of person Person.
+    """
     try:
         if hasattr(person,'password'):
             if not person.check_password(person.password):
@@ -116,6 +131,9 @@ def updatePerson(current_user, person):
     return resp
 
 def changePassword(person):
+    """
+    Changes the password of the user, supplied in person.password
+    """
     try:
         person.set_password(person.password)
         person.save()
