@@ -17,17 +17,14 @@
 Wraps `Location<http://dycapo.org/Protocol#Location/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
-import re
 
-class LocationAnonymousHandler(BaseHandler):
+class LocationAnonymousHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Location
     fields = ('point','street','town','postcode','georss_point','offset','leaves','href')
@@ -42,7 +39,7 @@ class LocationAnonymousHandler(BaseHandler):
         else:
             return piston.utils.rc.FORBIDDEN
         
-class LocationHandler(BaseHandler):
+class LocationHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Location
     fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
@@ -65,7 +62,7 @@ class LocationHandler(BaseHandler):
         except server.models.Location.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
             
-class LocationPersonHandler(BaseHandler):
+class LocationPersonHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Location
     fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 

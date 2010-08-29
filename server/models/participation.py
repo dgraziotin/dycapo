@@ -19,7 +19,6 @@ This module holds the Participation model
 """
 
 from django.db import models
-import person as moduleperson
 import trip as moduletrip
 import location
 

@@ -18,8 +18,8 @@
 
 import datetime
 import models
-import rpc4django
 import utils
+import django.core.exceptions
 
 def insertTrip(trip, author, source, destination, modality, preferences):
     """

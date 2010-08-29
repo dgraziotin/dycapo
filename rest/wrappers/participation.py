@@ -17,17 +17,14 @@
 Wraps `Participation<http://dycapo.org/Protocol#Participation/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
-import re
 
-class ParticipationHandler(BaseHandler):
+class ParticipationHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Participation
     fields = ('href','person','status')
@@ -138,7 +135,6 @@ class ParticipationHandler(BaseHandler):
         current_user = rest.utils.get_rest_user(request)
         try:
             trip = server.models.Trip.objects.get(id=trip_id)
-            status = data['status']
             person_participation = trip.get_participations().filter(person__username=username).get()
             person = person_participation.person
 

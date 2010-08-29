@@ -17,8 +17,7 @@
 RESTifies all stored objects, in case they are not
 """
 import server.models
-import rest.utils
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.urlresolvers import reverse
 import settings
 

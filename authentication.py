@@ -16,7 +16,7 @@
 
 from server.models import Person
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 
 class HttpBasicAuthentication(object):
     """

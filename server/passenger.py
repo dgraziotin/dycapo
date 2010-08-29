@@ -18,11 +18,8 @@
 This module holds all the methods that a passenger needs.
 """
 import datetime
-import geopy
 import matching
 import models
-import rpc4django
-import utils
 import django.db
 
 
@@ -61,7 +58,6 @@ def requestRide(trip, passenger):
     Sends a request for a ride to the Trip author
     """
     passenger_active_participation = passenger.get_active_participation()
-    trip_participations = trip.get_participations().exclude(role='driver')
 
     if passenger_active_participation:
         resp = models.Response(models.Response.FORBIDDEN,

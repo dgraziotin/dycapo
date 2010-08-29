@@ -76,7 +76,7 @@ def get_location_from_array(locations, point="dest"):
     for location in locations:
         if location["point"] == point:
             return location
-    return none
+    return None
 
 def populate_object_from_dictionary(obj, dictionary):
     """

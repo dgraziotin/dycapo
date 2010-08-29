@@ -17,16 +17,14 @@
 Wraps `Trip<http://dycapo.org/Protocol#Trip/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler, AnonymousBaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
 
-class AnonymousTripHandler(AnonymousBaseHandler):
+class AnonymousTripHandler(piston.handler.AnonymousBaseHandler):
     allowed_methods = ['GET']
     model = server.models.Trip
     fields = ('author','href',('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),)
@@ -38,7 +36,7 @@ class AnonymousTripHandler(AnonymousBaseHandler):
         return trips
 
     
-class TripHandler(BaseHandler):
+class TripHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
     fields = ('href','id', 'published', 'updated', 'expires', 

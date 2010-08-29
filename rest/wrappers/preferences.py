@@ -17,16 +17,14 @@
 Wraps `Preferences<http://dycapo.org/Protocol#Preferences/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
 
-class PreferencesHandler(BaseHandler):
+class PreferencesHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Preferences
     fields = ("nonsmoking",
@@ -37,7 +35,6 @@ class PreferencesHandler(BaseHandler):
         "age","href")
     
     def read(self, request, id=None):
-        user = rest.utils.get_rest_user(request)
         try:
             if id:
                 preferences = server.models.Preferences.objects.get(id=id)

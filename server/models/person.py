@@ -71,8 +71,8 @@ class Person(authmodels.User):
         in the Participation, for having better results in research algorithms
         """
         if self.get_active_participation() and self.get_active_participation().role == 'driver':
-            participation = self.get_active_participation()
-            recent_locations = list(participation.locations.filter().only("id","georss_point").order_by('-id')[:max_results])
+            current_participation = self.get_active_participation()
+            recent_locations = list(current_participation.locations.filter().only("id","georss_point").order_by('-id')[:max_results])
         else:
             recent_locations = list(self.locations.filter().only("id","georss_point").order_by('-id')[:max_results])
         recent_locations.reverse()

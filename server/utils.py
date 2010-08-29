@@ -19,9 +19,7 @@ This module holds some utility functions.
 """
 
 import time
-
 import datetime
-import models
 
 def now():
     """
@@ -38,7 +36,7 @@ def now_plus_minutes(num_minutes):
     """
     now_seconds = time.time()
     now_date = datetime.datetime.fromtimestamp(now_seconds)
-    now_plus = now_date + timedelta(minutes=num_minutes)
+    now_plus = now_date + datetime.timedelta(minutes=num_minutes)
     return now_plus.isoformat(' ')
 
 def now_minus_minutes(num_minutes):
@@ -48,7 +46,7 @@ def now_minus_minutes(num_minutes):
     """
     now_seconds = time.time()
     now_date = datetime.datetime.fromtimestamp(now_seconds)
-    now_minus = now_date - timedelta(minutes=num_minutes)
+    now_minus = now_date - datetime.timedelta(minutes=num_minutes)
     return now_minus.isoformat(' ')
 
 def synchronize_objects(old_obj, new_obj):

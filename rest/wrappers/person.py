@@ -17,17 +17,16 @@
 Wraps `Person<http://dycapo.org/Protocol#Person/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler, AnonymousBaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
 
 
-class AnonymousPersonHandler(AnonymousBaseHandler):
+
+class AnonymousPersonHandler(piston.handler.AnonymousBaseHandler):
     allowed_methods = ['GET','POST']
     model = server.models.Person
     fields = ('username','href')
@@ -52,7 +51,7 @@ class AnonymousPersonHandler(AnonymousBaseHandler):
         return rest.utils.extract_result_from_response(result)
 
    
-class PersonHandler(BaseHandler):
+class PersonHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','PUT']
     model = server.models.Person
     fields = ('username','gender','email','phone',('location', ('fake','href')),'href')
@@ -60,7 +59,6 @@ class PersonHandler(BaseHandler):
     
     
     def read(self, request, username=None):
-        current_user = rest.utils.get_rest_user(request)
         if not username:
             persons = server.models.Person.objects.exclude(username='admin').exclude(username='register')
             return persons

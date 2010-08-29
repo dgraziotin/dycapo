@@ -192,9 +192,9 @@ class Location(models.Model):
                 #self.country = full_address[-1].split(" ")[1]
             else:
                 self.town = full_address[0]
-        except Exception, e:
-            self.town = "UNKNOWN"
-            self.street = "UNKNOWN"
+        except Exception:
+            self.town = ""
+            self.street = ""
             self.postcode = 0
         self.georss_point_latitude = point.latitude
         self.georss_point_longitude = point.longitude

@@ -19,12 +19,10 @@ This module holds the Trip model
 """
 
 from django.db import models, IntegrityError
-import person
 import location
 import modality as modulemodality
 import preferences as modulepreferences
 import participation as moduleparticipation
-import participation
 
 class Trip(models.Model):
     """

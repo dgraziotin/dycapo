@@ -13,16 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-from piston.handler import BaseHandler
-import piston.utils
+import piston.handler
 import server.models
-import server.utils
-import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
 
-class ApiHandler(BaseHandler):
+class ApiHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     fields = ("persons",
         "trips",

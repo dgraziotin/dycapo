@@ -17,22 +17,19 @@
 Wraps `Modality<http://dycapo.org/Protocol#Modality/>`_ objects in a
 RESTful way. 
 """
-from piston.handler import BaseHandler
+import piston.handler
 import piston.utils
 import server.models
 import server.utils
 import server.common
 import rest.utils
-from piston.utils import require_mime
-import django.core.urlresolvers
 
-class ModalityHandler(BaseHandler):
+class ModalityHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Modality
     exclude = ('_state','person')
     
     def read(self, request, id=None):
-        user = rest.utils.get_rest_user(request)
         try:
             if id:
                 modality = server.models.Modality.objects.get(id=id)
