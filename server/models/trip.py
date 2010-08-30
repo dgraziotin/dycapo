@@ -45,7 +45,7 @@ class Trip(models.Model):
     modality = models.ForeignKey(modulemodality.Modality, blank=False, null=False)
     preferences = models.ForeignKey(modulepreferences.Preferences, null=False)
     participation = models.ManyToManyField('Person', through='Participation', related_name='participation')
-    href = models.URLField(blank=True, null=False)
+    href = models.URLField(verify_exists=False, blank=True, null=False)
 
     def __repr__(self):
         return str(self.id)

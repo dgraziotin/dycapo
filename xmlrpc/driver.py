@@ -124,7 +124,7 @@ def insertTrip(trip, ** kwargs):
 
     trip = server.models.Trip()
     trip = utils.populate_object_from_dictionary(trip, dict_trip)
-
+    
     response = server.driver.insertTrip(trip, author, source, destination, modality, preferences)
     return utils.to_xmlrpc(response)
 

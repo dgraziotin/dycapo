@@ -33,7 +33,8 @@ class AnonymousPersonHandler(piston.handler.AnonymousBaseHandler):
     
     def read(self, request, username=None):
         if username:
-            return piston.utils.rc.FORBIDDEN
+            handler = PersonHandler()
+            return handler.read(request,username)
         try:
             person = server.models.Person.objects.all().exclude(username='admin').exclude(username='register')
             return person

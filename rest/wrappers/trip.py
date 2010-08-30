@@ -29,9 +29,7 @@ class AnonymousTripHandler(piston.handler.AnonymousBaseHandler):
     model = server.models.Trip
     fields = ('author','href',('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),)
     
-    def read(self, request, id=None):
-        if id:
-            return piston.utils.rc.FORBIDDEN
+    def read(self, request):
         trips = server.models.Trip.objects.filter(active=True)
         return trips
 
@@ -102,10 +100,10 @@ class TripHandler(piston.handler.BaseHandler):
             id = result.value.id
             trip = server.models.Trip.objects.get(id=id)
             trip.href = rest.utils.get_href(request, 'trip_handler', [trip.id])
-            trip.preferences.href = rest.utils.get_href(request, 'preferences_handler',[trip.preferences.id,])
-            trip.modality = rest.utils.inflate_href(request, trip.mode, 'modality_handler',[trip.modality.id,])
+            trip.preferences.href = rest.utils.get_href(request, 'preferences_handler',[trip.id,])
+            trip.modality.href = rest.utils.get_href(request, 'modality_handler',[trip.id,])
             locations = trip.locations.all()
-            [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[item.id])) for item in locations]
+            [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[trip.id])) for item in locations]
             [item.save() for item in locations]
             trip.save()
             if trip.active:

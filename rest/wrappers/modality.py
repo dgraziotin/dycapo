@@ -29,12 +29,12 @@ class ModalityHandler(piston.handler.BaseHandler):
     model = server.models.Modality
     exclude = ('_state','person')
     
-    def read(self, request, id=None):
+    def read(self, request, trip_id=None):
         try:
-            if id:
-                modality = server.models.Modality.objects.get(id=id)
-                return modality
+            if trip_id:
+                trip = server.models.Trip.objects.get(id=trip_id, active=True)
+                return trip.modality
             else:
-                return server.models.Modality.objects.all()
-        except server.models.Modality.DoesNotExist:
+                return piston.utils.rc.NOT_FOUND
+        except server.models.Trip.DoesNotExist:
             return piston.utils.rc.NOT_FOUND

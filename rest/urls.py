@@ -33,19 +33,17 @@ modality_handler = Resource(handler=ModalityHandler,**ad)
 api_handler = Resource(handler=ApiHandler)
 
 urlpatterns = patterns('',
-    url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
-    url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
     url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
     url(r'^persons/(?P<username>\w+)/location/$', location_person_handler, { 'emitter_format': 'json',}, name='location_person_handler'),
     url(r'^persons/$', person_handler, name='person_handler'),
-    url(r'^modalities/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
-    url(r'^modalities/(?P<id>\w+)/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
-    url(r'^preferences/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
-    url(r'^preferences/(?P<id>\w+)/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
-    url(r'^locations/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
-    url(r'^locations/(?P<id>\w+)/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
     url(r'^trips/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
     url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/modality/$', modality_handler, { 'emitter_format': 'json',}, name='modality_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/preferences/$', preferences_handler, { 'emitter_format': 'json',}, name='preferences_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/participations/(?P<username>\w+)/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/participations/$', participation_handler, { 'emitter_format': 'json',}, name='participation_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/locations/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
+    url(r'^trips/(?P<trip_id>\w+)/locations/(?P<id>\w+)/$', location_handler, { 'emitter_format': 'json',}, name='location_handler'),
     url(r'^$', api_handler, { 'emitter_format': 'json',}, name='api_handler'),
     
 )

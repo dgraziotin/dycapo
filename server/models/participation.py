@@ -66,7 +66,7 @@ class Participation(models.Model):
     finished_timestamp = models.DateTimeField(auto_now_add=False, blank=False, null=True)
     finished_position = models.ForeignKey(location.Location, related_name="finished_position", blank=True, null=True)
     locations = models.ManyToManyField(location.Location, related_name="participation_locations")
-    href = models.URLField(blank=True, null=False)
+    href = models.URLField(verify_exists=False, blank=True, null=False)
 
     def __unicode__(self):
         return str(self.person) + " -> " + str(self.trip)

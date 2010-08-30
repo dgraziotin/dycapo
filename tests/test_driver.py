@@ -58,7 +58,7 @@ class TestDriver():
         assert [location for location in response['value']['locations'] if location['point']=='dest'][0]['georss_point'] == self.driver_destination
         assert response['code']==response_codes.CREATED
         self.driver.trip = response['value']
-
+    
     def test_start_trip(self):
         response = self.driver.start_trip()
         assert response['code'] == response_codes.ALL_OK

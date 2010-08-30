@@ -44,14 +44,18 @@ class LocationHandler(piston.handler.BaseHandler):
     model = server.models.Location
     fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
     "recurs","georss_point")
-    anonymous = LocationAnonymousHandler
+    #anonymous = LocationAnonymousHandler
 
-    def read(self, request, username=None, id=None):
+    def read(self, request, username=None, trip_id=None, id=None):
         user = rest.utils.get_rest_user(request)
         try:
-            if id:
-                location = server.models.Location.objects.get(id=id)
-                return location
+            if trip_id:
+                if id:
+                    trip = server.models.Trip.objects.get(id=trip_id)
+                    return trip.locations.filter(id=id).get()
+                else:
+                    trip = server.models.Trip.objects.get(id=trip_id)
+                    return trip.locations.all()
             if username:
                 person = server.models.Person.objects.get(username=username)
                 result = server.common.getPosition(user,person)
@@ -60,6 +64,8 @@ class LocationHandler(piston.handler.BaseHandler):
         except server.models.Person.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         except server.models.Location.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except server.models.Trip.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
             
 class LocationPersonHandler(piston.handler.BaseHandler):

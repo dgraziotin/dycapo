@@ -52,7 +52,7 @@ class Person(authmodels.User):
     deaf = models.BooleanField(default=False)
     dog = models.BooleanField(default=False)
     locations = models.ManyToManyField('Location', related_name="person_locations", blank=True, null=True, db_index=True)
-    href = models.URLField(blank=True, null=False)
+    href = models.URLField(verify_exists=False, blank=True, null=False)
     
     cannot_update = [
         'first_name',

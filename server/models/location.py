@@ -70,7 +70,7 @@ class Location(models.Model):
     recurs = models.CharField(max_length=255, blank=True)
     days = models.CharField(max_length=255, choices=RECURS_CHOICES, blank=True)
     leaves = models.DateTimeField(blank=True, null=False)
-    href = models.URLField(blank=True, null=False)
+    href = models.URLField(verify_exists=False, blank=True, null=False)
     
     def distance(self, location):
         """

@@ -43,7 +43,7 @@ class Command(BaseCommand):
             else:
                 try:
                     trip = server.models.Trip.objects.get(locations__id__exact=location.id)
-                    location.href = self.get_href("location_handler", [trip.id])
+                    location.href = self.get_href("location_handler", [trip.id,location.id])
                     location.save()
                 except server.models.Person.DoesNotExist:
                     pass
@@ -64,7 +64,7 @@ class Command(BaseCommand):
         modalities = server.models.Modality.objects.filter(href='')
         for modality in modalities:
             try:
-                modality.href = self.get_href("modality_handler", [modality.id])
+                modality.href = self.get_href("modality_handler", [trip])
                 modality.save()
             except Exception, e:
                 print e

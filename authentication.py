@@ -69,6 +69,8 @@ class HttpBasicAuthentication(object):
         
         request.user = self.authenticate(username=username, password=password) \
             or AnonymousUser()
+        
+        request.META['REMOTE_USER'] = request.user.username
                 
         return not request.user in (False, None, AnonymousUser())
         

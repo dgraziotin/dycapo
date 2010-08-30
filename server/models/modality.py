@@ -42,7 +42,7 @@ class Modality(models.Model):
     lic = models.CharField(max_length=255, blank=True)
     cost = models.FloatField(blank=True, null=False, default=0.00)
     person = models.ForeignKey('Person', blank=True, null=True)
-    href = models.URLField(blank=True, null=False)
+    href = models.URLField(verify_exists=False, blank=True, null=False)
 
     def save(self, * args, ** kwargs):
         if not self.kind or not self.capacity or self.vacancy < 0 or not self.make or not self.model_name:

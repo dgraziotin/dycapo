@@ -21,5 +21,6 @@ from server.models.preferences import Preferences
 from server.models.trip import Trip
 from server.models.participation import Participation
 from server.models.response import Response
+from server.models.search import Search
 
-__all__ = ['Location', 'Person', 'Preferences', 'Trip', 'Participation', 'Response', 'Modality']
+__all__ = ['Location', 'Person', 'Preferences', 'Trip', 'Participation', 'Response', 'Modality', 'Search']
