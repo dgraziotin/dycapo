@@ -64,6 +64,10 @@ def clean_ids(dictionary):
     """
     try:
         del dictionary['id']
+        del dictionary['href']
+        del dictionary['_state']
+        del dictionary['locations']
+        del dictionary['location']
     except KeyError:
         pass
     return dictionary

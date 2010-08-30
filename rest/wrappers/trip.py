@@ -23,16 +23,6 @@ import server.models
 import server.utils
 import server.common
 import rest.utils
-
-class AnonymousTripHandler(piston.handler.AnonymousBaseHandler):
-    allowed_methods = ['GET']
-    model = server.models.Trip
-    fields = ('author','href',('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),)
-    
-    def read(self, request):
-        trips = server.models.Trip.objects.filter(active=True)
-        return trips
-
     
 class TripHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
@@ -44,7 +34,6 @@ class TripHandler(piston.handler.BaseHandler):
               ('preferences',('fake','href')),
               'participations')
     
-    anonymous = AnonymousTripHandler
     
     @classmethod
     def participations(cls,trip):

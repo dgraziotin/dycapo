@@ -27,19 +27,10 @@ import rest.utils
 
 
 class AnonymousPersonHandler(piston.handler.AnonymousBaseHandler):
-    allowed_methods = ['GET','POST']
+    allowed_methods = ['POST']
     model = server.models.Person
     fields = ('username','href')
     
-    def read(self, request, username=None):
-        if username:
-            handler = PersonHandler()
-            return handler.read(request,username)
-        try:
-            person = server.models.Person.objects.all().exclude(username='admin').exclude(username='register')
-            return person
-        except server.models.Person.DoesNotExist:
-            return piston.utils.rc.NOT_FOUND
     
     def create(self, request):
         attrs = self.flatten_dict(request.data)
