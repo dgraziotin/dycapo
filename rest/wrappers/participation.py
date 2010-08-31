@@ -98,11 +98,11 @@ class ParticipationHandler(piston.handler.BaseHandler):
 
             status_code = person_participation.get_status_code(status)
 
-            if status_code <= person_participation.get_status_code():
+            if status_code < person_participation.get_status_code():
                 result = server.models.Response(
                         server.models.Response.FORBIDDEN,
                         'Message',
-                         'Can not fall back to "' +str(status)+ '" status at this point')
+                         'Can not fall back from '+str(data['status'])+'to ' +str(status)+ 'status at this point')
                 return rest.utils.extract_result_from_response(result)
 
             status_set = server.models.Participation._status
@@ -120,11 +120,13 @@ class ParticipationHandler(piston.handler.BaseHandler):
                 result = server.models.Response(
                         server.models.Response.FORBIDDEN,
                         'Message',
-                         'Can not fall back to ' +status+ 'status at this point')
+                         'Can not fall back from '+str(data['status'])+'to ' +str(status)+ 'status at this point')
             return rest.utils.extract_result_from_response(result)
 
 
-        except server.models.Trip.DoesNotExist, server.models.Participation.DoesNotExist:
+        except server.models.Trip.DoesNotExist:
+            return piston.utils.rc.NOT_FOUND
+        except server.models.Participation.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         except KeyError, e:
             result = server.models.Response(

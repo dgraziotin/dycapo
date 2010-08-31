@@ -68,18 +68,18 @@ def getPosition(current_user, person):
     person_participation = person.get_requested_participation()
     current_user_participation = current_user.get_active_participation()
 
-    if not person_participation:
-        resp = models.Response(models.Response.NOT_FOUND,
+    if not person_participation:#
+        resp = models.Response(models.Response.FORBIDDEN,
                                'Message', models.Response.PERSON_NOT_FOUND)
         return resp
 
     if person_participation.trip_id != current_user_participation.trip_id:
-        resp = models.Response(models.Response.NOT_FOUND,
+        resp = models.Response(models.Response.FORBIDDEN,
                                'Message', models.Response.PERSON_NOT_FOUND)
         return resp
     else:
         if person_participation.requested_deleted:
-            resp = models.Response(models.Response.NOT_FOUND,
+            resp = models.Response(models.Response.FORBIDDEN,
                                    'Message', models.Response.PERSON_DELETED_REQUESTED_RIDE)
             return resp
 
