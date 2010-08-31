@@ -22,5 +22,6 @@ from wrappers.participation import ParticipationHandler
 from wrappers.preferences import PreferencesHandler
 from wrappers.modality import ModalityHandler
 from wrappers.location import LocationHandler, LocationPersonHandler
+from wrappers.search import SearchHandler
 from wrappers.trip import TripHandler
 from wrappers.api import ApiHandler

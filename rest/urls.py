@@ -16,7 +16,9 @@
 
 from django.conf.urls.defaults import *
 from piston.resource import Resource
-from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler, TripHandler, ParticipationHandler, PreferencesHandler, ModalityHandler, ApiHandler
+from rest.handlers import PersonHandler, LocationHandler, LocationPersonHandler 
+from rest.handlers import TripHandler, ParticipationHandler, PreferencesHandler
+from rest.handlers import ModalityHandler, ApiHandler, SearchHandler
 
 from authentication import HttpBasicAuthentication
 
@@ -31,10 +33,13 @@ participation_handler = Resource(handler=ParticipationHandler,**ad)
 preferences_handler = Resource(handler=PreferencesHandler,**ad)
 modality_handler = Resource(handler=ModalityHandler,**ad)
 api_handler = Resource(handler=ApiHandler)
+search_handler = Resource(handler=SearchHandler, **ad)
 
 urlpatterns = patterns('',
     url(r'^persons/(?P<username>\w+)/$', person_handler, { 'emitter_format': 'json',}, name='person_handler'),
     url(r'^persons/(?P<username>\w+)/location/$', location_person_handler, { 'emitter_format': 'json',}, name='location_person_handler'),
+    url(r'^searches/$', search_handler, name='search_handler'),
+    url(r'^searches/(?P<id>\w+)/$', search_handler, name='search_handler'),
     url(r'^persons/$', person_handler, name='person_handler'),
     url(r'^trips/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),
     url(r'^trips/(?P<id>\w+)/$', trip_handler, { 'emitter_format': 'json',}, name='trip_handler'),

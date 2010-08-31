@@ -107,9 +107,12 @@ class TripHandler(piston.handler.BaseHandler):
             trip = server.models.Trip.objects.get(id=id)
             if trip.author.id != current_user.id:
                 return piston.utils.rc.FORBIDDEN
-            if trip.active:
+            if trip.active and not data['active']:
+                result = server.driver.finishTrip(trip, current_user)
+            elif not trip.active and data['active']:
+                result = server.driver.startTrip(trip, current_user)
+            else:
                 return piston.utils.rc.FORBIDDEN
-            result = server.driver.startTrip(trip, current_user)
             return rest.utils.extract_result_from_response(result)
         except server.models.Trip.DoesNotExist:
             return piston.utils.rc.NOT_FOUND

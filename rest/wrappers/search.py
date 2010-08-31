@@ -24,16 +24,20 @@ import rest.utils
 class SearchHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST']
     model = server.models.Search
-    fields = ("href","origin","destination")
+    fields = ("href","origin","destination",("trips",("fake","href")))
 
     def read(self, request, id=None):
         user = rest.utils.get_rest_user(request)
         if not id:
-            return piston.rc.utils.NOT_FOUND
+            return piston.utils.rc.NOT_FOUND
         try:
             search = server.models.Search.objects.get(id=id)
             result = server.passenger.searchRide(search.origin, search.destination, user)
-            return rest.utils.extract_result_from_response(result)
+            if result.type == "Trip[]":
+                search.trips = result.value
+                return search
+            else:
+                return piston.utils.rc.NOT_FOUND
         except server.models.Search.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         
@@ -57,8 +61,14 @@ class SearchHandler(piston.handler.BaseHandler):
         search.author = user
         
         search.save()
-        search.href = utils.get_href(request, 'search_handler', search.id)
+        search.href = rest.utils.get_href(request, 'search_handler', [search.id])
         search.save()
+        
+        origin.href = rest.utils.get_href(request, 'search_handler', [search.id])
+        destination.href = rest.utils.get_href(request, 'search_handler', [search.id])
+        origin.save()
+        destination.save()
+
         
         return search 
        
