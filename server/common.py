@@ -51,7 +51,7 @@ def setPosition(current_user, position):
     current_user.save()
 
     resp = models.Response(models.Response.CREATED,
-                           "Message", models.Response.POSITION_UPDATED)
+                           "Location", position)
     return resp
 
 def getPosition(current_user, person):

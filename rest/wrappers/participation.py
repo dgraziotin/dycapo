@@ -27,7 +27,7 @@ import rest.utils
 class ParticipationHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Participation
-    fields = ('href','person','status')
+    fields = ('href',('person',('fake','username','href',('location',('fake','href')))),'status')
 
     def read(self, request, trip_id=None, username=None):
         if username:
@@ -67,7 +67,7 @@ class ParticipationHandler(piston.handler.BaseHandler):
                         'Message',
                          {'status': [u'This field is required and its value must be request.']})
             if hasattr(result.value,'person'):
-                result.value.href = rest.utils.get_href(request, 'participation_handler', [result.value.person.username])
+                result.value.href = rest.utils.get_href(request, 'participation_handler', [trip.id, result.value.person.username])
                 result.value.save()
             return rest.utils.extract_result_from_response(result)
 

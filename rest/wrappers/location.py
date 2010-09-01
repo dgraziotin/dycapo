@@ -102,7 +102,9 @@ class LocationPersonHandler(piston.handler.BaseHandler):
         except server.models.Person.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         result = server.common.setPosition(user, location)
-        if result.type == "Location":
+        if result.code != server.models.Response.BAD_REQUEST and \
+           result.code != server.models.Response.FORBIDDEN and \
+           result.code != server.models.Response.NOT_FOUND:
             result.value.href = rest.utils.get_href(request, "location_person_handler", [user.username])
             result.value.save()
         return rest.utils.extract_result_from_response(result)

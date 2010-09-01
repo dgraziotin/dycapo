@@ -95,6 +95,10 @@ class TripHandler(piston.handler.BaseHandler):
             [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[trip.id])) for item in locations]
             [item.save() for item in locations]
             trip.save()
+            participation = server.models.Participation.objects.get(person=trip.author, trip=trip,
+                                         role='driver')
+            participation.href = rest.utils.get_href(request, 'participation_handler',[trip.id,trip.author.username])
+            participation.save()
             if trip.active:
                 server.driver.startTrip(trip, author)
             return trip
