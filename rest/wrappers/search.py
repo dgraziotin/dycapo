@@ -24,7 +24,12 @@ import rest.utils
 class SearchHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST']
     model = server.models.Search
-    fields = ("href","origin","destination",("trips",("fake","href")))
+    fields = ("href","origin","destination",("author",("fake","username","href")),("trips",('href', 'published', 'updated', 'expires', 
+              ('author',('username','gender','href')), 
+              'locations',
+              'modality',
+              'preferences',
+              'participations')))
 
     def read(self, request, id=None):
         user = rest.utils.get_rest_user(request)

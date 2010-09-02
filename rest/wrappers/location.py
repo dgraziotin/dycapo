@@ -27,7 +27,8 @@ import rest.utils
 class LocationAnonymousHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Location
-    fields = ('point','street','town','postcode','georss_point','offset','leaves','href')
+    fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
+    "recurs","georss_point")
 
     def read(self, request, username=None, id=None):
         if id:
@@ -71,8 +72,9 @@ class LocationHandler(piston.handler.BaseHandler):
 class LocationPersonHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT']
     model = server.models.Location
-    fields = ("href","id","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
+    fields = ("href","town","point","country","region","subregion","days","label","street","postcode","offset","leaves", 
     "recurs","georss_point")
+    
     
     def read(self, request, username=None, id=None):
         user = rest.utils.get_rest_user(request)

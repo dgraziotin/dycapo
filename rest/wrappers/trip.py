@@ -27,11 +27,11 @@ import rest.utils
 class TripHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Trip
-    fields = ('href','id', 'published', 'updated', 'expires', 
+    fields = ('id','href', 'published', 'updated', 'expires', 
               ('author',('username','gender','href')), 
-              ('locations',('point','street','town','postcode','georss_point','offset','leaves','href')),
-              ('modality',('kind','capacity','vacancy','make','model_name','href')), 
-              ('preferences',('fake','href')),
+              'locations',
+              'modality', 
+              'preferences',
               'participations')
     
     
@@ -91,11 +91,13 @@ class TripHandler(piston.handler.BaseHandler):
             trip.href = rest.utils.get_href(request, 'trip_handler', [trip.id])
             trip.preferences.href = rest.utils.get_href(request, 'preferences_handler',[trip.id,])
             trip.modality.href = rest.utils.get_href(request, 'modality_handler',[trip.id,])
+            trip.preferences.save()
+            trip.modality.save()
             locations = trip.locations.all()
             [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[trip.id])) for item in locations]
             [item.save() for item in locations]
             trip.save()
-            participation = server.models.Participation.objects.get(person=trip.author, trip=trip,
+            participation = server.models.Participation.objects.get(author=trip.author, trip=trip,
                                          role='driver')
             participation.href = rest.utils.get_href(request, 'participation_handler',[trip.id,trip.author.username])
             participation.save()

@@ -65,7 +65,7 @@ def requestRide(trip, passenger):
         return resp
 
     participation = models.Participation(trip_id = trip.id,
-                                         person_id = passenger.id,
+                                         author_id = passenger.id,
                                          role = 'rider',
                                          requested = True,
                                          requested_timestamp =
@@ -76,7 +76,7 @@ def requestRide(trip, passenger):
     try:
         participation.save()
         resp = models.Response(models.Response.CREATED,
-                               "Message", models.Response.RIDE_REQUESTED)
+                               "Participation", participation)
     except django.db.IntegrityError, e:
         resp = models.Response(models.Response.BAD_REQUEST,
                                "Message", e)
@@ -95,7 +95,7 @@ def statusRide(trip, passenger):
 
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=passenger.id)
+                                                               author=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(models.Response.NOT_FOUND,
                                "Message", models.Response.PERSON_NOT_FOUND)
@@ -115,7 +115,7 @@ def cancelRide(trip, passenger):
     """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=passenger.id)
+                                                               author=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(models.Response.NOT_FOUND,
                     "Message", models.Response.MUST_FIRST_REQUEST_RIDE)
@@ -141,7 +141,7 @@ def startRide(trip, passenger):
     has arrived to pick the passenger
     """
     try:
-        is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
+        is_already_participating = models.Participation.objects.filter(trip=trip, author=passenger).exists()
 
         if not is_already_participating:
             resp = models.Response(models.Response.NOT_FOUND,
@@ -156,7 +156,7 @@ def startRide(trip, passenger):
         participation = trip.get_participations().only('started',
                                                        'started_timestamp',
                                                        'started_position') \
-                      .get(person=passenger)
+                      .get(author=passenger)
         participation.started = True
         participation.started_timestamp = datetime.datetime.now()
         participation.started_position_id = passenger.location_id
@@ -175,7 +175,7 @@ def finishRide(trip, passenger):
     has arrived to destination
     """
     try:
-        is_already_participating = models.Participation.objects.filter(trip=trip, person=passenger).exists()
+        is_already_participating = models.Participation.objects.filter(trip=trip, author=passenger).exists()
 
         if not is_already_participating:
             resp = models.Response(models.Response.NOT_FOUND,
@@ -190,7 +190,7 @@ def finishRide(trip, passenger):
     participation = trip.get_participations().only('finished',
                                                    'finished_timestamp',
                                                    'finished_position') \
-                  .get(person=passenger)
+                  .get(author=passenger)
     participation.finished = True
     participation.finished_timestamp = datetime.datetime.now()
     participation.finished_position_id = passenger.location_id

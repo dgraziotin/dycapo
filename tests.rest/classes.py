@@ -236,7 +236,7 @@ class Driver(Person):
             try:
                 username = person['username']
             except KeyError:
-                username = person['person']['username']
+                username = person['author']['username']
         response = self.client.put('/trips/' +str(self.trip['id'])+ '/participations/'+username+'/',
                                    data={'status':'accept'})
         print "Dycapo Response: \n" + str(response)
@@ -247,7 +247,7 @@ class Driver(Person):
         print "#" * 80
         print self.username + ": REFUSE A RIDE REQUEST..."
         print "#" * 80
-        response = self.client.delete('/trips/' +str(self.trip['id'])+ '/participations/'+person['person']['username']+'/')
+        response = self.client.delete('/trips/' +str(self.trip['id'])+ '/participations/'+person['author']['username']+'/')
         print "Dycapo Response: \n" + str(response)
         print "#" * 80
         return utils.rest_to_response(response)

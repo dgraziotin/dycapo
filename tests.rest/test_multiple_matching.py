@@ -174,7 +174,7 @@ class TestMultipleMatching():
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.ALL_OK
         participation = utils.get_requested_participation(response['value'])
-        assert participation['person']['username'] == self.rider5.username
+        assert participation['author']['username'] == self.rider5.username
         self.driver.ride_request = response['value']
     
 
@@ -206,7 +206,7 @@ class TestMultipleMatching():
         response = self.driver.check_ride_requests()
         assert response['code'] == response_codes.ALL_OK
         participation = utils.get_requested_participation(response['value'])
-        assert participation['person']['username'] == self.rider6.username
+        assert participation['author']['username'] == self.rider6.username
         self.driver.ride_request = response['value']
 
     def test_finish_ride(self):

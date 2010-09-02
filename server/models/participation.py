@@ -44,7 +44,7 @@ class Participation(models.Model):
         "refuse": ("refuse", 200),
     }
 
-    person = models.ForeignKey('Person', related_name="participant")
+    author = models.ForeignKey('Person', related_name="participant")
     trip = models.ForeignKey(moduletrip.Trip, related_name="trip")
     role = models.CharField(max_length=6, choices=ROLE_CHOICES, blank=False)
     requested = models.BooleanField(blank=False, default=False)
@@ -69,7 +69,7 @@ class Participation(models.Model):
     href = models.URLField(verify_exists=False, blank=True, null=False)
 
     def __unicode__(self):
-        return str(self.person) + " -> " + str(self.trip)
+        return str(self.author) + " -> " + str(self.trip)
 
     def get_status(self):
         if self.refused:
@@ -100,4 +100,4 @@ class Participation(models.Model):
 
     class Meta:
         app_label = 'server'
-        unique_together = (("person","trip"),)
+        unique_together = (("author","trip"),)

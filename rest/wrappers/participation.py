@@ -27,13 +27,13 @@ import rest.utils
 class ParticipationHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET','POST','PUT','DELETE']
     model = server.models.Participation
-    fields = ('href',('person',('fake','username','href',('location',('fake','href')))),'status')
+    fields = ('href',('author',('fake','username','href',('location',('fake','href')))),'status')
 
     def read(self, request, trip_id=None, username=None):
         if username:
             try:
                 trip = server.models.Trip.objects.get(id=trip_id, active=True)
-                participation = trip.get_participations().filter(person__username=username).get()
+                participation = trip.get_participations().filter(author__username=username).get()
                 participation.status = participation.get_status_name()
                 if participation.status == 'refuse' or participation.status == 'cancel':
                     return piston.utils.rc.NOT_FOUND
@@ -61,14 +61,13 @@ class ParticipationHandler(piston.handler.BaseHandler):
             status = data['status']
             if status == server.models.Participation._status['request'][0]:
                 result = server.passenger.requestRide(trip, current_user)
+                result.value.href = rest.utils.get_href(request, 'participation_handler', [trip.id, result.value.author.username])
+                result.value.save()
             else:
                 result = server.models.Response(
                         server.models.Response.BAD_REQUEST,
                         'Message',
                          {'status': [u'This field is required and its value must be request.']})
-            if hasattr(result.value,'person'):
-                result.value.href = rest.utils.get_href(request, 'participation_handler', [trip.id, result.value.person.username])
-                result.value.save()
             return rest.utils.extract_result_from_response(result)
 
         except server.models.Trip.DoesNotExist:
@@ -88,8 +87,8 @@ class ParticipationHandler(piston.handler.BaseHandler):
         try:
             trip = server.models.Trip.objects.get(id=trip_id)
             status = data['status']
-            person_participation = trip.get_participations().filter(person__username=username).get()
-            person = person_participation.person
+            person_participation = trip.get_participations().filter(author__username=username).get()
+            person = person_participation.author
 
             if current_user != person and current_user != trip.author:
             # only the author of the trip or the owner of the
@@ -111,11 +110,11 @@ class ParticipationHandler(piston.handler.BaseHandler):
                 if not current_user == trip.author:
                     # this is a status that can be set just by the driver
                     return piston.utils.rc.FORBIDDEN
-                result = server.driver.acceptRide(trip, current_user, person_participation.person)
+                result = server.driver.acceptRide(trip, current_user, person_participation.author)
             elif status == status_set['start'][0]:
-                result = server.passenger.startRide(trip, person_participation.person)
+                result = server.passenger.startRide(trip, person_participation.author)
             elif status == status_set['finish'][0]:
-                result = server.passenger.finishRide(trip, person_participation.person)
+                result = server.passenger.finishRide(trip, person_participation.author)
             else:
                 result = server.models.Response(
                         server.models.Response.FORBIDDEN,
@@ -140,8 +139,8 @@ class ParticipationHandler(piston.handler.BaseHandler):
         current_user = rest.utils.get_rest_user(request)
         try:
             trip = server.models.Trip.objects.get(id=trip_id)
-            person_participation = trip.get_participations().filter(person__username=username).get()
-            person = person_participation.person
+            person_participation = trip.get_participations().filter(author__username=username).get()
+            person = person_participation.author
 
             if current_user != person and current_user != trip.author:
             # only the author of the trip or the owner of the

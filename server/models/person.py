@@ -82,14 +82,14 @@ class Person(authmodels.User):
         """
         Returns true if the Person is actively participating in a Trip
         """
-        is_participating = participation.Participation.objects.filter(started=True, finished=False, refused=False, person=self, trip__active=True).exists()
+        is_participating = participation.Participation.objects.filter(started=True, finished=False, refused=False, author=self, trip__active=True).exists()
         return is_participating
 
     def get_active_participation(self):
         """
         Returns the currently Participation of the Person in a Trip.
         """
-        participations = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True, requested_deleted=False)
+        participations = participation.Participation.objects.filter(started=True, finished=False, author=self, trip__active=True, requested_deleted=False)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
@@ -99,7 +99,7 @@ class Person(authmodels.User):
         """
         Returns the currently Participation of the Person in a Trip.
         """
-        participations = participation.Participation.objects.filter(requested=True, started=False, finished=False, person=self, trip__active=True, requested_deleted=False)
+        participations = participation.Participation.objects.filter(requested=True, started=False, finished=False, author=self, trip__active=True, requested_deleted=False)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None
@@ -109,7 +109,7 @@ class Person(authmodels.User):
         """
         Returns the Trip in which the Person is Participating
         """
-        participations = participation.Participation.objects.filter(started=True, finished=False, person=self, trip__active=True)
+        participations = participation.Participation.objects.filter(started=True, finished=False, author=self, trip__active=True)
         if not participations: return None
         # TODO: we should purge here in case of multiple Participations returned
         if len(participations) > 1: return None

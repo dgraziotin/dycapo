@@ -91,7 +91,7 @@ class Command(BaseCommand):
         participations = server.models.Participation.objects.filter(href='')
         for participation in participations:
             try:
-                participation.href = self.get_href("participation_handler", [participation.trip.id,participation.person.username])
+                participation.href = self.get_href("participation_handler", [participation.trip.id,participation.author.username])
                 participation.save()
             except Exception, e:
                 print e

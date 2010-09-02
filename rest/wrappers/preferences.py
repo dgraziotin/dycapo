@@ -31,7 +31,6 @@ class PreferencesHandler(piston.handler.BaseHandler):
         "gender",
         "ride",
         "drive",
-        "id",
         "age","href")
     
     def read(self, request, trip_id=None):

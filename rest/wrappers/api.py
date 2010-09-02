@@ -21,6 +21,7 @@ class ApiHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     fields = ("persons",
         "trips",
+        "searches"
         )
     
     def read(self, request):
@@ -28,7 +29,10 @@ class ApiHandler(piston.handler.BaseHandler):
         persons['href'] = rest.utils.get_href(request,'person_handler',[])
         trips = {}
         trips['href'] = rest.utils.get_href(request,'trip_handler',[])
+        searches = {}
+        searches['href'] = rest.utils.get_href(request,'search_handler',[])
         api = {}
         api['persons'] = persons
         api['trips'] = trips
+        api['searches'] = searches
         return api

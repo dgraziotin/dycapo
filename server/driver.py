@@ -28,7 +28,7 @@ def insertTrip(trip, author, source, destination, modality, preferences):
     """
     
     vacancy = modality.vacancy
-    modality, created = models.Modality.objects.get_or_create(person=author,
+    modality = models.Modality(person=author,
                                                  make=modality.make,
                                                  model_name=modality.model_name,
                                                  capacity=modality.capacity,
@@ -75,7 +75,7 @@ def insertTrip(trip, author, source, destination, modality, preferences):
     trip.locations.add(source)
     trip.locations.add(destination)
 
-    participation = models.Participation(person=author, trip=trip,
+    participation = models.Participation(author=author, trip=trip,
                                          role='driver')
     participation.save()
 
@@ -126,19 +126,19 @@ def getRides(trip, driver):
         return resp
     
     participations_for_trip = (models.Participation.objects.filter(trip=trip.id)
-                               .exclude(person=driver)
+                               .exclude(author=driver)
                                .filter(started=False)
                                .filter(finished=False)
                                .filter(requested=True)
                                .filter(requested_deleted=False)
-                               ).only("person")
+                               ).only("author")
 
     if not len(participations_for_trip):
         resp = models.Response(models.Response.NOT_FOUND,
                                "Message", models.Response.RIDE_REQUESTS_NOT_FOUND)
         return resp
     else:
-        participations = [participation.person
+        participations = [participation.author
                           for participation in participations_for_trip]
         resp = models.Response(models.Response.ALL_OK,
                                "Person[]", participations)
@@ -151,7 +151,7 @@ def acceptRide(trip, driver, passenger):
     """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=passenger.id)
+                                                               author=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(models.Response.NOT_FOUND,
                                "Message", models.Response.PERSON_NOT_FOUND)
@@ -180,7 +180,7 @@ def refuseRide(trip, passenger):
     """
     try:
         passenger_participation = models.Participation.objects.get(trip=trip.id,
-                                                               person=passenger.id)
+                                                               author=passenger.id)
     except models.Participation.DoesNotExist:
         resp = models.Response(models.Response.NOT_FOUND,
                            "Message", models.Response.PERSON_NOT_FOUND)

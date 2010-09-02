@@ -76,7 +76,7 @@ def rest_to_response(rest,typE=None):
 
 def filter_participations(participations,username=''):
     for participation in participations:
-        if participation['person']['username'] == username or participation['status'] != 'request':
+        if participation['author']['username'] == username or participation['status'] != 'request':
             participations.remove(participation)
     return participations
 
