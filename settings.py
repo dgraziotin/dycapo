@@ -142,5 +142,6 @@ INSTALLED_APPS = (
     'dycapo.rpc4django',
     'dycapo.server',
     'dycapo.xmlrpc',
-    'dycapo.rest'
+    'dycapo.rest',
+    'django_extensions'
 )

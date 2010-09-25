@@ -38,11 +38,8 @@ class SearchHandler(piston.handler.BaseHandler):
         try:
             search = server.models.Search.objects.get(id=id)
             result = server.passenger.searchRide(search.origin, search.destination, user)
-            if result.type == "Trip[]":
-                search.trips = result.value
-                return search
-            else:
-                return piston.utils.rc.NOT_FOUND
+            search.trips = result.value
+            return search
         except server.models.Search.DoesNotExist:
             return piston.utils.rc.NOT_FOUND
         
@@ -53,11 +50,13 @@ class SearchHandler(piston.handler.BaseHandler):
         origin = server.models.Location()
         dict_orig = rest.utils.clean_ids(data['origin'])
         origin = rest.utils.populate_object_from_dictionary(origin, dict_orig)
+        origin.full_clean()
         origin.save()
         
         destination = server.models.Location()
         dict_dest = rest.utils.clean_ids(data['destination'])
         destination = rest.utils.populate_object_from_dictionary(destination, dict_dest)
+        origin.full_clean()
         destination.save()
         
         search = server.models.Search()

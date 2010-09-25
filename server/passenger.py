@@ -48,7 +48,7 @@ def searchRide(source, destination, passenger):
 
     if not trips:
         return models.Response(models.Response.NOT_FOUND,
-                               "Message", models.Response.RIDES_NOT_FOUND)
+                               "Trip[]", [])
 
     return models.Response(models.Response.ALL_OK,
                            "Trip[]", trips)
