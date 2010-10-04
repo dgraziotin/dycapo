@@ -18,6 +18,7 @@ import utils
 import copy
 import settings
 import response_codes
+import py
 
 class TestSimpleMatching():
     def setup_class(self):
@@ -83,7 +84,9 @@ class TestSimpleMatching():
         self.driver.update_position()
 
         response = self.rider.search_ride(self.rider.location,self.rider.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
         self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.update_position()
 

@@ -18,7 +18,7 @@ import utils
 import copy
 import settings
 import response_codes
-
+import py
 class TestMultipleMatching():
     def setup_class(self):
         self.driver = classes.Driver(settings.DRIVER_USERNAME,settings.DRIVER_PASSWORD,settings.DYCAPO_URL)
@@ -91,7 +91,9 @@ class TestMultipleMatching():
     def test_search_trip_before_start(self):
         for rider in self.riders:
             response = rider.search_ride(rider.location,rider.destination)
-            assert response['code'] == response_codes.NOT_FOUND
+            assert response['code'] == response_codes.ALL_OK
+            with py.test.raises(KeyError):
+                assert response['trips'] == True
 
     def test_start_trip(self):
         response = self.driver.start_trip()
@@ -110,7 +112,9 @@ class TestMultipleMatching():
         self.driver.update_position()
 
         response = self.rider1.search_ride(self.rider1.location,self.rider1.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
         self.driver.location = classes.Location(georss_point=self.driver_position)
         self.driver.update_position()
 
@@ -154,7 +158,9 @@ class TestMultipleMatching():
 
     def test_search_trip_no_vacany(self):
         response = self.rider5.search_ride(self.rider5.location,self.rider5.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
 
     def test_search_trip_vacany(self):
         response = self.rider4.finish_ride(self.rider4.trip)

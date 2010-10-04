@@ -18,6 +18,7 @@ import utils
 import copy
 import settings
 import response_codes
+import py
 
 class TestRider():
     def setup_class(self):
@@ -49,7 +50,9 @@ class TestRider():
 
     def test_search_trip(self):
         response = self.rider.search_ride(self.rider.location,self.rider.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
 
     def test_request_ride(self,trip=None):
         if not trip:

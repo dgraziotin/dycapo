@@ -18,6 +18,7 @@ import utils
 import copy
 import settings
 import response_codes
+import py
 
 class TestMatchingAlgorithm():
     def setup_class(self):
@@ -119,7 +120,9 @@ class TestMatchingAlgorithm():
         response = self.driver.update_position(location=self.driver.location)
         assert response['code'] == response_codes.CREATED
         response = self.rider.search_ride(self.rider.location,self.rider.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
 
     def test_search_trip_driver_moving_away_from_rider(self):
         '''
@@ -141,4 +144,6 @@ class TestMatchingAlgorithm():
         driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
 
         response = self.rider.search_ride(self.rider.location,self.rider.destination)
-        assert response['code'] == response_codes.NOT_FOUND
+        assert response['code'] == response_codes.ALL_OK
+        with py.test.raises(KeyError):
+            assert response['trips'] == True
