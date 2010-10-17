@@ -92,10 +92,8 @@ MIDDLEWARE_CLASSES = (
 # Required for RPC4Django authenticated method calls
 # Also requires Django 1.1+
 AUTHENTICATION_BACKENDS = (
-    'dycapo.auth_backends.DycapoRemoteUserBackend',
-    'piston.authentication.HttpBasicAuthentication',
-    'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'piston.authentication.HttpBasicAuthentication',
 )
 
 

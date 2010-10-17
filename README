@@ -1,19 +1,13 @@
 INTRODUCTION
 ***************
+Dycapo Server (also known as DycapoS) is a software built using evolutionary prototyping to
+demonstrate and support contributions to Dynamic Carpooling research.
+It provides a basic set of functionalities for dynamic ridesharing using a REST-based protocol.
+It implements our proposed standard for Dynamic Carpooling communication, Dycapo Protocol.
 
-Dycapo Server [a.k.a. DyCaPo - DYnamic CArPOoling] is a free software system 
-developed in the SoNET unit of the 
-Fondazione Bruno Kessler <http://sonet.fbk.eu>. 
 It is currently a solo project started by Daniel Graziotin 
-for his BSC thesis at the Free University of Bolzano/Bozen <http://www.unibz.it>.
+for his BSc thesis at the Free University of Bolzano/Bozen <http://www.unibz.it>.
 
-Dycapo Server is a software built using evolutionary prototyping to demonstrate 
-and support our contributions to OpenTrip <http://www.opentrip.info> 
-and therefore the definition  of a standard protocol for (Dynamic) Ridesharing. 
-
-It will first provide full functionalities for dynamic ridesharing using an XML-RPC 
-based protocol. Then we will fully support and extend OpenTrip Dynamic with a 
-RESTful webservice.
 
 See http://dycapo.org for more information about the project.
 
@@ -22,25 +16,26 @@ Dycapo is hosted on Github: http://github.com/BodomLx/dycapo
 
 STATUS
 ***************
-We are currently releasing working prototypes for building our APIs and Protocol.
+Dycapo is reaching a mature state. A basic set of Dynamic Carpooling functionalities has been implemented.
+We are waiting for some clients to provide a wider set of empirical tests.
+
 We adopted SemVer - Semantic Versioning [http://semver.org]
 for our release numbering system.
 Therefore, v1.0.0 will be considered stable, with fixed API. 
 
 PROTOCOL
 ***************
-Dycapo defines a new Protocol for Dynamic Carpooling, heavily inspired on
-<http://opentrip.info/wiki/Home> Protocol.
-The Protocol, called Dycapo Protocol, is currently based on XML-RPC calls.
+DycapoS implements a new REST-ful Protocol, called Dycapo Protocol.
 See http://dycapo.org/Protocol for more information
+
 
 API
 ***************
-APIs are located at http://dycapo.org/Dycapo-API.html
+The APIs are the application-level protocol itself.
 
 TESTING
 ***************
-We provide 8 registered users to test Dycapo functionalities:
+We provide 8 registered users to test DycapoS functionalities:
 - admin 
 - driver1
 - rider1
@@ -55,8 +50,12 @@ We provide a testing framework, located under tests/.
 We are using py.test <http://codespeak.net/py/dist/test/>.
 To run all tests, simply run run_tests.py
 
-If you want to align all the objects created by XML-RPC tests,
-please use manage.py restifymodels
+MORE
+***************
+
+Visit the official website at http://dycapo.org for more information.
+The docs/ folder contains the Bachelor thesis of the author of Dycapo that
+briefly explains the whole project, as well as the Server structure.
 
 ACKNOWLEDGEMENT
 ***************

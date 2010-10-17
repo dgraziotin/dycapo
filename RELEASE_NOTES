@@ -1,14 +1,14 @@
 RELEASE NOTES
 ***************
 
-2010-08-30  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
+2010-10-17  Daniel Graziotin  <daniel DOT graziotin AT acm DOT org>
 
-Dycapo v0.7.0 is the seventh prototype version on which we are building our Protocol.
-It will be the last version supporting XML-RPC.
+Dycapo v0.8.0 is the eight prototype version on which we are building our Protocol.
 
-Dycapo v0.7.0 incorporates and shows:
+
+Dycapo v0.8.0 incorporates and shows:
 * Adoption of Dycapo Protocol [http://dycapo.org/Protocol]
-* A first attempt of conversion to RESTful Dycapo Protocol (some features are still missing)
+* A a full conversion to RESTful Dycapo Protocol
 * Integration of Dycapo models with Django models
 * Authentication system
 * Registration System
@@ -28,9 +28,10 @@ Dycapo v0.7.0 incorporates and shows:
 * A full set of tests
 
 
-CHANGES SINCE v0.6.0
+CHANGES SINCE v0.7.0
 ***************
 
-* All XML-RPC functionalities have been separated from the server functionalitites
-* A first experiment of a RESTful implementation of the Protocol now lives in rest module.
-* Just a search method is missing
+* XML-RPC has been dropped out
+* The tests suite now contains full REST tests
+* LOTS of bugs fixed
+* It seems that I forgot to tag v0.7.0 on GitHub, so we jump to v0.8.0

@@ -1,3 +1,4 @@
 Django 1.2+ - http://www.djangoproject.com/
-rpc4django - http://www.davidfischer.name/rpc4django/ - we always try to include the latest version
+piston > e539a104d516 (don't use v0.2.2) - http://bitbucket.org/jespern/django-piston/ - we always try to include the latest version
 geopy, reverse-geocode branch- http://code.google.com/p/geopy/ -  we always try to include the latest version
+py.test - http://pytest.org - just for testing, you can also use run_test.py that contains Py.test
