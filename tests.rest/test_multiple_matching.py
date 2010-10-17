@@ -55,20 +55,20 @@ class TestMultipleMatching():
 
     def test_position(self):
         response = self.driver.update_position()
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.location.georss_point
         self.driver.location = response['value']
 
         response = self.rider5.update_position()
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider5.get_position()
         assert response['value']['georss_point'] == self.rider5.location.georss_point
         self.rider5.location = response['value']
 
 
         response = self.rider6.update_position(location=self.rider6.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider6.get_position()
         assert response['value']['georss_point'] == self.rider6.location.georss_point
         self.rider6.location = response['value']
@@ -76,7 +76,7 @@ class TestMultipleMatching():
 
         for rider in self.riders:
             response = rider.update_position()
-            assert response['code'] == response_codes.CREATED
+            assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
             response = rider.get_position()
             assert response['value']['georss_point'] == rider.location.georss_point
             rider.location = response['value']
@@ -131,7 +131,7 @@ class TestMultipleMatching():
     def test_request_ride(self):
         for rider in self.riders:
             response = rider.request_ride(trip=rider.trip)
-            assert response['code'] == response_codes.CREATED
+            assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
 
     def test_check_ride_requests_after_request(self):
         for rider in self.riders:
@@ -173,7 +173,7 @@ class TestMultipleMatching():
 
     def test_request_ride_rider5(self):
         response = self.rider5.request_ride(trip=self.rider5.trip)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         
     
     def test_check_ride_request_rider5(self):
@@ -206,7 +206,7 @@ class TestMultipleMatching():
 
     def test_request_ride_rider6(self):
         response = self.rider6.request_ride(trip=self.rider6.trip)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
 
     def test_check_ride_request_rider5(self):
         response = self.driver.check_ride_requests()

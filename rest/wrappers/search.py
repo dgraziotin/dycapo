@@ -19,6 +19,7 @@ import piston.utils
 import server.models
 import server.utils
 import server.common
+import server.passenger
 import rest.utils
 
 class SearchHandler(piston.handler.BaseHandler):

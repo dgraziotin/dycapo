@@ -50,12 +50,12 @@ class TestMatchingAlgorithm():
 
     def test_position(self):
         response = self.driver.update_position(location=self.driver.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.location.georss_point
         self.driver.location = response['value']
         response = self.rider.update_position(location=self.rider.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider.get_position()
         assert response['value']['georss_point'] == self.rider.location.georss_point
         self.rider.location = response['value']
@@ -92,7 +92,7 @@ class TestMatchingAlgorithm():
             self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
             self.driver.location = classes.Location(georss_point=self.driver_position)
             response = self.driver.update_position(location=self.driver.location)
-            assert response['code'] == response_codes.CREATED
+            assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
             response = self.rider.search_ride(self.rider.location,self.rider.destination)
             assert response['code'] == response_codes.ALL_OK
             self.rider.trip = response['value']['trips'][0]
@@ -118,7 +118,7 @@ class TestMatchingAlgorithm():
         self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
         self.driver.location = classes.Location(georss_point=self.driver_position)
         response = self.driver.update_position(location=self.driver.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider.search_ride(self.rider.location,self.rider.destination)
         assert response['code'] == response_codes.ALL_OK
         with py.test.raises(KeyError):
@@ -140,7 +140,7 @@ class TestMatchingAlgorithm():
             self.driver_position = utils.georss_point_from_coords(self.driver.position_lat,self.driver.position_lon)
             self.driver.location = classes.Location(georss_point=self.driver_position)
             response = self.driver.update_position(location=self.driver.location)
-            assert response['code'] == response_codes.CREATED
+            assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         driver_position = utils.coords_from_georss_point(self.driver.get_position()['value']['georss_point'])
 
         response = self.rider.search_ride(self.rider.location,self.rider.destination)

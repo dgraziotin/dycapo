@@ -44,17 +44,17 @@ class TestSimpleMatching():
 
     def test_position(self):
         response = self.driver.update_position(location=self.driver.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.ALL_OK
         response = self.driver.get_position()
         assert response['value']['georss_point'] == self.driver.location.georss_point
         self.driver.location = response['value']
         response = self.rider.update_position(location=self.rider.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider.get_position()
         assert response['value']['georss_point'] == self.rider.location.georss_point
         self.rider.location = response['value']
         response = self.rider2.update_position(location=self.rider2.location)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider2.get_position()
         assert response['value']['georss_point'] == self.rider2.location.georss_point
         self.rider2.location = response['value']
@@ -96,9 +96,9 @@ class TestSimpleMatching():
 
     def test_request_ride(self):
         response = self.rider.request_ride(trip=self.rider.trip)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
         response = self.rider2.request_ride(trip=self.rider2.trip)
-        assert response['code'] == response_codes.CREATED
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK
 
     def test_check_requested_ride(self):
         response = self.rider.check_requested_ride(trip=self.rider.trip)

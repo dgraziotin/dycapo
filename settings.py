@@ -15,20 +15,6 @@
 """
 
 # Handle logging for this project
-import logging
-logging.basicConfig(
-    level = logging.DEBUG,
-    format = '%(asctime)s %(levelname)s %(message)s',
-)
-
-# These are all optional and set to their default values
-RPC4DJANGO_LOG_REQUESTS_RESPONSES = True
-RPC4DJANGO_RESTRICT_INTROSPECTION = False
-RPC4DJANGO_RESTRICT_JSONRPC = True
-RPC4DJANGO_RESTRICT_XMLRPC = False
-RPC4DJANGO_RESTRICT_METHOD_SUMMARY = False
-RPC4DJANGO_RESTRICT_RPCTEST = True
-RPC4DJANGO_RESTRICT_REST = False
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -122,13 +108,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-)
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    '/Users/bodom_lx/Projects/dycapo/templates',
+    '/home/bodom_lx/Projects/dycapo/templates',
 )
 
 INSTALLED_APPS = (
@@ -139,9 +119,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'dycapo.piston',
     'dycapo.geopy',
-    'dycapo.rpc4django',
     'dycapo.server',
-    'dycapo.xmlrpc',
     'dycapo.rest',
-    'django_extensions'
 )

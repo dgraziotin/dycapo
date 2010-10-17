@@ -22,6 +22,7 @@ import piston.utils
 import server.models
 import server.utils
 import server.common
+import server.driver
 import rest.utils
     
 class TripHandler(piston.handler.BaseHandler):

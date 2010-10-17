@@ -45,8 +45,11 @@ def setPosition(current_user, position):
     current_user.locations.add(position)
 
     if current_user.is_participating():
-        participation = current_user.get_active_participation()
-        participation.locations.add(position)
+        try:
+                participation = current_user.get_active_participation()
+                participation.locations.add(position)
+        except:
+                pass
 
     current_user.save()
 

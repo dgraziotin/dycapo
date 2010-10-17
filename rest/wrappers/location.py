@@ -109,6 +109,7 @@ class LocationPersonHandler(piston.handler.BaseHandler):
            result.code != server.models.Response.NOT_FOUND:
             result.value.href = rest.utils.get_href(request, "location_person_handler", [user.username])
             result.value.save()
+            return result.value
         return rest.utils.extract_result_from_response(result)
     
     def update(self, request, username):

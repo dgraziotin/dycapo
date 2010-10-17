@@ -43,7 +43,7 @@ class TestRegistration():
         response = self.rider.register(person)
         print response
 
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
 
     def test_registrations_real(self):
         person = {
@@ -54,7 +54,7 @@ class TestRegistration():
             "gender" : "M",
         }
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
         person = {
             "username" : "rider1",
             "password" : "password",
@@ -64,7 +64,7 @@ class TestRegistration():
         }
 
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
 
         person = {
             "username" : "dio",
@@ -75,7 +75,7 @@ class TestRegistration():
         }
 
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
         person = {
             "username" : "rob",
             "password" : "password",
@@ -85,7 +85,7 @@ class TestRegistration():
         }
 
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
         person = {
             "username" : "ozzy",
             "password" : "password",
@@ -93,7 +93,7 @@ class TestRegistration():
             "phone" : "1234567890",
             "gender" : "M",
         }
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
         response = self.rider.register(person)
 
         person = {
@@ -104,7 +104,7 @@ class TestRegistration():
             "gender" : "M",
         }
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
 
         person = {
             "username" : "angela",
@@ -114,7 +114,7 @@ class TestRegistration():
             "gender" : "F",
         }
         response = self.rider.register(person)
-        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
+        assert response['code'] == response_codes.CREATED or response['code'] == response_codes.ALL_OK or response['code'] == response_codes.DUPLICATE_ENTRY or response['code'] == response_codes.ALL_OK
 
     def test_unvalid_registration(self):
         person = {
