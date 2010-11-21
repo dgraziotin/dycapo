@@ -1,0 +1,48 @@
+# Enable mod_wsgi first!
+# Then add this line in apache2.conf (httpd.conf)
+
+# WSGIPassAuthorization On
+
+<VirtualHost *:80>
+
+# CHANGE ME!
+WSGIScriptAlias / /home/bodom_lx/Projects/dycapo/apache/dycapo.wsgi
+
+# CHANGE ME!
+Alias /media_admin /usr/local/lib/python2.6/dist-packages/django/contrib/admin/media
+
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www
+
+
+# CHANGE ME!
+<Directory /home/bodom_lx/Projects/dycapo/>
+	Order allow,deny
+	Allow from all
+</Directory>
+
+# CHANGE ME!
+<Directory /Library/Python/2.6/site-packages/django/contrib/admin/media>
+	Order allow,deny
+	Allow from all
+</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+</VirtualHost>

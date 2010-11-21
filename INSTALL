@@ -21,58 +21,39 @@ Adjust settings.py according to your needs. In particular, change the values of:
 - ADMIN_MEDIA_PREFIX
 - GOOGLE_MAPS_API_KEY
 - SITE_DOMAIN (use domain.ext or subdomain.domain.ext, without HTTP)
+- TEMPLATE_DIRS
 
 Run
 python manage.py syncdb
 
-We provide 3 registered users to test Dycapo functionalities:
-- admin 
+We provide 8 registered users to test DycapoS functionalities:
+- admin
 - driver1
 - rider1
+- rob
+- dio
+- ozzy
+- angela
 
 All of them with password set to "password".
 
+We provide a testing framework, located under tests/.
+We are using py.test <http://codespeak.net/py/dist/test/>.
+To run all tests, simply run run_tests.py
+
 ADJUST DYCAPO.WSGI
 ***************
-Change the lines
-sys.path.append('/home/bodom_lx/Projects/')
-sys.path.append('/home/bodom_lx/Projects/dycapo')
-according to your Dycapo path
-
-ADJUST AUTH.WSGI
-***************
-Change the lines
-sys.path.append('/home/bodom_lx/Projects/')
-sys.path.append('/home/bodom_lx/Projects/dycapo')
-according to your Dycapo path
+It should work as it is but have a look at it. It's in the
+apache folder
 
 CONFIGURE APACHE
 ***************
 Dycapo is designed and thought for using it with Apache2, and served with
-mod_wsgi. It uses rpc4django <http://www.davidfischer.name/rpc4django/> to 
-handle XML-RPC requests and responses. 
+mod_wsgi.
 Authentication is based on basic access authentication (on HTTP and HTTPS)
-Authentication is also handled by auth.wsgi file. Other authentication systems
-will not work, even the classical Django admin login.
+
 We highly reccommend to use HTTPS instead of HTTP, because of the private
 information exchanged between Dycapo and the clients.
 
-Please see docs/httpd.conf and docs/sites-enabled for some examples of 
-basic Apache2 configuration for Dycapo.
+Please see docs/apache_conf/000-default for an example of a VHost configuration for Apache under Ubuntu
 
-CONFIGURE MOD.WSGI
-***************
-To let rpc4django write its logs, modify mod_wsgi configuration 
-(/etc/apache2/mods-available/wsgi.conf for Debian systems).
-
-Locate the lines
-
-#WSGIRestrictStdin Off
-#WSGIRestrictStdout Off
-#WSGIRestrictSignal Off
-
-And modify them in this way:
-
-WSGIRestrictStdin On
-WSGIRestrictStdout On
-WSGIRestrictSignal On
