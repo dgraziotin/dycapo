@@ -53,19 +53,6 @@ SITE_DOMAIN = 'dycapo.org'
 # to load the internationalization machinery.
 USE_I18N = False
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/Users/bodom_lx/virtualenvs/django/dycapo/media/'
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'blahblahblahblahsecretkey12345'
@@ -92,10 +79,8 @@ MIDDLEWARE_CLASSES = (
 # Required for RPC4Django authenticated method calls
 # Also requires Django 1.1+
 AUTHENTICATION_BACKENDS = (
-    'dycapo.auth_backends.DycapoRemoteUserBackend',
-    'piston.authentication.HttpBasicAuthentication',
-    'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'piston.authentication.HttpBasicAuthentication',
 )
 
 
@@ -104,11 +89,23 @@ ROOT_URLCONF = 'dycapo.urls'
 
 GOOGLE_MAPS_API_KEY = 'ABQIAAAAEA5TqsSgku8oY63GIt0kvxTpH3CbXHjuCVmaTc5MkkU4wO1RRhQOBSk1yb3j1mHbRPaRhtbSt_APcA'
 
+MEDIA_ADMIN = '/Library/Python/2.6/site-packages/Django-1.2.3-py2.6.egg/django/contrib/admin/media'
+TEMPLATE_DIR = '/Users/bodom_lx/Projects/dycapo/templates/'
+MEDIA_ROOT = '/Users/bodom_lx/Projects/dycapo/media/'
+MEDIA_URL = '/media/'
+ADMIN_MEDIA_PREFIX = '/media_admin/'
+
+try:
+    from settings_local import *
+except ImportError:
+    pass
+
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/home/bodom_lx/Projects/dycapo/templates',
+    TEMPLATE_DIR,
 )
 
 INSTALLED_APPS = (

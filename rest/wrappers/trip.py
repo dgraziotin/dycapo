@@ -31,11 +31,23 @@ class TripHandler(piston.handler.BaseHandler):
     fields = ('id','href', 'published', 'updated', 'expires', 
               ('author',('username','gender','href')), 
               'locations',
-              'modality', 
+              ('modality',('kind','capacity','lic','color','make','vacancy','cost','year','model_name')),
               'preferences',
               'participations')
     
-    
+    """
+"kind": "auto",
+"capacity": 4,
+"lic": "38238asd",
+"color": "black",
+"make": "Ford",
+"vacancy": 4,
+"cost": 0.0,
+"year": 0,
+"model_name": "Fiesta",
+
+
+    """
     @classmethod
     def participations(cls,trip):
         participation = {}

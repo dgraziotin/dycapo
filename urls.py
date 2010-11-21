@@ -13,10 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 """
+import settings
 from django.conf.urls.defaults import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+
 admin.autodiscover()
+
 
 urlpatterns = patterns('',
     # Example:
@@ -30,7 +33,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     (r'^api/', include('dycapo.rest.urls')),
     (r'^media_admin/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': '/home/bodom_lx/Projects/dycapo/media_admin/', 'show_indexes': True}),
-    (r'^media/(.*)', 'django.views.static.serve', {'document_root': '/home/bodom_lx/Projects/dycapo/media/'}),
+        {'document_root': settings.MEDIA_ADMIN, 'show_indexes': True}),
+    (r'^media/(.*)', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'home.html'}),
 )

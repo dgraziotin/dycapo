@@ -67,7 +67,7 @@ class Participation(models.Model):
     finished_position = models.ForeignKey(location.Location, related_name="finished_position", blank=True, null=True)
     locations = models.ManyToManyField(location.Location, related_name="participation_locations")
     href = models.URLField(verify_exists=False, blank=True, null=False)
-
+    status = ''
     def __unicode__(self):
         return str(self.author) + " -> " + str(self.trip)
 
