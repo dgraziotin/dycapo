@@ -34,7 +34,7 @@ class ParticipationHandler(piston.handler.BaseHandler):
             try:
                 trip = server.models.Trip.objects.get(id=trip_id, active=True)
                 participation = trip.get_participations().filter(author__username=username).get()
-                setattr(participation,'status',participation.get_status_name()    )
+                setattr(participation,'status',participation.get_status_name())
                 if participation.status == 'refuse' or participation.status == 'cancel':
                     return piston.utils.rc.NOT_FOUND
                 return participation
@@ -46,7 +46,7 @@ class ParticipationHandler(piston.handler.BaseHandler):
             trip = server.models.Trip.objects.get(id=trip_id, active=True)
             participations = trip.get_participations()
             for participation in participations:
-                participations.status = participation.get_status_name()
+                setattr(participation,'status',participation.get_status_name())
                 if participation.status == 'refuse' or participation.status == 'cancel':
                     participations.exclude(id=participation.id)
             return participations
