@@ -64,7 +64,7 @@ class Trip():
 
 
 class Modality():
-    def __init__(self,kind='auto',capacity=4,lic='',color='',make='Ford',vacancy=4,cost=0,model_name='Fiesta'):
+    def __init__(self,kind='auto',capacity=4,lic='licensetest',color='blue',make='Fooord',vacancy=4,cost=0,model_name='Fiestaaaa'):
         self.kind = kind
         self.capacity = capacity
         self.lic = lic

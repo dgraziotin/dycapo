@@ -27,7 +27,7 @@ import rest.utils
 class ModalityHandler(piston.handler.BaseHandler):
     allowed_methods = ['GET']
     model = server.models.Modality
-    exclude = ('_state','person')
+    exclude = ('_state','person','id')
     
     def read(self, request, trip_id=None):
         try:

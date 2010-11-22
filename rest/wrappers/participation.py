@@ -59,6 +59,9 @@ class ParticipationHandler(piston.handler.BaseHandler):
         try:
             trip = server.models.Trip.objects.get(id=trip_id)
             status = data['status']
+            person_participation = trip.get_participations().filter(author__username=current_user.username)
+            if len(person_participation) > 0:
+                return piston.utils.rc.DUPLICATE_ENTRY
             if status == server.models.Participation._status['request'][0]:
                 result = server.passenger.requestRide(trip, current_user)
                 result.value.href = rest.utils.get_href(request, 'participation_handler', [trip.id, result.value.author.username])
@@ -68,6 +71,10 @@ class ParticipationHandler(piston.handler.BaseHandler):
                         server.models.Response.BAD_REQUEST,
                         'Message',
                          {'status': [u'This field is required and its value must be request.']})
+            #TODO: stupid hack but works
+            if result.code < 300:
+                result.value.status = result.value.get_status_name()
+                return result.value
             return rest.utils.extract_result_from_response(result)
 
         except server.models.Trip.DoesNotExist:
@@ -150,6 +157,7 @@ class ParticipationHandler(piston.handler.BaseHandler):
             if current_user == person:
                 response = server.passenger.cancelRide(trip, current_user)
                 return rest.utils.extract_result_from_response(response)
+
             elif current_user == trip.author:
                 response = server.driver.refuseRide(trip, person)
                 rest.utils.extract_result_from_response(response)

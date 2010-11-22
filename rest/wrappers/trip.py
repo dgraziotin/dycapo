@@ -72,6 +72,8 @@ class TripHandler(piston.handler.BaseHandler):
 
     def create(self, request, id=None):
         data = request.data
+        author = rest.utils.get_rest_user(request)
+
 
         source = server.models.Location()
         dict_source = rest.utils.get_location_from_array(data['locations'],"orig")
@@ -85,8 +87,10 @@ class TripHandler(piston.handler.BaseHandler):
 
         modality = server.models.Modality()
         dict_modality = rest.utils.clean_ids(data['modality'])
+
         modality = rest.utils.populate_object_from_dictionary(modality, dict_modality)
         modality.vacancy = data['modality']['vacancy']
+        modality.person = author
 
         preferences = server.models.Preferences()
         dict_preferences = rest.utils.clean_ids(data['preferences'])
@@ -96,7 +100,7 @@ class TripHandler(piston.handler.BaseHandler):
         dict_trip = rest.utils.clean_ids(data)
         trip = rest.utils.populate_object_from_dictionary(trip, dict_trip)
 
-        author = rest.utils.get_rest_user(request)    
+
         result = server.driver.insertTrip(trip, author, source, destination, modality, preferences)
         if result.code == server.models.Response.CREATED:
             id = result.value.id
@@ -106,6 +110,7 @@ class TripHandler(piston.handler.BaseHandler):
             trip.modality.href = rest.utils.get_href(request, 'modality_handler',[trip.id,])
             trip.preferences.save()
             trip.modality.save()
+
             locations = trip.locations.all()
             [item.__setattr__('href',rest.utils.get_href(request,'location_handler',[trip.id])) for item in locations]
             [item.save() for item in locations]

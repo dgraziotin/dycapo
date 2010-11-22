@@ -38,10 +38,8 @@ def extract_result_from_response(response):
     and converts a Response object to a RESTful
     object
     """
-    if response.code != server.models.Response.ALL_OK:
-        result = get_rc_from_code(response.code)
-        if response.value:
-            result.write(response.value)
+    if response.code > 300 or response.code == server.models.Response.DELETED:
+            result = get_rc_from_code(response.code)
     else:
         result = response.value
     return result

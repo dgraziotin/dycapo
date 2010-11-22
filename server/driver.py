@@ -26,15 +26,6 @@ def insertTrip(trip, author, source, destination, modality, preferences):
     Inserts a trip in the system. It may be either started or not. It also
     checks the validity of each object supplied
     """
-    
-    vacancy = modality.vacancy
-    modality = models.Modality(person=author,
-                                                 make=modality.make,
-                                                 model_name=modality.model_name,
-                                                 capacity=modality.capacity,
-                                                 kind=modality.kind)
-    modality.vacancy = vacancy
-
 
     try:
         source.full_clean()
