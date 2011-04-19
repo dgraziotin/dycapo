@@ -89,9 +89,9 @@ ROOT_URLCONF = 'dycapo.urls'
 
 GOOGLE_MAPS_API_KEY = 'ABQIAAAAEA5TqsSgku8oY63GIt0kvxTpH3CbXHjuCVmaTc5MkkU4wO1RRhQOBSk1yb3j1mHbRPaRhtbSt_APcA'
 
-MEDIA_ADMIN = '/Library/Python/2.6/site-packages/Django-1.2.3-py2.6.egg/django/contrib/admin/media'
-TEMPLATE_DIR = '/Users/bodom_lx/Projects/dycapo/templates/'
-MEDIA_ROOT = '/Users/bodom_lx/Projects/dycapo/media/'
+MEDIA_ADMIN = '/usr/local/lib/python2.7/dist-packages/django/contrib/admin/media'
+TEMPLATE_DIR = '/home/dgraziotin/Projects/dycapo/templates/'
+MEDIA_ROOT = '/home/dgraziotin/Projects/dycapo/media/'
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media_admin/'
 

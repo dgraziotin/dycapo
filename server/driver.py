@@ -104,7 +104,7 @@ def startTrip(trip, driver):
     trip.save()
 
     resp = models.Response(models.Response.ALL_OK,
-                           "Message", models.Response.TRIP_STARTED)
+                           "Trip", trip)
     return resp
 
 def getRides(trip, driver):
@@ -157,7 +157,7 @@ def acceptRide(trip, driver, passenger):
 
         passenger_participation.save()
         resp = models.Response(models.Response.ALL_OK,
-                               "Message", models.Response.RIDE_REQUEST_ACCEPTED)
+                               "Participation", passenger_participation)
         return resp
 
     resp = models.Response(models.Response.DUPLICATE_ENTRY,
@@ -186,8 +186,8 @@ def refuseRide(trip, passenger):
         passenger_participation.accepted_position = None
 
     passenger_participation.save()
-    resp = models.Response(models.Response.ALL_OK,
-                            "Message", models.Response.RIDE_REQUEST_REFUSED)
+    resp = models.Response(models.Response.DELETED,
+                            "Participation", models.Response.RIDE_REQUEST_REFUSED)
     return resp
 
 

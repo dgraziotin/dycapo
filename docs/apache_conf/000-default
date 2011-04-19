@@ -13,7 +13,7 @@ Alias /media_admin /usr/local/lib/python2.6/dist-packages/django/contrib/admin/m
 
 	ServerAdmin webmaster@localhost
 
-	DocumentRoot /var/www
+	#DocumentRoot /var/www
 
 
 # CHANGE ME!

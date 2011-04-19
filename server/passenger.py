@@ -166,7 +166,7 @@ def startRide(trip, passenger):
                                "Message", e)
         return resp
     resp = models.Response(models.Response.ALL_OK,
-                               "Message", models.Response.RIDE_STARTED)
+                               "Participation", participation)
     return resp
 
 def finishRide(trip, passenger):
@@ -196,5 +196,5 @@ def finishRide(trip, passenger):
     participation.finished_position_id = passenger.location_id
     participation.save()
     resp = models.Response(models.Response.ALL_OK,
-                               "Message", models.Response.RIDE_STARTED)
+                               "Participation", participation)
     return resp
